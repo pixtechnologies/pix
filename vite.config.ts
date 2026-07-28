@@ -3,7 +3,10 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
+const base = process.env.GITHUB_ACTIONS ? "/pix/" : "/";
+
 export default defineConfig({
+  base,
   plugins: [react(), tailwindcss(), tsconfigPaths()],
   build: {
     chunkSizeWarningLimit: 1000,
