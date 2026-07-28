@@ -1,121 +1,136 @@
+import { Link } from "@tanstack/react-router";
+
+const pillars = [
+  {
+    title: "Universal Data Intelligence",
+    description:
+      "Ingest Excel, CSV, SQL, SAP, Salesforce, Kafka, and REST APIs in one governed pipeline.",
+    icon: "dataset",
+  },
+  {
+    title: "Semantic Intelligence",
+    description:
+      "Automatically reconcile revenue, sales amount, and invoice value into a single business concept.",
+    icon: "hub",
+  },
+  {
+    title: "Decision Support",
+    description:
+      "Ask natural-language questions and receive evidence-backed explanations and recommended actions.",
+    icon: "psychology",
+  },
+];
+
+const modules = [
+  "Enterprise Profile",
+  "Knowledge Graph",
+  "Dynamic Dashboards",
+  "Memory & Audit",
+  "Governance",
+  "AI Copilot",
+];
+
 export function HomePage() {
   return (
     <div className="pt-20">
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex flex-col items-center justify-center text-center px-margin-mobile md:px-margin-desktop overflow-hidden">
-        {/* Background HUD Effect */}
+      <section className="relative min-h-[90vh] flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-white/5 rounded-full animate-[pulse_8s_infinite]"></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-white/10 rounded-full animate-[pulse_6s_infinite]"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-white/5 rounded-full animate-[pulse_8s_infinite]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-white/10 rounded-full animate-[pulse_6s_infinite]" />
         </div>
-        <div className="relative z-10 space-y-8 max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full mb-4">
-            <span className="w-1.5 h-1.5 bg-secondary-fixed-dim rounded-full animate-pulse"></span>
-            <span className="font-mono-data text-[10px] tracking-widest uppercase">System Active: Core V4.0</span>
-          </div>
-          <div className="flex justify-center mb-12">
-            <img alt="πX Core Logo" className="w-48 h-48 neural-glow object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLsLbZ-VBDg4luluTD5SP6JG-zi3fZuUZCz24SsHbZ-G6d-IcrtOpBdQK_fmKdZewh9zFqvdGS70AlmHCQwT-R6FpGS64_pNJyFEwF2Zdy4FjmTQI_bmblpZGmzW00Rf5qoDQpC6tswbvpxabWQzGMgOU_TgklJRfei-RUV6aNyaumREl0ffcQjFoMv4FB9Ctl7dugvriBUThq_M_Iu-8z4e8Pb_2k6q2vedMAai9Nt9XG807sPWQB3wOhZl" />
-          </div>
-          <h1 className="font-display-lg text-[64px] md:text-[96px] leading-[1.1] tracking-tighter text-primary">
-            The Future of <span className="text-secondary-fixed-dim italic">Vision AI</span>
-          </h1>
-          <p className="font-body-lg text-on-surface-variant max-w-2xl mx-auto opacity-80">
-            Intelligence Amplified. We provide the neural framework for high-performance vision environments, blending Swiss-engineered precision with futuristic adaptive intelligence.
-          </p>
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4 pt-8">
-            <button className="bg-primary text-background font-label-caps text-label-caps px-8 py-4 rounded-lg hover:bg-secondary-fixed-dim transition-all duration-300 transform active:scale-95 uppercase tracking-widest">
-              Initialize Core
-            </button>
-            <button className="border border-white/20 text-primary font-label-caps text-label-caps px-8 py-4 rounded-lg hover:border-white transition-all duration-300 uppercase tracking-widest">
-              View Documentation
-            </button>
-          </div>
-        </div>
-      </section>
 
-      {/* Section 01-03 Horizontal Layout */}
-      <section className="px-margin-desktop py-24 bg-surface-container-lowest">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="group p-8 border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 rounded-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 font-mono-data text-white/10 text-6xl font-bold select-none">01</div>
-            <div className="space-y-6">
-              <span className="material-symbols-outlined text-secondary-fixed-dim text-4xl">psychology</span>
-              <h3 className="font-headline-md text-headline-md text-primary">Neural Mesh</h3>
-              <p className="font-body-md text-on-surface-variant opacity-70">
-                Proprietary architecture designed for sub-millisecond object detection and environmental mapping in high-density data streams.
+        <div className="relative z-10 grid gap-12 max-w-6xl items-center lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="space-y-8 text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
+              <span className="w-1.5 h-1.5 bg-secondary-fixed-dim rounded-full animate-pulse" />
+              <span className="font-mono-data text-[10px] tracking-widest uppercase">Enterprise Intelligence Platform</span>
+            </div>
+            <div className="space-y-5">
+              <h1 className="font-display-lg text-[48px] md:text-[72px] leading-[1.05] tracking-tighter text-primary">
+                Transform enterprise data into <span className="text-secondary-fixed-dim">decisions</span>.
+              </h1>
+              <p className="font-body-lg text-on-surface-variant max-w-2xl opacity-80">
+                πX unifies profiling, semantic understanding, knowledge graphs, and decision support so teams can move from raw data to trusted action in minutes.
               </p>
-              <div className="pt-4 flex items-center gap-2 text-secondary-fixed-dim font-label-caps text-label-caps uppercase tracking-wider cursor-pointer group-hover:gap-4 transition-all">
-                Explore Mesh <span className="material-symbols-outlined text-sm">arrow_forward</span>
-              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-background uppercase tracking-widest transition hover:bg-secondary-fixed-dim"
+              >
+                Explore Platform
+              </Link>
+              <Link
+                to="/analytics"
+                className="inline-flex items-center justify-center rounded-lg border border-white/20 px-6 py-3 text-sm font-semibold text-primary uppercase tracking-widest transition hover:border-white"
+              >
+                View Insights
+              </Link>
+            </div>
+            <div className="flex flex-wrap gap-4 text-sm text-on-surface-variant">
+              <span className="rounded-full border border-white/10 px-3 py-1">FastAPI + React 19</span>
+              <span className="rounded-full border border-white/10 px-3 py-1">PostgreSQL + Supabase</span>
+              <span className="rounded-full border border-white/10 px-3 py-1">Cloudflare deployment</span>
             </div>
           </div>
-          <div className="group p-8 border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 rounded-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 font-mono-data text-white/10 text-6xl font-bold select-none">02</div>
-            <div className="space-y-6">
-              <span className="material-symbols-outlined text-secondary-fixed-dim text-4xl">visibility</span>
-              <h3 className="font-headline-md text-headline-md text-primary">Predictive Sight</h3>
-              <p className="font-body-md text-on-surface-variant opacity-70">
-                Anticipate movements and environmental shifts using integrated temporal analysis models built for mission-critical reliability.
-              </p>
-              <div className="pt-4 flex items-center gap-2 text-secondary-fixed-dim font-label-caps text-label-caps uppercase tracking-wider cursor-pointer group-hover:gap-4 transition-all">
-                Core Specs <span className="material-symbols-outlined text-sm">arrow_forward</span>
+
+          <div className="glass-panel rounded-2xl p-8 space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-label-caps text-label-caps uppercase tracking-widest text-secondary-fixed-dim">Live intelligence profile</p>
+                <h2 className="mt-2 text-2xl font-semibold text-primary">Northwind Global</h2>
+              </div>
+              <div className="rounded-full border border-secondary-fixed-dim/30 bg-secondary-fixed-dim/10 px-3 py-1 text-xs uppercase tracking-widest text-secondary-fixed-dim">
+                Online
               </div>
             </div>
-          </div>
-          <div className="group p-8 border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 rounded-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 font-mono-data text-white/10 text-6xl font-bold select-none">03</div>
-            <div className="space-y-6">
-              <span className="material-symbols-outlined text-secondary-fixed-dim text-4xl">hub</span>
-              <h3 className="font-headline-md text-headline-md text-primary">Global Link</h3>
-              <p className="font-body-md text-on-surface-variant opacity-70">
-                Deploy instantly across distributed edge networks with a single unified API designed for hardware-agnostic integration.
-              </p>
-              <div className="pt-4 flex items-center gap-2 text-secondary-fixed-dim font-label-caps text-label-caps uppercase tracking-wider cursor-pointer group-hover:gap-4 transition-all">
-                API Docs <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                <p className="text-sm text-on-surface-variant">KPIs detected</p>
+                <p className="mt-2 text-3xl font-semibold text-primary">128</p>
               </div>
+              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                <p className="text-sm text-on-surface-variant">Data connections</p>
+                <p className="mt-2 text-3xl font-semibold text-primary">24</p>
+              </div>
+            </div>
+            <div className="rounded-xl border border-white/10 p-4">
+              <p className="text-sm text-on-surface-variant">Current insight</p>
+              <p className="mt-2 text-lg text-primary">Revenue variance in Northern Italy is being traced to supply constraints and delayed fulfillment.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Core Capabilities Bento Grid */}
-      <section className="px-margin-desktop py-32 bg-background">
-        <div className="mb-16">
-          <span className="font-label-caps text-label-caps text-secondary-fixed-dim uppercase tracking-widest block mb-2">Systems &amp; Performance</span>
-          <h2 className="font-display-lg text-primary text-[48px] tracking-tight">Core Capabilities</h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-12 md:grid-rows-2 gap-6 md:h-[700px]">
-          <div className="col-span-1 md:col-span-8 md:row-span-2 glass-panel p-10 rounded-xl flex flex-col justify-between overflow-hidden relative group">
-            <div className="z-10">
-              <h4 className="font-headline-md text-headline-md text-primary mb-4">Spatial Intelligence Dashboard</h4>
-              <p className="font-body-md text-on-surface-variant max-w-md opacity-80">
-                Real-time data visualization of neural processing clusters. Monitor performance metrics with zero latency.
-              </p>
+      <section className="px-margin-mobile md:px-margin-desktop py-24 bg-surface-container-lowest">
+        <div className="grid gap-6 lg:grid-cols-3">
+          {pillars.map((pillar) => (
+            <div key={pillar.title} className="group rounded-2xl border border-white/10 bg-white/[0.03] p-8 transition hover:border-secondary-fixed-dim/40 hover:bg-white/[0.05]">
+              <span className="material-symbols-outlined text-secondary-fixed-dim text-3xl">{pillar.icon}</span>
+              <h3 className="mt-5 text-xl font-semibold text-primary">{pillar.title}</h3>
+              <p className="mt-3 text-sm leading-7 text-on-surface-variant">{pillar.description}</p>
             </div>
-            <div className="absolute bottom-0 right-0 w-2/3 h-2/3 opacity-20 group-hover:opacity-40 transition-opacity duration-700">
-              <div className="w-full h-full border-l border-t border-white/10 p-6 flex items-end">
-                <div className="flex items-end gap-1 w-full h-full">
-                  <div className="w-1/6 bg-secondary-fixed-dim h-1/4 rounded-t-sm"></div>
-                  <div className="w-1/6 bg-secondary-fixed-dim/80 h-2/4 rounded-t-sm"></div>
-                  <div className="w-1/6 bg-secondary-fixed-dim/60 h-1/3 rounded-t-sm"></div>
-                  <div className="w-1/6 bg-secondary-fixed-dim/40 h-3/4 rounded-t-sm"></div>
-                  <div className="w-1/6 bg-secondary-fixed-dim/90 h-full rounded-t-sm"></div>
-                  <div className="w-1/6 bg-white/20 h-1/2 rounded-t-sm"></div>
+          ))}
+        </div>
+      </section>
+
+      <section className="px-margin-mobile md:px-margin-desktop py-24">
+        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="space-y-4">
+            <p className="font-label-caps text-label-caps uppercase tracking-widest text-secondary-fixed-dim">Platform architecture</p>
+            <h2 className="text-3xl font-semibold tracking-tight text-primary">From source systems to executive decisions.</h2>
+            <p className="max-w-xl text-base leading-8 text-on-surface-variant">
+              πX combines universal ingestion, semantic mapping, knowledge graph construction, dynamic dashboards, and governance into a single operating layer for data-driven organizations.
+            </p>
+          </div>
+          <div className="glass-panel rounded-2xl p-8">
+            <div className="grid gap-4 md:grid-cols-2">
+              {modules.map((module) => (
+                <div key={module} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm text-primary">
+                  {module}
                 </div>
-              </div>
+              ))}
             </div>
-          </div>
-          <div className="col-span-1 md:col-span-4 glass-panel p-8 rounded-xl relative overflow-hidden group">
-            <span className="material-symbols-outlined text-secondary-fixed-dim text-3xl mb-4">speed</span>
-            <h4 className="font-headline-md text-headline-md text-primary mb-2 text-2xl">Ultra Low Latency</h4>
-            <p className="font-body-md text-on-surface-variant opacity-70">Sub 2ms processing times for edge devices.</p>
-            <div className="absolute -right-4 -bottom-4 text-9xl text-white/[0.03] font-mono-data font-bold group-hover:text-secondary-fixed-dim/10 transition-colors">2ms</div>
-          </div>
-          <div className="col-span-1 md:col-span-4 glass-panel p-8 rounded-xl relative overflow-hidden group">
-            <span className="material-symbols-outlined text-secondary-fixed-dim text-3xl mb-4">security</span>
-            <h4 className="font-headline-md text-headline-md text-primary mb-2 text-2xl">Enterprise Grade</h4>
-            <p className="font-body-md text-on-surface-variant opacity-70">End-to-end encryption with quantum-resistant keys.</p>
-            <div className="absolute -right-4 -bottom-4 text-9xl text-white/[0.03] font-mono-data font-bold group-hover:text-secondary-fixed-dim/10 transition-colors">AES</div>
           </div>
         </div>
       </section>

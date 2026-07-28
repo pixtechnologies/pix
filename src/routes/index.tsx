@@ -4,17 +4,17 @@ import { HomePage } from "@/pages/Home";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "πX Technologies — Intelligence, Architected" },
+      { title: "πX Enterprise Intelligence Platform" },
       {
         name: "description",
         content:
-          "Foundational intelligence infrastructure for the next generation of global enterprise. Secured by design, engineered for scale.",
+          "πX transforms enterprise data into structured intelligence, semantic understanding, dynamic dashboards, and evidence-backed decisions.",
       },
-      { property: "og:title", content: "πX Technologies — Intelligence, Architected" },
+      { property: "og:title", content: "πX Enterprise Intelligence Platform" },
       {
         property: "og:description",
         content:
-          "Foundational intelligence infrastructure for the next generation of global enterprise. Secured by design, engineered for scale.",
+          "πX transforms enterprise data into structured intelligence, semantic understanding, dynamic dashboards, and evidence-backed decisions.",
       },
       { property: "og:type", content: "website" },
     ],
