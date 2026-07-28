@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>πX — Intelligence Workspace</title>
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        black: '#000000',
+                        surface: {
+                            DEFAULT: '#0A0A0A',
+                            dark: '#111111',
+                            light: '#1A1A1A',
+                        },
+                        silver: '#C0C8D0',
+                        muted: '#666666',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        error: '#EF4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Base Reset & Variables */
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Border Utility */
+        .border-subtle {
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        .border-subtle-bright {
+            border-color: rgba(255, 255, 255, 0.16);
+        }
+
+        /* Dynamic Transitions */
+        .view-section {
+            opacity: 0;
+            transform: translateY(8px);
+            pointer-events: none;
+            transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .view-section.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Hover lifting */
+        .card-interactive {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card-interactive:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #222222;
+            border-radius: 2px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333333;
+        }
+
+        /* Knowledge Graph Node Styling */
+        .graph-node circle, .graph-node rect, .graph-node polygon {
+            transition: fill 0.3s, stroke 0.3s, stroke-width 0.3s;
+        }
+        .graph-node:hover circle, .graph-node:hover rect, .graph-node:hover polygon {
+            stroke: #FFFFFF;
+            stroke-width: 3px;
+        }
+        .graph-node.active circle, .graph-node.active rect, .graph-node.active polygon {
+            stroke: #C0C8D0;
+            stroke-width: 3.5px;
+            fill: #1A1A1A;
+        }
+        
+        /* Node pulsing keyframes */
+        @keyframes subtle-pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.04); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+        .pulse-node {
+            animation: subtle-pulse 4s infinite ease-in-out;
+            transform-origin: center;
+        }
+
+        /* Collapsible container heights */
+        .expand-transition {
+            transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+        .expand-transition.expanded {
+            max-height: 1000px;
+            opacity: 1;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-left-color: currentColor;
+            border-radius: 50%;
+            width: 1.25rem;
+            height: 1.25rem;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Text Input */
+        .custom-input {
+            background-color: #0A0A0A;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            color: #FFFFFF;
+            font-size: 0.875rem;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .custom-input:focus {
+            outline: none;
+            border-color: #FFFFFF;
+            box-shadow: 0 0 0 1px #FFFFFF;
+        }
+
+        /* Buttons styling */
+        .btn-primary {
+            background-color: #FFFFFF;
+            color: #000000;
+            font-weight: 600;
+            font-size: 0.875rem;
+            border-radius: 6px;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-primary:hover {
+            background-color: #E6E6E6;
+        }
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #FFFFFF;
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-radius: 6px;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-secondary:hover {
+            border-color: #FFFFFF;
+            background-color: rgba(255, 255, 255, 0.04);
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col md:flex-row overflow-hidden select-none">
+
+    <!-- COMMAND PALETTE OVERLAY -->
+    <div id="command-palette" class="fixed inset-0 bg-black/80 z-50 flex items-start justify-center pt-[15vh] px-4 opacity-0 pointer-events-none transition-opacity duration-200">
+        <div class="w-full max-w-xl bg-surface border border-subtle rounded-xl shadow-2xl overflow-hidden">
+            <div class="p-4 border-b border-subtle flex items-center space-x-3">
+                <svg class="w-5 h-5 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" id="cmd-input" class="w-full bg-transparent text-white placeholder-muted focus:outline-none text-sm" placeholder="Search resources, execute commands, switch views... (try 'memory' or 'sim')">
+                <span class="text-[10px] font-bold text-muted bg-surface-dark px-1.5 py-0.5 rounded border border-subtle">ESC</span>
+            </div>
+            <!-- Results list -->
+            <div class="p-2 max-h-80 overflow-y-auto" id="cmd-results">
+                <!-- Javascript maps search terms here -->
+            </div>
+            <div class="p-3 bg-surface-dark border-t border-subtle flex items-center justify-between text-[10px] text-muted">
+                <span>Use <kbd class="text-white">↑</kbd> <kbd class="text-white">↓</kbd> to navigate, <kbd class="text-white">Enter</kbd> to execute</span>
+                <span>CMD+K to toggle</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="w-full md:w-64 bg-black border-b md:border-b-0 md:border-r border-subtle flex flex-col justify-between shrink-0 h-16 md:h-full z-20">
+        <!-- Logo + Top menu -->
+        <div class="flex md:flex-col flex-1 overflow-y-auto overflow-x-hidden md:py-6 py-0 px-4 md:px-5 justify-between md:justify-start items-center md:items-stretch">
+            
+            <!-- Logo Section -->
+            <div class="flex items-center space-x-3 md:mb-8 shrink-0 py-3 md:py-0">
+                <div class="flex items-center justify-center w-8 h-8 border border-subtle bg-surface-dark rounded-md">
+                    <svg viewBox="0 0 100 100" class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M25,36 Q45,33 75,33" stroke="#C0C8D0" stroke-width="4.5" />
+                        <path d="M40,34 C38,52 35,64 28,68" />
+                        <path d="M58,34 L58,60 Q58,67 66,67" />
+                    </svg>
+                </div>
+                <span class="font-bold text-base tracking-wider text-white">πX <span class="text-[10px] font-light text-muted">SYSTEM</span></span>
+            </div>
+
+            <!-- Mobile Navigation Trigger (Hamburger) -->
+            <button onclick="toggleMobileSidebar()" class="md:hidden flex items-center justify-center w-10 h-10 border border-subtle rounded-md">
+                <svg id="mobile-menu-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
+            </button>
+
+            <!-- Navigation Links -->
+            <nav id="sidebar-nav" class="hidden md:flex flex-col space-y-6 w-full absolute md:static top-16 left-0 bg-black md:bg-transparent p-6 md:p-0 border-b md:border-b-0 border-subtle shrink-0">
+                <!-- Group 1: Workspace -->
+                <div>
+                    <h4 class="text-[10px] font-bold tracking-widest text-muted uppercase mb-3">Workspace</h4>
+                    <ul class="space-y-1.5">
+                        <li>
+                            <a href="#" onclick="switchTab('memory', this)" class="nav-item flex items-center space-x-3 px-3 py-2 text-xs font-semibold rounded-md bg-surface border border-subtle text-white transition-all">
+                                <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                                <span>Memory Center</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="switchTab('graph', this)" class="nav-item flex items-center space-x-3 px-3 py-2 text-xs font-medium rounded-md text-muted hover:text-white hover:bg-surface border border-transparent hover:border-subtle transition-all">
+                                <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.003 9.003 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.002 0 0120.488 9z"/></svg>
+                                <span>Knowledge Graph</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Group 2: Intelligence -->
+                <div>
+                    <h4 class="text-[10px] font-bold tracking-widest text-muted uppercase mb-3">Intelligence</h4>
+                    <ul class="space-y-1.5">
+                        <li>
+                            <a href="#" onclick="switchTab('ai', this)" class="nav-item flex items-center space-x-3 px-3 py-2 text-xs font-medium rounded-md text-muted hover:text-white hover:bg-surface border border-transparent hover:border-subtle transition-all">
+                                <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                                <span>AI Assistant</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="switchTab('decisions', this)" class="nav-item flex items-center space-x-3 px-3 py-2 text-xs font-medium rounded-md text-muted hover:text-white hover:bg-surface border border-transparent hover:border-subtle transition-all">
+                                <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span>Decision Center</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Group 3: System -->
+                <div>
+                    <h4 class="text-[10px] font-bold tracking-widest text-muted uppercase mb-3">System</h4>
+                    <ul class="space-y-1.5">
+                        <li>
+                            <a href="#" onclick="switchTab('simulation', this)" class="nav-item flex items-center space-x-3 px-3 py-2 text-xs font-medium rounded-md text-muted hover:text-white hover:bg-surface border border-transparent hover:border-subtle transition-all">
+                                <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                                <span>Simulation Center</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Sidebar footer: user profile -->
+        <div class="hidden md:flex p-4 border-t border-subtle items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-full border border-subtle bg-surface-dark flex items-center justify-center text-xs font-bold text-silver">JD</div>
+                <div>
+                    <div class="text-xs font-bold text-white">John Doe</div>
+                    <div class="text-[10px] text-muted">Operator Level 4</div>
+                </div>
+            </div>
+            <button onclick="window.location.href='auth_v2.html'" title="Deauthorize Session" class="text-muted hover:text-white transition-colors">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 flex flex-col h-[calc(100vh-4rem)] md:h-full relative overflow-hidden bg-black">
+        
+        <!-- TOP NAVIGATION BAR -->
+        <header class="h-14 border-b border-subtle flex items-center justify-between px-6 z-10 shrink-0 bg-black">
+            <div class="flex items-center space-x-3 text-xs">
+                <span class="text-muted">Node</span>
+                <span class="text-muted">/</span>
+                <span id="breadcrumb-current" class="font-bold text-white">Memory Center</span>
+            </div>
+
+            <!-- Command Bar Trigger -->
+            <button onclick="toggleCommandPalette(true)" class="flex items-center space-x-3 px-3 py-1.5 border border-subtle rounded-md bg-surface-dark text-muted hover:text-white hover:border-subtle-bright transition-all text-xs">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <span>Command Palette</span>
+                <kbd class="text-[9px] bg-surface font-semibold px-1 rounded border border-subtle">⌘K</kbd>
+            </button>
+        </header>
+
+        <!-- VIEW PANELS (Scrollable container) -->
+        <div class="flex-1 overflow-hidden relative">
+
+            <!-- ================== 1. MEMORY CENTER PANEL ================== -->
+            <section id="view-memory" class="view-section active absolute inset-0 p-6 overflow-y-auto space-y-6">
+                <!-- Grid: Left upload, Right gauge -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Drag and Drop upload block -->
+                    <div class="lg:col-span-2 border border-dashed border-subtle hover:border-white rounded-xl bg-surface p-8 flex flex-col items-center justify-center text-center group cursor-pointer transition-all duration-300" onclick="triggerFilePicker()">
+                        <input type="file" id="file-picker" class="hidden" multiple onchange="simulateUpload(this.files)">
+                        <div class="w-12 h-12 rounded-lg border border-subtle bg-surface-dark flex items-center justify-center text-muted group-hover:text-white transition-colors mb-4">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                        </div>
+                        <h3 class="text-sm font-bold text-white mb-1 group-hover:underline">Deposit Corporate Memory Matrix</h3>
+                        <p class="text-xs text-muted max-w-sm leading-relaxed mb-3">Drag & drop files or click to browser files. Files are encrypted on-prem and converted into vector representations.</p>
+                        <span class="text-[10px] uppercase font-bold tracking-widest text-silver bg-surface-dark border border-subtle px-2 py-0.5 rounded">PDF, DOCX, XLSX, CSV, TXT, Images</span>
+
+                        <!-- Dynamic upload progress container -->
+                        <div id="upload-progress-container" class="hidden w-full max-w-md bg-surface-dark border border-subtle rounded-lg p-3 mt-4 text-left space-y-2">
+                            <div class="flex justify-between items-center text-[10px] font-bold text-muted uppercase">
+                                <span id="upload-filename">Document.pdf</span>
+                                <span id="upload-percent">0%</span>
+                            </div>
+                            <div class="w-full h-1 bg-black rounded-full overflow-hidden">
+                                <div id="upload-bar" class="w-0 h-full bg-white transition-all"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- circular SVG storage gauge -->
+                    <div class="border border-subtle bg-surface rounded-xl p-6 flex flex-col justify-between">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xs font-bold text-white uppercase tracking-wider">Memory Allocation</h3>
+                                <p class="text-[11px] text-muted">Partition capacity usage</p>
+                            </div>
+                            <span class="text-[10px] font-bold text-success border border-success/20 bg-success/10 px-2 py-0.5 rounded uppercase">Optimized</span>
+                        </div>
+                        
+                        <!-- SVG gauge -->
+                        <div class="flex items-center justify-center my-2">
+                            <div class="relative w-36 h-36 flex items-center justify-center">
+                                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="40" stroke="rgba(255, 255, 255, 0.04)" stroke-width="7" fill="transparent" />
+                                    <!-- Dashed metallic effect circle -->
+                                    <circle cx="50" cy="50" r="40" stroke="#C0C8D0" stroke-width="7" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="95.4" stroke-linecap="round" />
+                                </svg>
+                                <div class="absolute text-center">
+                                    <span class="text-xl font-extrabold tracking-tight text-white">62.1%</span>
+                                    <p class="text-[9px] text-muted uppercase font-semibold">79.5 GB / 128 GB</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-subtle pt-4 flex justify-between items-center text-[10px] text-muted">
+                            <span>Index vector arrays: 1,842,900</span>
+                            <a href="#" onclick="switchTab('ai')" class="text-white font-semibold hover:underline">Query Index →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clusters List section with lookup filter -->
+                <div class="border border-subtle bg-surface rounded-xl overflow-hidden">
+                    <div class="p-5 border-b border-subtle flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                        <div>
+                            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Active Memory Clusters</h3>
+                            <p class="text-xs text-muted">Cognitive partitions indexed inside vector memory layers.</p>
+                        </div>
+                        
+                        <!-- Semantic filter input -->
+                        <div class="relative w-full md:w-64">
+                            <input type="text" id="cluster-search" class="custom-input w-full py-1.5 pl-8 pr-3 text-xs placeholder-muted" placeholder="Filter cluster arrays..." oninput="filterClusters(this.value)">
+                            <svg class="w-3.5 h-3.5 text-muted absolute left-2.5 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        </div>
+                    </div>
+
+                    <!-- Clusters List -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="border-b border-subtle bg-surface-dark text-muted uppercase font-bold text-[10px] tracking-wider">
+                                    <th class="p-4">Cluster Identity / Target</th>
+                                    <th class="p-4">Resource Space</th>
+                                    <th class="p-4">Indexing status</th>
+                                    <th class="p-4 text-right">Vectors Compiled</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clusters-table-body">
+                                <tr class="border-b border-subtle hover:bg-surface-dark/40 transition-colors">
+                                    <td class="p-4 flex items-center space-x-3">
+                                        <div class="w-7 h-7 rounded border border-subtle bg-black flex items-center justify-center text-white font-bold text-[10px]">DF</div>
+                                        <div>
+                                            <span class="font-bold text-white block">Corporate Financial Audit Q2</span>
+                                            <span class="text-[10px] text-muted">XLSX, PDF / Root/Vault/Finance</span>
+                                        </div>
+                                    </td>
+                                    <td class="p-4 text-muted">42.8 MB</td>
+                                    <td class="p-4">
+                                        <span class="inline-flex items-center space-x-1.5 text-[10px] text-success font-bold uppercase"><span class="w-1.5 h-1.5 rounded-full bg-success"></span><span>Ready</span></span>
+                                    </td>
+                                    <td class="p-4 text-right font-semibold text-white">412,800</td>
+                                </tr>
+
+                                <tr class="border-b border-subtle hover:bg-surface-dark/40 transition-colors">
+                                    <td class="p-4 flex items-center space-x-3">
+                                        <div class="w-7 h-7 rounded border border-subtle bg-black flex items-center justify-center text-white font-bold text-[10px]">HR</div>
+                                        <div>
+                                            <span class="font-bold text-white block">SOP Handbook & Policies v2.5</span>
+                                            <span class="text-[10px] text-muted">PDF / Root/Vault/HR</span>
+                                        </div>
+                                    </td>
+                                    <td class="p-4 text-muted">14.1 MB</td>
+                                    <td class="p-4">
+                                        <span class="inline-flex items-center space-x-1.5 text-[10px] text-success font-bold uppercase"><span class="w-1.5 h-1.5 rounded-full bg-success"></span><span>Ready</span></span>
+                                    </td>
+                                    <td class="p-4 text-right font-semibold text-white">184,500</td>
+                                </tr>
+
+                                <tr class="border-b border-subtle hover:bg-surface-dark/40 transition-colors">
+                                    <td class="p-4 flex items-center space-x-3">
+                                        <div class="w-7 h-7 rounded border border-subtle bg-black flex items-center justify-center text-white font-bold text-[10px]">AP</div>
+                                        <div>
+                                            <span class="font-bold text-white block">External Customer Support Slack Sync</span>
+                                            <span class="text-[10px] text-muted">Webhook API Stream / live</span>
+                                        </div>
+                                    </td>
+                                    <td class="p-4 text-muted">118.4 MB</td>
+                                    <td class="p-4">
+                                        <span class="inline-flex items-center space-x-1.5 text-[10px] text-warning font-bold uppercase"><span class="w-1.5 h-1.5 rounded-full bg-warning animate-ping"></span><span>Processing</span></span>
+                                    </td>
+                                    <td class="p-4 text-right font-semibold text-white">1,245,600</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Event Timeline -->
+                <div class="border border-subtle bg-surface rounded-xl p-5">
+                    <h3 class="text-xs font-bold text-white uppercase tracking-wider mb-4">Memory Sync History</h3>
+                    <div class="space-y-4 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-light">
+                        <div class="flex items-start space-x-4 relative">
+                            <div class="w-6 h-6 rounded-full bg-black border border-subtle flex items-center justify-center text-white z-10 text-[9px] font-bold uppercase">S</div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="font-semibold text-white">Synthesized Cluster 'Financial Audit'</span>
+                                    <span class="text-[10px] text-muted">10 mins ago</span>
+                                </div>
+                                <p class="text-[11px] text-muted">Converted 14 files into multi-dimensional vectors. Assigned to cluster FINANCE-03.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4 relative">
+                            <div class="w-6 h-6 rounded-full bg-black border border-subtle flex items-center justify-center text-white z-10 text-[9px] font-bold uppercase">C</div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="font-semibold text-white">S3 Object Vault Webhook Connected</span>
+                                    <span class="text-[10px] text-muted">2 hours ago</span>
+                                </div>
+                                <p class="text-[11px] text-muted">Secured direct RPC tunnel to s3://nexus-financials-audit. Established 36-point watch schema.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ================== 2. KNOWLEDGE GRAPH PANEL ================== -->
+            <section id="view-graph" class="view-section absolute inset-0 p-6 overflow-hidden flex flex-col h-full space-y-4">
+                
+                <!-- Title & Filter bar -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 shrink-0">
+                    <div>
+                        <h2 class="text-sm font-bold text-white uppercase tracking-wider">Semantic Knowledge Graph</h2>
+                        <p class="text-xs text-muted">Visualized array mapping logical linkages between corporate schemas, databases, decisions, and operators.</p>
+                    </div>
+
+                    <!-- Search Node inside Graph -->
+                    <div class="relative w-full md:w-64">
+                        <input type="text" id="graph-search" class="custom-input w-full py-1.5 pl-8 pr-3 text-xs placeholder-muted" placeholder="Locate entity nodes..." oninput="searchGraphNode(this.value)">
+                        <svg class="w-3.5 h-3.5 text-muted absolute left-2.5 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+                </div>
+
+                <!-- Main Interactive SVG Layout -->
+                <div class="flex-1 min-h-0 flex flex-col lg:flex-row gap-6">
+                    
+                    <!-- SVG Interactive Canvas with controls -->
+                    <div class="flex-1 border border-subtle bg-surface rounded-xl relative overflow-hidden flex flex-col justify-between min-h-[350px]">
+                        
+                        <!-- Zoom / Pan controls overlay -->
+                        <div class="absolute top-4 left-4 z-10 flex flex-col bg-surface border border-subtle rounded-md p-1.5 gap-1.5">
+                            <button onclick="zoomGraph(1.2)" class="w-8 h-8 rounded hover:bg-surface-light border border-transparent hover:border-subtle flex items-center justify-center font-bold text-white text-sm" title="Zoom In">+</button>
+                            <button onclick="zoomGraph(0.8)" class="w-8 h-8 rounded hover:bg-surface-light border border-transparent hover:border-subtle flex items-center justify-center font-bold text-white text-sm" title="Zoom Out">-</button>
+                            <button onclick="resetZoomGraph()" class="w-8 h-8 rounded hover:bg-surface-light border border-transparent hover:border-subtle flex items-center justify-center text-[10px] font-bold text-white" title="Reset Frame">R</button>
+                        </div>
+
+                        <!-- Node Type Legends Overlay -->
+                        <div class="absolute bottom-4 left-4 z-10 flex flex-wrap gap-2 max-w-sm">
+                            <span class="inline-flex items-center space-x-1.5 text-[9px] uppercase font-bold text-muted bg-surface border border-subtle px-1.5 py-0.5 rounded"><span class="w-2 h-2 rounded-full bg-white"></span><span>Company</span></span>
+                            <span class="inline-flex items-center space-x-1.5 text-[9px] uppercase font-bold text-muted bg-surface border border-subtle px-1.5 py-0.5 rounded"><span class="w-2 h-2 bg-silver"></span><span>Customer</span></span>
+                            <span class="inline-flex items-center space-x-1.5 text-[9px] uppercase font-bold text-muted bg-surface border border-subtle px-1.5 py-0.5 rounded"><span class="w-2.5 h-2.5 bg-white border border-subtle rotate-45"></span><span>Product</span></span>
+                            <span class="inline-flex items-center space-x-1.5 text-[9px] uppercase font-bold text-muted bg-surface border border-subtle px-1.5 py-0.5 rounded"><span class="w-0.5 h-3 bg-white rotate-[30deg]"></span><span>Employee</span></span>
+                            <span class="inline-flex items-center space-x-1.5 text-[9px] uppercase font-bold text-muted bg-surface border border-subtle px-1.5 py-0.5 rounded"><span class="w-2.5 h-2.5 bg-transparent border-t border-r border-white"></span><span>Project</span></span>
+                        </div>
+
+                        <!-- SVG Graph Canvas -->
+                        <div class="flex-1 w-full h-full cursor-grab active:cursor-grabbing overflow-hidden" id="graph-viewport-container" onmousedown="startGraphPan(event)" onmousemove="panGraph(event)" onmouseup="endGraphPan()">
+                            <svg id="graph-svg" class="w-full h-full transition-transform duration-200" viewBox="0 0 800 500">
+                                <!-- Edge connections -->
+                                <g stroke="rgba(255, 255, 255, 0.08)" stroke-width="1.5">
+                                    <line x1="400" y1="250" x2="250" y2="150" />
+                                    <line x1="400" y1="250" x2="550" y2="150" />
+                                    <line x1="400" y1="250" x2="400" y2="400" />
+                                    <line x1="250" y1="150" x2="120" y2="100" />
+                                    <line x1="250" y1="150" x2="200" y2="300" />
+                                    <line x1="550" y1="150" x2="680" y2="100" />
+                                    <line x1="550" y1="150" x2="620" y2="300" />
+                                    <line x1="400" y1="400" x2="280" y2="440" />
+                                    <line x1="400" y1="400" x2="520" y2="440" />
+                                </g>
+
+                                <!-- Interactive Groups for Nodes -->
+                                <!-- 1. Company node -->
+                                <g id="gn-nexus" class="graph-node pulse-node cursor-pointer active" onclick="clickGraphNode('nexus')" transform="translate(0,0)">
+                                    <circle cx="400" cy="250" r="16" fill="#000000" stroke="#FFFFFF" stroke-width="2.5" />
+                                    <text x="400" y="285" text-anchor="middle" fill="#FFFFFF" font-size="11" font-weight="700">Nexus Corp</text>
+                                    <text x="400" y="297" text-anchor="middle" fill="#666666" font-size="9" font-weight="500">Company Node</text>
+                                </g>
+
+                                <!-- 2. Customer node -->
+                                <g id="gn-aether" class="graph-node cursor-pointer" onclick="clickGraphNode('aether')">
+                                    <circle cx="250" cy="150" r="12" fill="#000000" stroke="#C0C8D0" stroke-width="1.5" />
+                                    <text x="250" y="175" text-anchor="middle" fill="#FFFFFF" font-size="10" font-weight="600">Aether Syndicate</text>
+                                    <text x="250" y="185" text-anchor="middle" fill="#666666" font-size="8">Customer</text>
+                                </g>
+
+                                <!-- 3. Product node -->
+                                <g id="gn-synthesizer" class="graph-node cursor-pointer" onclick="clickGraphNode('synthesizer')">
+                                    <!-- Rotated square to signify product shape -->
+                                    <rect x="538" y="138" width="24" height="24" transform="rotate(45 550 150)" fill="#000000" stroke="#FFFFFF" stroke-width="1.5" />
+                                    <text x="550" y="175" text-anchor="middle" fill="#FFFFFF" font-size="10" font-weight="600">Synthesizer v3</text>
+                                    <text x="550" y="185" text-anchor="middle" fill="#666666" font-size="8">Product Core</text>
+                                </g>
+
+                                <!-- 4. Employee node -->
+                                <g id="gn-elena" class="graph-node cursor-pointer" onclick="clickGraphNode('elena')">
+                                    <!-- Hexagonal path simulated simple diamond -->
+                                    <polygon points="400,388 410,400 400,412 390,400" fill="#000000" stroke="#C0C8D0" stroke-width="1.5" />
+                                    <text x="400" y="430" text-anchor="middle" fill="#FFFFFF" font-size="10" font-weight="600">Dr. Elena Rostova</text>
+                                    <text x="400" y="440" text-anchor="middle" fill="#666666" font-size="8">Lead Architect</text>
+                                </g>
+
+                                <!-- 5. Project node -->
+                                <g id="gn-helios" class="graph-node cursor-pointer" onclick="clickGraphNode('helios')">
+                                    <polygon points="120,88 129,106 111,106" fill="#000000" stroke="#FFFFFF" stroke-width="1.5" />
+                                    <text x="120" y="125" text-anchor="middle" fill="#FFFFFF" font-size="10" font-weight="600">Project Helios</text>
+                                    <text x="120" y="135" text-anchor="middle" fill="#666666" font-size="8">Sovereign Project</text>
+                                </g>
+
+                                <!-- 6. Decision node -->
+                                <g id="gn-relocation" class="graph-node cursor-pointer" onclick="clickGraphNode('relocation')">
+                                    <rect x="188" y="288" width="24" height="24" rx="4" fill="#000000" stroke="#C0C8D0" stroke-width="1.5" />
+                                    <text x="200" y="325" text-anchor="middle" fill="#FFFFFF" font-size="10" font-weight="600">Server Relocation</text>
+                                    <text x="200" y="335" text-anchor="middle" fill="#666666" font-size="8">Active Decision</text>
+                                </g>
+
+                                <!-- 7. Document node -->
+                                <g id="gn-auditdoc" class="graph-node cursor-pointer" onclick="clickGraphNode('auditdoc')">
+                                    <polygon points="680,88 689,106 671,106" fill="#000000" stroke="#FFFFFF" stroke-width="1.5" />
+                                    <text x="680" y="125" text-anchor="middle" fill="#FFFFFF" font-size="10" font-weight="600">Helios Audit PDF</text>
+                                    <text x="680" y="135" text-anchor="middle" fill="#666666" font-size="8">Audit Record</text>
+                                </g>
+
+                                <!-- 8. Metric node -->
+                                <g id="gn-latency" class="graph-node cursor-pointer" onclick="clickGraphNode('latency')">
+                                    <rect x="608" y="288" width="24" height="24" rx="12" fill="#000000" stroke="#FFFFFF" stroke-width="1.5" />
+                                    <text x="620" y="325" text-anchor="middle" fill="#FFFFFF" font-size="10" font-weight="600">Cognitive Latency</text>
+                                    <text x="620" y="335" text-anchor="middle" fill="#666666" font-size="8">System Metric</text>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Right detail panel -->
+                    <div class="w-full lg:w-80 border border-subtle bg-surface rounded-xl p-5 flex flex-col justify-between shrink-0 h-full overflow-y-auto">
+                        <div class="space-y-4">
+                            <div class="border-b border-subtle pb-4">
+                                <span class="text-[9px] uppercase font-bold text-silver bg-surface-dark px-2 py-0.5 rounded border border-subtle inline-block mb-2" id="node-badge">Company</span>
+                                <h3 class="text-base font-bold text-white" id="node-title">Nexus Corp</h3>
+                                <p class="text-xs text-muted mt-1 leading-relaxed" id="node-description">Global conglomerate parent node. Controls structural and technical strategic divisions.</p>
+                            </div>
+
+                            <div class="space-y-3.5">
+                                <h4 class="text-[10px] uppercase font-bold tracking-widest text-muted">Schema Attributes</h4>
+                                <div class="space-y-2 text-xs" id="node-attributes">
+                                    <div class="flex justify-between border-b border-subtle/40 pb-1.5">
+                                        <span class="text-muted">Node ID</span>
+                                        <span class="text-white font-mono">NODE-001</span>
+                                    </div>
+                                    <div class="flex justify-between border-b border-subtle/40 pb-1.5">
+                                        <span class="text-muted">System Clearance</span>
+                                        <span class="text-white">L4 Admin</span>
+                                    </div>
+                                    <div class="flex justify-between border-b border-subtle/40 pb-1.5">
+                                        <span class="text-muted">Vector Affiliation</span>
+                                        <span class="text-white">Full-Matrix</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3.5">
+                                <h4 class="text-[10px] uppercase font-bold tracking-widest text-muted">Logical Connections</h4>
+                                <ul class="space-y-2 text-xs" id="node-connections">
+                                    <li class="flex items-center space-x-2 cursor-pointer hover:underline text-silver hover:text-white" onclick="clickGraphNode('aether')">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-silver"></span>
+                                        <span>Aether Syndicate (Customer Relationship)</span>
+                                    </li>
+                                    <li class="flex items-center space-x-2 cursor-pointer hover:underline text-silver hover:text-white" onclick="clickGraphNode('synthesizer')">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-silver"></span>
+                                        <span>Synthesizer v3 (Product Mapping)</span>
+                                    </li>
+                                    <li class="flex items-center space-x-2 cursor-pointer hover:underline text-silver hover:text-white" onclick="clickGraphNode('elena')">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-silver"></span>
+                                        <span>Dr. Elena Rostova (Lead Staff)</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="pt-6 border-t border-subtle flex">
+                            <button onclick="switchTab('ai')" class="btn-secondary w-full py-2 text-xs flex items-center justify-center space-x-2">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                                <span>Query Entity Context</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+
+            <!-- ================== 3. AI ASSISTANT PANEL ================== -->
+            <section id="view-ai" class="view-section absolute inset-0 p-6 overflow-hidden flex flex-col h-full space-y-4">
+                
+                <div class="flex-1 min-h-0 flex flex-col lg:flex-row gap-6 h-full">
+                    
+                    <!-- Left Chat area -->
+                    <div class="flex-1 border border-subtle bg-surface rounded-xl flex flex-col h-full min-h-0">
+                        
+                        <!-- Header with Context dropdown -->
+                        <div class="p-4 border-b border-subtle flex items-center justify-between bg-surface-dark shrink-0">
+                            <div class="flex items-center space-x-2.5">
+                                <span class="w-2 h-2 rounded-full bg-success"></span>
+                                <span class="text-xs font-bold text-white uppercase tracking-wider">Cognitive Synthesis Core</span>
+                            </div>
+                            
+                            <!-- Context dropdown selectors -->
+                            <div class="flex items-center space-x-2">
+                                <span class="text-[10px] text-muted">Core Scope:</span>
+                                <select id="chat-scope" class="bg-black border border-subtle text-white text-xs px-2.5 py-1 rounded focus:outline-none focus:border-white">
+                                    <option value="all">Full Structural Workspace</option>
+                                    <option value="financial">Financial Matrix Vault Only</option>
+                                    <option value="legal">Legal & Audit Vaults Only</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Chat Messages Board -->
+                        <div class="flex-1 p-5 overflow-y-auto space-y-5" id="chat-message-board">
+                            <!-- AI Welcome message -->
+                            <div class="flex items-start space-x-3.5 max-w-2.5xl">
+                                <div class="w-7 h-7 rounded border border-subtle bg-black flex items-center justify-center text-white font-bold text-[9px] shrink-0">πX</div>
+                                <div class="bg-surface-dark border border-subtle rounded-lg p-4 text-xs text-white leading-relaxed space-y-3">
+                                    <p>Intelligence node online. Key matrix files have been synced. I have fully indexed active memory and parsed structural graph paths.</p>
+                                    <p class="text-muted text-[11px]">How shall I help formulate recommendations or analyze strategic variables today?</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pre-filled suggestions block -->
+                        <div class="px-5 py-2.5 border-t border-subtle bg-surface-dark/40 flex flex-wrap gap-2 shrink-0">
+                            <button onclick="applySuggestedPrompt('Synthesize Q3 Revenue Risk')" class="text-[10px] font-medium text-silver bg-surface border border-subtle hover:border-white hover:text-white px-3 py-1.5 rounded-full transition-all">Synthesize Q3 Revenue Risk</button>
+                            <button onclick="applySuggestedPrompt('Review Project Helios Constraints')" class="text-[10px] font-medium text-silver bg-surface border border-subtle hover:border-white hover:text-white px-3 py-1.5 rounded-full transition-all">Review Project Helios Constraints</button>
+                            <button onclick="applySuggestedPrompt('Evaluate server relocation risks')" class="text-[10px] font-medium text-silver bg-surface border border-subtle hover:border-white hover:text-white px-3 py-1.5 rounded-full transition-all">Evaluate Server Relocation Risks</button>
+                        </div>
+
+                        <!-- Chat Input matrix bar -->
+                        <form id="chat-form" onsubmit="handleSendChat(event)" class="p-4 border-t border-subtle flex items-center space-x-3 shrink-0">
+                            <input type="text" id="chat-input" class="flex-1 custom-input py-2 px-4 text-xs placeholder-muted" placeholder="Ask AI Assistant, synthesize options, run mathematical projections...">
+                            <button type="submit" class="btn-primary px-4 py-2 text-xs flex items-center space-x-1.5">
+                                <span>Query</span>
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Right Context Metadata Panel -->
+                    <div class="w-full lg:w-80 border border-subtle bg-surface rounded-xl p-5 flex flex-col justify-between shrink-0 h-full overflow-y-auto">
+                        <div class="space-y-4">
+                            <div class="border-b border-subtle pb-4">
+                                <h3 class="text-xs font-bold text-white uppercase tracking-wider">Cognitive context details</h3>
+                                <p class="text-[11px] text-muted">Supporting evidence and confidence indices</p>
+                            </div>
+
+                            <!-- Confidence Circular SVG -->
+                            <div class="flex items-center space-x-4 bg-surface-dark border border-subtle p-3 rounded-lg">
+                                <div class="relative w-12 h-12 flex items-center justify-center shrink-0">
+                                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="42" stroke="rgba(255,255,255,0.06)" stroke-width="12" fill="transparent" />
+                                        <circle cx="50" cy="50" r="42" stroke="#FFFFFF" stroke-width="12" fill="transparent" stroke-dasharray="263.8" stroke-dashoffset="15.8" />
+                                    </svg>
+                                    <span class="absolute text-[10px] font-bold text-white">94%</span>
+                                </div>
+                                <div>
+                                    <span class="text-[11px] font-bold text-white block">Synthesis Confidence</span>
+                                    <p class="text-[9px] text-muted leading-tight">Calculated across 8 related file citations.</p>
+                                </div>
+                            </div>
+
+                            <!-- Accordions for Sources -->
+                            <div class="space-y-2 text-xs">
+                                <!-- Accordion 1: Memory Sources -->
+                                <div class="border border-subtle rounded-md">
+                                    <button onclick="toggleAccordion('sources-mem')" class="w-full p-2.5 bg-surface-dark flex items-center justify-between text-white font-bold text-[10px] uppercase">
+                                        <span>Active Memory Sources (2)</span>
+                                        <svg class="w-3.5 h-3.5 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    </button>
+                                    <div id="sources-mem" class="p-2.5 space-y-1.5 hidden border-t border-subtle">
+                                        <div class="text-[11px] text-silver flex justify-between">
+                                            <span>• Financial_Audit_Q2.xlsx</span>
+                                            <span class="text-muted">Weight 0.74</span>
+                                        </div>
+                                        <div class="text-[11px] text-silver flex justify-between">
+                                            <span>• Helios_Audit_Report.pdf</span>
+                                            <span class="text-muted">Weight 0.91</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Accordion 2: Knowledge Sources -->
+                                <div class="border border-subtle rounded-md">
+                                    <button onclick="toggleAccordion('sources-kg')" class="w-full p-2.5 bg-surface-dark flex items-center justify-between text-white font-bold text-[10px] uppercase">
+                                        <span>Knowledge Nodes (3)</span>
+                                        <svg class="w-3.5 h-3.5 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    </button>
+                                    <div id="sources-kg" class="p-2.5 space-y-1.5 hidden border-t border-subtle">
+                                        <div class="text-[11px] text-silver">• Nexus Corp (Company)</div>
+                                        <div class="text-[11px] text-silver">• Dr. Elena Rostova (Lead Staff)</div>
+                                        <div class="text-[11px] text-silver">• Project Helios (Sovereign Project)</div>
+                                    </div>
+                                </div>
+
+                                <!-- Accordion 3: Reasoning Trace -->
+                                <div class="border border-subtle rounded-md">
+                                    <button onclick="toggleAccordion('sources-trace')" class="w-full p-2.5 bg-surface-dark flex items-center justify-between text-white font-bold text-[10px] uppercase">
+                                        <span>Active Reasoning Trace</span>
+                                        <svg class="w-3.5 h-3.5 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    </button>
+                                    <div id="sources-trace" class="p-2.5 space-y-2 hidden border-t border-subtle text-[11px] text-muted">
+                                        <div class="flex items-center space-x-2 text-white">
+                                            <span class="w-1 h-1 rounded-full bg-success"></span>
+                                            <span>Parsing structural query context...</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2 text-white">
+                                            <span class="w-1 h-1 rounded-full bg-success"></span>
+                                            <span>Scanning cross-node relationships...</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="w-1 h-1 rounded-full bg-surface-light"></span>
+                                            <span>Retrieving relevant semantic vectors...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- System operational telemetry -->
+                        <div class="pt-4 border-t border-subtle text-[10px] text-muted flex justify-between">
+                            <span>Latency: 78ms</span>
+                            <span>Tokens: 1,489 / 4.1k</span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+
+            <!-- ================== 4. DECISION CENTER PANEL ================== -->
+            <section id="view-decisions" class="view-section absolute inset-0 p-6 overflow-y-auto space-y-6">
+                <div class="flex flex-col lg:flex-row gap-6">
+                    
+                    <!-- Left: Decision list and cards expansion -->
+                    <div class="flex-1 space-y-4">
+                        <div class="mb-4">
+                            <h2 class="text-sm font-bold text-white uppercase tracking-wider">Executive Decision Matrix</h2>
+                            <p class="text-xs text-muted">Review, approve, or challenge structured decision vectors derived from mapped corporate criteria.</p>
+                        </div>
+
+                        <!-- Decision Card 1 -->
+                        <div class="border border-subtle hover:border-white rounded-xl bg-surface p-6 card-interactive space-y-4" id="dc-card-1">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-[9px] uppercase font-bold text-warning border border-warning/20 bg-warning/10 px-2.5 py-0.5 rounded">Awaiting Authorization</span>
+                                    <span class="text-xs text-muted">ID: DEC-0941</span>
+                                </div>
+                                <span class="text-xs text-muted">Priority: High</span>
+                            </div>
+
+                            <div>
+                                <h3 class="text-base font-bold text-white">Infrastructure Migration to Sovereign Zero-Knowledge Cloud</h3>
+                                <p class="text-xs text-muted mt-1 leading-relaxed">Transitioning sensitive database records and computational models from public platforms to a fully isolated private environment to safeguard IP assets.</p>
+                            </div>
+
+                            <!-- Expandable Section -->
+                            <div class="expand-transition rounded-lg bg-surface-dark border border-subtle p-4 space-y-4" id="dc-exp-1">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                                    <div>
+                                        <span class="text-[10px] font-bold text-muted uppercase tracking-wider block mb-1">Analytical Context</span>
+                                        <p class="text-[11px] text-silver leading-relaxed">Audit Helios identifies 3 risk vectors in public APIs exposing corporate memory indexes to potential external model training pipelines.</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] font-bold text-muted uppercase tracking-wider block mb-1">Key Options Analysed</span>
+                                        <p class="text-[11px] text-silver leading-relaxed">Option A: Retain current AWS configuration with proxy shields. Option B (Recommended): Migrate core data nodes to sovereign secure vaults.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Horizontal Confidence Bar -->
+                                <div>
+                                    <div class="flex justify-between items-center text-[10px] font-bold uppercase text-muted mb-1">
+                                        <span>Projection Success Confidence</span>
+                                        <span class="text-white">88.5%</span>
+                                    </div>
+                                    <div class="w-full h-1.5 bg-surface-light rounded-full overflow-hidden">
+                                        <div class="h-full bg-white" style="width: 88.5%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card controls bar -->
+                            <div class="flex items-center justify-between pt-2 border-t border-subtle/50 text-xs">
+                                <button onclick="toggleCardExpand('1', this)" class="text-silver hover:text-white font-medium flex items-center space-x-1">
+                                    <span>Expand Criteria</span>
+                                    <svg class="w-3.5 h-3.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                
+                                <div class="flex space-x-2">
+                                    <button onclick="setDecisionState('1', 'review')" class="btn-secondary px-3 py-1.5 text-xs">Require Review</button>
+                                    <button onclick="setDecisionState('1', 'reject')" class="border border-error text-error hover:bg-error/5 px-3 py-1.5 text-xs font-semibold rounded-md transition-all">Reject Vector</button>
+                                    <button onclick="setDecisionState('1', 'approve')" class="btn-primary px-3 py-1.5 text-xs">Approve & Authorize</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Decision Card 2 -->
+                        <div class="border border-subtle hover:border-white rounded-xl bg-surface p-6 card-interactive space-y-4" id="dc-card-2">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-[9px] uppercase font-bold text-success border border-success/20 bg-success/10 px-2.5 py-0.5 rounded">Approved</span>
+                                    <span class="text-xs text-muted">ID: DEC-0940</span>
+                                </div>
+                                <span class="text-xs text-muted">Priority: Medium</span>
+                            </div>
+
+                            <div>
+                                <h3 class="text-base font-bold text-white">Initiate Research Synergy With Aether Syndicate</h3>
+                                <p class="text-xs text-muted mt-1 leading-relaxed">Joint engineering pipeline deploying local LLM models on shared secure servers to accelerate strategic decision mapping.</p>
+                            </div>
+
+                            <!-- Expandable Section -->
+                            <div class="expand-transition rounded-lg bg-surface-dark border border-subtle p-4 space-y-4" id="dc-exp-2">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                                    <div>
+                                        <span class="text-[10px] font-bold text-muted uppercase tracking-wider block mb-1">Analytical Context</span>
+                                        <p class="text-[11px] text-silver leading-relaxed">Aether Syndicate volume of $12.4M ARR justifies joint hardware partitioning to reduce API routing costs by 42%.</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] font-bold text-muted uppercase tracking-wider block mb-1">Key Risks Analysed</span>
+                                        <p class="text-[11px] text-silver leading-relaxed">Shared network vulnerabilities (SLA strictly limits shared keys to isolated node cluster-08).</p>
+                                    </div>
+                                </div>
+
+                                <!-- Horizontal Confidence Bar -->
+                                <div>
+                                    <div class="flex justify-between items-center text-[10px] font-bold uppercase text-muted mb-1">
+                                        <span>Projection Success Confidence</span>
+                                        <span class="text-white">92.0%</span>
+                                    </div>
+                                    <div class="w-full h-1.5 bg-surface-light rounded-full overflow-hidden">
+                                        <div class="h-full bg-white" style="width: 92%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card controls bar -->
+                            <div class="flex items-center justify-between pt-2 border-t border-subtle/50 text-xs">
+                                <button onclick="toggleCardExpand('2', this)" class="text-silver hover:text-white font-medium flex items-center space-x-1">
+                                    <span>Expand Criteria</span>
+                                    <svg class="w-3.5 h-3.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                
+                                <div class="flex space-x-2">
+                                    <button disabled class="opacity-35 cursor-not-allowed btn-secondary px-3 py-1.5 text-xs">Authorized by JD</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right sidebar: Decision History timeline -->
+                    <div class="w-full lg:w-80 border border-subtle bg-surface rounded-xl p-5 shrink-0 h-full overflow-y-auto space-y-4">
+                        <div class="border-b border-subtle pb-4">
+                            <h3 class="text-xs font-bold text-white uppercase tracking-wider">Resolution Vault History</h3>
+                            <p class="text-[11px] text-muted">Audited structural determinations</p>
+                        </div>
+
+                        <!-- Timeline list -->
+                        <div class="space-y-4 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-light">
+                            <div class="flex items-start space-x-4 relative">
+                                <div class="w-6 h-6 rounded-full bg-black border border-subtle flex items-center justify-center text-success z-10 text-[9px] font-bold uppercase">✔</div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="font-semibold text-white">DEC-0938 Approved</span>
+                                        <span class="text-[10px] text-muted">1d ago</span>
+                                    </div>
+                                    <p class="text-[11px] text-muted leading-snug">Synthesizer v3 structural API budget increased 15%. Signed off by Chief AI Architect.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start space-x-4 relative">
+                                <div class="w-6 h-6 rounded-full bg-black border border-subtle flex items-center justify-center text-error z-10 text-[9px] font-bold uppercase">✖</div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="font-semibold text-white">DEC-0935 Rejected</span>
+                                        <span class="text-[10px] text-muted">3d ago</span>
+                                    </div>
+                                    <p class="text-[11px] text-muted leading-snug">Public API exposure option vetoed due to high leak vector scores in testing.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ================== 5. SIMULATION CENTER PANEL ================== -->
+            <section id="view-simulation" class="view-section absolute inset-0 p-6 overflow-y-auto space-y-6">
+                <!-- Top What-if input section -->
+                <div class="border border-subtle bg-surface rounded-xl p-6 space-y-4">
+                    <div>
+                        <h2 class="text-sm font-bold text-white uppercase tracking-wider">Cognitive 'What-If' Simulation Arena</h2>
+                        <p class="text-xs text-muted font-normal leading-relaxed">Formulate mock scenarios below. The intelligence matrices will run mathematical stress-testing to project financial, technical, and risk outcomes.</p>
+                    </div>
+
+                    <!-- Input form -->
+                    <div class="flex flex-col md:flex-row gap-3">
+                        <input type="text" id="sim-query-input" class="flex-1 custom-input py-2.5 px-4 text-xs placeholder-muted" placeholder="e.g. What happens if we increase Synthesizer pricing by 15% but reduce support keys by 5?">
+                        <button onclick="runSimulation()" class="btn-primary px-6 py-2.5 text-xs flex items-center justify-center space-x-2 shrink-0">
+                            <span id="sim-btn-text">Execute Projections Matrix</span>
+                            <div id="sim-btn-spinner" class="hidden spinner text-black shrink-0 w-3.5 h-3.5"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simulation results grid (hidden initially till run) -->
+                <div id="simulation-results" class="hidden space-y-6">
+                    <!-- Scenario Cards side-by-side -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Baseline -->
+                        <div class="border border-subtle bg-surface rounded-xl p-5 space-y-3">
+                            <div class="flex justify-between items-center border-b border-subtle pb-3">
+                                <span class="text-[10px] uppercase font-bold text-muted tracking-wider">Model Variant A: Baseline Model</span>
+                                <span class="text-xs font-bold text-white">Current Status</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-center">
+                                <div class="bg-surface-dark border border-subtle p-3 rounded-lg">
+                                    <span class="text-[10px] text-muted block uppercase font-bold">Revenue Proj.</span>
+                                    <span class="text-base font-bold text-white">$12.4M</span>
+                                </div>
+                                <div class="bg-surface-dark border border-subtle p-3 rounded-lg">
+                                    <span class="text-[10px] text-muted block uppercase font-bold">Latency Score</span>
+                                    <span class="text-base font-bold text-white">84ms</span>
+                                </div>
+                                <div class="bg-surface-dark border border-subtle p-3 rounded-lg">
+                                    <span class="text-[10px] text-muted block uppercase font-bold">Risk Exposure</span>
+                                    <span class="text-base font-bold text-white">Low</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Simulated Scenario -->
+                        <div class="border border-subtle bg-surface rounded-xl p-5 space-y-3">
+                            <div class="flex justify-between items-center border-b border-subtle pb-3">
+                                <span class="text-[10px] uppercase font-bold text-silver tracking-wider">Model Variant B: Projected Variant</span>
+                                <span class="text-xs font-bold text-success border border-success/20 bg-success/10 px-2 rounded uppercase">Calculated</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-center">
+                                <div class="bg-surface-dark border border-subtle p-3 rounded-lg">
+                                    <span class="text-[10px] text-muted block uppercase font-bold">Revenue Proj.</span>
+                                    <span class="text-base font-bold text-success">$14.2M (+14.5%)</span>
+                                </div>
+                                <div class="bg-surface-dark border border-subtle p-3 rounded-lg">
+                                    <span class="text-[10px] text-muted block uppercase font-bold">Latency Score</span>
+                                    <span class="text-base font-bold text-white">86ms</span>
+                                </div>
+                                <div class="bg-surface-dark border border-subtle p-3 rounded-lg">
+                                    <span class="text-[10px] text-muted block uppercase font-bold">Risk Exposure</span>
+                                    <span class="text-base font-bold text-warning">Medium</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Impact Prediction Chart and Risk Analysis -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Chart -->
+                        <div class="lg:col-span-2 border border-subtle bg-surface rounded-xl p-5 flex flex-col justify-between">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-xs font-bold text-white uppercase tracking-wider">Strategic Impact Projection</h3>
+                                    <p class="text-[11px] text-muted">12-month trajectory comparison</p>
+                                </div>
+                                <!-- Legends -->
+                                <div class="flex space-x-3 text-[10px]">
+                                    <span class="flex items-center space-x-1"><span class="w-2.5 h-0.5 bg-white"></span><span class="text-muted">Baseline</span></span>
+                                    <span class="flex items-center space-x-1"><span class="w-2.5 h-0.5 bg-silver border-b border-dashed border-silver"></span><span class="text-muted">Projected</span></span>
+                                </div>
+                            </div>
+
+                            <!-- Interactive SVG line chart -->
+                            <div class="relative flex-1 min-h-[220px]">
+                                <svg class="w-full h-full" viewBox="0 0 600 200" preserveAspectRatio="none">
+                                    <!-- Grid background lines -->
+                                    <line x1="0" y1="50" x2="600" y2="50" stroke="rgba(255,255,255,0.04)" stroke-width="1" />
+                                    <line x1="0" y1="100" x2="600" y2="100" stroke="rgba(255,255,255,0.04)" stroke-width="1" />
+                                    <line x1="0" y1="150" x2="600" y2="150" stroke="rgba(255,255,255,0.04)" stroke-width="1" />
+                                    
+                                    <!-- Baseline line (White) -->
+                                    <path d="M 0,160 Q 150,140 300,120 T 600,110" fill="transparent" stroke="#FFFFFF" stroke-width="2.5" />
+                                    <!-- Projected line (Silver dashed) -->
+                                    <path d="M 0,160 Q 150,110 300,80 T 600,50" fill="transparent" stroke="#C0C8D0" stroke-width="2.5" stroke-dasharray="4 3" />
+
+                                    <!-- Coordinate points for hover interaction -->
+                                    <circle cx="300" cy="120" r="4" fill="#FFFFFF" class="cursor-pointer hover:r-6" title="Baseline Month 6: $12.4M" />
+                                    <circle cx="300" cy="80" r="4" fill="#C0C8D0" class="cursor-pointer hover:r-6" title="Projected Month 6: $14.2M" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Risk Analysis Gauge -->
+                        <div class="border border-subtle bg-surface rounded-xl p-5 flex flex-col justify-between">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-xs font-bold text-white uppercase tracking-wider">Simulated Risk Gauge</h3>
+                                    <p class="text-[11px] text-muted">Computational exposure score</p>
+                                </div>
+                                <span class="text-[10px] font-bold text-warning uppercase">Warning State</span>
+                            </div>
+
+                            <!-- Risk Arc SVG -->
+                            <div class="flex items-center justify-center my-4">
+                                <div class="relative w-32 h-32 flex items-center justify-center">
+                                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.04)" stroke-width="7" fill="transparent" />
+                                        <!-- Custom offset for half arc representing risk index -->
+                                        <circle cx="50" cy="50" r="40" stroke="#F59E0B" stroke-width="7" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="138.1" stroke-linecap="round" />
+                                    </svg>
+                                    <div class="absolute text-center">
+                                        <span class="text-xl font-extrabold tracking-tight text-white">45%</span>
+                                        <p class="text-[9px] text-muted uppercase font-semibold">Moderate Exposure</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="text-[11px] text-muted leading-relaxed">Risk score elevated due to increased system budget constraints routing models over public subnets. Mitigate by coupling with DEC-0941 private cloud vaults.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- JS Scripts for Interactivity -->
+    <script>
+        // Tab switching engine
+        function switchTab(tabId, elNav) {
+            // Sections: view-memory, view-graph, view-ai, view-decisions, view-simulation
+            const sections = ['memory', 'graph', 'ai', 'decisions', 'simulation'];
+            
+            sections.forEach(s => {
+                const sectionDiv = document.getElementById(`view-${s}`);
+                if (s === tabId) {
+                    sectionDiv.classList.add('active');
+                    sectionDiv.classList.remove('hidden');
+                } else {
+                    sectionDiv.classList.remove('active');
+                    sectionDiv.classList.add('hidden');
+                }
+            });
+
+            // Update sidebar highlights
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('bg-surface', 'text-white');
+                item.classList.add('text-muted', 'border-transparent');
+            });
+
+            // If triggered from click, apply styles directly
+            if (elNav) {
+                elNav.classList.add('bg-surface', 'text-white');
+                elNav.classList.remove('text-muted', 'border-transparent');
+            } else {
+                // Find nav item by href/onclick attributes to highlight programmatically
+                const items = document.querySelectorAll('.nav-item');
+                items.forEach(it => {
+                    if (it.getAttribute('onclick').includes(tabId)) {
+                        it.classList.add('bg-surface', 'text-white');
+                        it.classList.remove('text-muted', 'border-transparent');
+                    }
+                });
+            }
+
+            // Update Breadcrumb text
+            const tabNames = {
+                'memory': 'Memory Center',
+                'graph': 'Knowledge Graph',
+                'ai': 'AI Assistant',
+                'decisions': 'Decision Center',
+                'simulation': 'Simulation Center'
+            };
+            document.getElementById('breadcrumb-current').innerText = tabNames[tabId] || 'Workspace';
+
+            // Close mobile menu
+            if (window.innerWidth < 768) {
+                toggleMobileSidebar(false);
+            }
+        }
+
+        // Mobile sidebar handler
+        function toggleMobileSidebar(forceClose = null) {
+            const nav = document.getElementById('sidebar-nav');
+            const icon = document.getElementById('mobile-menu-icon');
+            
+            let isClosed = nav.classList.contains('hidden');
+            if (forceClose !== null) isClosed = !forceClose;
+
+            if (isClosed) {
+                nav.classList.remove('hidden');
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>';
+            } else {
+                nav.classList.add('hidden');
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>';
+            }
+        }
+
+        // Accordion collapsing inside right sidebars
+        function toggleAccordion(id) {
+            const el = document.getElementById(id);
+            el.classList.toggle('hidden');
+        }
+
+        // ================== MEMORY CENTER LOGIC ==================
+        function triggerFilePicker() {
+            document.getElementById('file-picker').click();
+        }
+
+        function simulateUpload(files) {
+            if (!files || files.length === 0) return;
+            const container = document.getElementById('upload-progress-container');
+            const nameSpan = document.getElementById('upload-filename');
+            const bar = document.getElementById('upload-bar');
+            const percentSpan = document.getElementById('upload-percent');
+
+            container.classList.remove('hidden');
+            nameSpan.innerText = files[0].name;
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 15) + 5;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    // Add newly uploaded file to table
+                    addNewClusterRow(files[0].name, files[0].size);
+                    
+                    setTimeout(() => {
+                        container.classList.add('hidden');
+                        bar.style.width = '0%';
+                        percentSpan.innerText = '0%';
+                    }, 1000);
+                }
+                bar.style.width = `${progress}%`;
+                percentSpan.innerText = `${progress}%`;
+            }, 150);
+        }
+
+        function addNewClusterRow(fileName, size) {
+            const tbody = document.getElementById('clusters-table-body');
+            const sizeInMb = (size ? (size / (1024 * 1024)).toFixed(1) : (Math.random() * 10 + 1).toFixed(1)) + " MB";
+            const newRow = document.createElement('tr');
+            newRow.className = "border-b border-subtle hover:bg-surface-dark/40 transition-colors";
+            newRow.innerHTML = `
+                <td class="p-4 flex items-center space-x-3">
+                    <div class="w-7 h-7 rounded border border-subtle bg-black flex items-center justify-center text-white font-bold text-[10px]">UP</div>
+                    <div>
+                        <span class="font-bold text-white block">${fileName}</span>
+                        <span class="text-[10px] text-muted">User deposited / Indexing queue</span>
+                    </div>
+                </td>
+                <td class="p-4 text-muted">${sizeInMb}</td>
+                <td class="p-4">
+                    <span class="inline-flex items-center space-x-1.5 text-[10px] text-warning font-bold uppercase"><span class="w-1.5 h-1.5 rounded-full bg-warning animate-ping"></span><span>Readying Vector</span></span>
+                </td>
+                <td class="p-4 text-right font-semibold text-white">-</td>
+            `;
+            tbody.insertBefore(newRow, tbody.firstChild);
+        }
+
+        // Real-time memory clusters filtration
+        function filterClusters(term) {
+            const query = term.toLowerCase();
+            const rows = document.querySelectorAll('#clusters-table-body tr');
+            rows.forEach(row => {
+                const title = row.querySelector('td span.font-bold').innerText.toLowerCase();
+                const path = row.querySelector('td span.text-muted').innerText.toLowerCase();
+                if (title.includes(query) || path.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+
+        // ================== KNOWLEDGE GRAPH LOGIC ==================
+        const graphMetadata = {
+            'nexus': {
+                badge: 'Company Node',
+                title: 'Nexus Corp',
+                description: 'Global corporate entity parent. Master clearance registry mapping technical infrastructure.',
+                attributes: [
+                    { label: 'Node ID', val: 'NODE-001' },
+                    { label: 'Clearance', val: 'L5 Executive' },
+                    { label: 'Security Sector', val: 'Corporate Hub' }
+                ],
+                connections: [
+                    { target: 'aether', label: 'Aether Syndicate (Client Relationship)' },
+                    { target: 'synthesizer', label: 'Synthesizer v3 (Product Core)' },
+                    { target: 'elena', label: 'Dr. Elena Rostova (AI Engineering Staff)' }
+                ]
+            },
+            'aether': {
+                badge: 'Customer Node',
+                title: 'Aether Syndicate',
+                description: 'Primary customer node representing an automated logistics consortium. High strategic yield.',
+                attributes: [
+                    { label: 'Contract Space', val: '$12.4M ARR' },
+                    { label: 'Status', val: 'Active integration' },
+                    { label: 'Encryption Key', val: 'AES-256' }
+                ],
+                connections: [
+                    { target: 'nexus', label: 'Nexus Corp (Provider Parent)' },
+                    { target: 'synthesizer', label: 'Synthesizer v3 (Consumer Target)' }
+                ]
+            },
+            'synthesizer': {
+                badge: 'Product Node',
+                title: 'Synthesizer v3',
+                description: 'Algorithmic multi-vector compiler engine. Executes deep semantic mapping queries across S3 vaults.',
+                attributes: [
+                    { label: 'Index Capacity', val: '100M Vectors' },
+                    { label: 'Software Version', val: 'v3.4.12' },
+                    { label: 'API Queries/Day', val: '4.2M' }
+                ],
+                connections: [
+                    { target: 'nexus', label: 'Nexus Corp (IP Owner)' },
+                    { target: 'aether', label: 'Aether Syndicate (Active Deployment)' },
+                    { target: 'latency', label: 'Cognitive Latency (Direct Telemetry)' }
+                ]
+            },
+            'elena': {
+                badge: 'Employee Node',
+                title: 'Dr. Elena Rostova',
+                description: 'Senior Director of Decision Intelligence. Core architect for neural compiler pipelines.',
+                attributes: [
+                    { label: 'Operator ID', val: 'STAFF-0819' },
+                    { label: 'Role Authority', val: 'Level 5 Write Access' },
+                    { label: 'Team', val: 'Cognitive Engineering' }
+                ],
+                connections: [
+                    { target: 'nexus', label: 'Nexus Corp (Principal Employer)' },
+                    { target: 'helios', label: 'Project Helios (Lead Architect)' }
+                ]
+            },
+            'helios': {
+                badge: 'Project Node',
+                title: 'Project Helios',
+                description: 'Strategic de-risking pipeline compiling regulatory data elements across international subnets.',
+                attributes: [
+                    { label: 'Priority Index', val: 'Alpha 1' },
+                    { label: 'Launch Phase', val: 'M4 De-Risking' },
+                    { label: 'Compliance Index', val: '99.8%' }
+                ],
+                connections: [
+                    { target: 'elena', label: 'Dr. Elena Rostova (Director Lead)' },
+                    { target: 'auditdoc', label: 'Helios Audit PDF (Logical Proof Document)' }
+                ]
+            },
+            'relocation': {
+                badge: 'Active Decision',
+                title: 'Server Relocation',
+                description: 'Voted strategy vector migrating core computational servers to a private on-prem vault setup.',
+                attributes: [
+                    { label: 'Resolution ID', val: 'DEC-0941' },
+                    { label: 'Status', val: 'Awaiting Sign-off' },
+                    { label: 'Projected Budget', val: '$140k allocation' }
+                ],
+                connections: [
+                    { target: 'nexus', label: 'Nexus Corp (Risk Safeguard Action)' },
+                    { target: 'latency', label: 'Cognitive Latency (Impact Target)' }
+                ]
+            },
+            'auditdoc': {
+                badge: 'Document Record',
+                title: 'Helios Audit PDF',
+                description: 'Vector-mapped formal security audit report regarding public API vulnerabilities.',
+                attributes: [
+                    { label: 'Document Code', val: 'PDF-981-H' },
+                    { label: 'Security Class', val: 'Highly Isolated IP' },
+                    { label: 'Verification Date', val: '2026-07-15' }
+                ],
+                connections: [
+                    { target: 'helios', label: 'Project Helios (Validating Proof)' }
+                ]
+            },
+            'latency': {
+                badge: 'System Metric',
+                title: 'Cognitive Latency',
+                description: 'Real-time response tracking of vector generation pipelines. Critical operational limit.',
+                attributes: [
+                    { label: 'Active Baseline', val: '84ms avg' },
+                    { label: 'Optimal Boundary', val: '50ms limit' },
+                    { label: 'State', val: 'Nominal' }
+                ],
+                connections: [
+                    { target: 'synthesizer', label: 'Synthesizer v3 (Model Generator)' },
+                    { target: 'relocation', label: 'Server Relocation (Influence Source)' }
+                ]
+            }
+        };
+
+        function clickGraphNode(nodeId) {
+            // Remove active style from all nodes
+            document.querySelectorAll('.graph-node').forEach(n => {
+                n.classList.remove('active');
+            });
+
+            // Highlight selected node group
+            const selectedGroup = document.getElementById(`gn-${nodeId}`);
+            if (selectedGroup) {
+                selectedGroup.classList.add('active');
+            }
+
+            // Load Metadata to Right Side-Panel
+            const meta = graphMetadata[nodeId];
+            if (!meta) return;
+
+            document.getElementById('node-badge').innerText = meta.badge;
+            document.getElementById('node-title').innerText = meta.title;
+            document.getElementById('node-description').innerText = meta.description;
+
+            // Render attributes
+            const attrsContainer = document.getElementById('node-attributes');
+            attrsContainer.innerHTML = '';
+            meta.attributes.forEach(attr => {
+                attrsContainer.innerHTML += `
+                    <div class="flex justify-between border-b border-subtle/40 pb-1.5">
+                        <span class="text-muted">${attr.label}</span>
+                        <span class="text-white font-semibold">${attr.val}</span>
+                    </div>
+                `;
+            });
+
+            // Render connections links
+            const connContainer = document.getElementById('node-connections');
+            connContainer.innerHTML = '';
+            meta.connections.forEach(conn => {
+                connContainer.innerHTML += `
+                    <li class="flex items-center space-x-2 cursor-pointer hover:underline text-silver hover:text-white" onclick="clickGraphNode('${conn.target}')">
+                        <span class="w-1.5 h-1.5 rounded-full bg-silver"></span>
+                        <span>${conn.label}</span>
+                    </li>
+                `;
+            });
+        }
+
+        // SVG pan & zoom dynamics
+        let currentScale = 1;
+        let isPanning = false;
+        let panStartX = 0, panStartY = 0;
+        let transformX = 0, transformY = 0;
+
+        function zoomGraph(factor) {
+            currentScale *= factor;
+            applyGraphTransform();
+        }
+
+        function resetZoomGraph() {
+            currentScale = 1;
+            transformX = 0;
+            transformY = 0;
+            applyGraphTransform();
+        }
+
+        function startGraphPan(e) {
+            isPanning = true;
+            panStartX = e.clientX - transformX;
+            panStartY = e.clientY - transformY;
+        }
+
+        function panGraph(e) {
+            if (!isPanning) return;
+            transformX = e.clientX - panStartX;
+            transformY = e.clientY - panStartY;
+            applyGraphTransform();
+        }
+
+        function endGraphPan() {
+            isPanning = false;
+        }
+
+        function applyGraphTransform() {
+            const svg = document.getElementById('graph-svg');
+            svg.style.transform = `translate(${transformX}px, ${transformY}px) scale(${currentScale})`;
+        }
+
+        function searchGraphNode(term) {
+            const query = term.toLowerCase().trim();
+            if (!query) {
+                document.querySelectorAll('.graph-node').forEach(g => g.style.opacity = '1');
+                return;
+            }
+
+            let foundId = null;
+            Object.keys(graphMetadata).forEach(id => {
+                const meta = graphMetadata[id];
+                const g = document.getElementById(`gn-${id}`);
+                
+                if (meta.title.toLowerCase().includes(query) || meta.badge.toLowerCase().includes(query)) {
+                    if (g) g.style.opacity = '1';
+                    if (!foundId) foundId = id; // select first match
+                } else {
+                    if (g) g.style.opacity = '0.25';
+                }
+            });
+
+            if (foundId) {
+                clickGraphNode(foundId);
+            }
+        }
+
+
+        // ================== AI ASSISTANT LOGIC ==================
+        function applySuggestedPrompt(text) {
+            document.getElementById('chat-input').value = text;
+            document.getElementById('chat-input').focus();
+        }
+
+        function handleSendChat(event) {
+            event.preventDefault();
+            const input = document.getElementById('chat-input');
+            const queryText = input.value.trim();
+            if (!queryText) return;
+
+            // Clear input
+            input.value = '';
+
+            // Render User Message (White bg, Black text)
+            const board = document.getElementById('chat-message-board');
+            const userMsg = document.createElement('div');
+            userMsg.className = "flex items-start space-x-3.5 max-w-2.5xl ml-auto justify-end";
+            userMsg.innerHTML = `
+                <div class="bg-white text-black border border-transparent rounded-lg p-4 text-xs font-semibold leading-relaxed shadow-sm">
+                    ${queryText}
+                </div>
+                <div class="w-7 h-7 rounded border border-subtle bg-surface-dark flex items-center justify-center text-silver text-[9px] font-bold shrink-0">JD</div>
+            `;
+            board.appendChild(userMsg);
+            board.scrollTop = board.scrollHeight;
+
+            // Mock Simulated AI Stream response after short delay
+            setTimeout(() => {
+                simulateAiStreamResponse(queryText);
+            }, 800);
+        }
+
+        const mockResponses = {
+            'revenue': "Based on the Financial Audit Q2 cluster arrays, increasing pricing variables by 15% yields a Projected Revenue of $14.2M (+14.5% change) with nominal impact to user retention metrics. Critical: Suggest coupling with server migration to keep latency levels stable.",
+            'helios': "Audit Helios vector scanning confirms 3 high-exposure nodes within corporate subnets. The Lead Architect recommends executing private sovereign server relocation (DEC-0941) to isolate intellectual data streams immediately.",
+            'relocation': "Migration to zero-knowledge servers (DEC-0941) minimizes exposure rating to low-level boundaries. Budget requirements are within the approved limits of Q2 capital plans ($140,000 threshold). Approved sign-off advised.",
+            'default': "Cognitive Synthesis compiled. Mapped entities confirm robust correlations between technical latency thresholds and corporate revenue projections. Deploying decision model DEC-0941 is calculated to reduce external vector leakage risks by 94%."
+        };
+
+        function simulateAiStreamResponse(userQuery) {
+            const board = document.getElementById('chat-message-board');
+            const aiMsgContainer = document.createElement('div');
+            aiMsgContainer.className = "flex items-start space-x-3.5 max-w-2.5xl";
+            
+            aiMsgContainer.innerHTML = `
+                <div class="w-7 h-7 rounded border border-subtle bg-black flex items-center justify-center text-white font-bold text-[9px] shrink-0">πX</div>
+                <div class="bg-surface-dark border border-subtle rounded-lg p-4 text-xs text-white leading-relaxed space-y-3">
+                    <p id="streaming-p" class="after:content-['|'] after:animate-pulse"></p>
+                </div>
+            `;
+            board.appendChild(aiMsgContainer);
+            board.scrollTop = board.scrollHeight;
+
+            const streamingParagraph = aiMsgContainer.querySelector('#streaming-p');
+            
+            // Map query to appropriate mock text
+            let responseText = mockResponses.default;
+            const normalizedQuery = userQuery.toLowerCase();
+            if (normalizedQuery.includes('revenue') || normalizedQuery.includes('pricing')) {
+                responseText = mockResponses.revenue;
+            } else if (normalizedQuery.includes('helios')) {
+                responseText = mockResponses.helios;
+            } else if (normalizedQuery.includes('relocation') || normalizedQuery.includes('server')) {
+                responseText = mockResponses.relocation;
+            }
+
+            // Word-by-word streaming effect
+            const words = responseText.split(' ');
+            let i = 0;
+            const streamInterval = setInterval(() => {
+                if (i < words.length) {
+                    streamingParagraph.innerHTML += words[i] + ' ';
+                    board.scrollTop = board.scrollHeight;
+                    i++;
+                } else {
+                    clearInterval(streamInterval);
+                    streamingParagraph.classList.remove("after:content-['|']", "after:animate-pulse");
+                }
+            }, 65);
+        }
+
+
+        // ================== DECISION CENTER LOGIC ==================
+        function toggleCardExpand(cardId, button) {
+            const ext = document.getElementById(`dc-exp-${cardId}`);
+            ext.classList.toggle('expanded');
+            
+            const isExpanded = ext.classList.contains('expanded');
+            button.querySelector('span').innerText = isExpanded ? 'Collapse Criteria' : 'Expand Criteria';
+            button.querySelector('svg').style.transform = isExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        function setDecisionState(cardId, action) {
+            const card = document.getElementById(`dc-card-${cardId}`);
+            const badge = card.querySelector('span.uppercase');
+            
+            if (action === 'approve') {
+                badge.innerText = "Approved";
+                badge.className = "text-[9px] uppercase font-bold text-success border border-success/20 bg-success/10 px-2.5 py-0.5 rounded";
+                alert(`DEC-094${cardId} successfully authorized within secure logs.`);
+            } else if (action === 'reject') {
+                badge.innerText = "Rejected";
+                badge.className = "text-[9px] uppercase font-bold text-error border border-error/20 bg-error/10 px-2.5 py-0.5 rounded";
+            } else if (action === 'review') {
+                badge.innerText = "Under Review";
+                badge.className = "text-[9px] uppercase font-bold text-warning border border-warning/20 bg-warning/10 px-2.5 py-0.5 rounded";
+            }
+        }
+
+
+        // ================== SIMULATION LOGIC ==================
+        function runSimulation() {
+            const queryInput = document.getElementById('sim-query-input');
+            if (!queryInput.value.trim()) return;
+
+            const btnText = document.getElementById('sim-btn-text');
+            const spinner = document.getElementById('sim-btn-spinner');
+            const results = document.getElementById('simulation-results');
+
+            btnText.innerText = "Running Projections Matrix...";
+            spinner.classList.remove('hidden');
+
+            // Simulate mathematical model calculation delays
+            setTimeout(() => {
+                btnText.innerText = "Execute Projections Matrix";
+                spinner.classList.add('hidden');
+                
+                // Show simulation charts and cards
+                results.classList.remove('hidden');
+                results.scrollIntoView({ behavior: 'smooth' });
+            }, 2200);
+        }
+
+
+        // ================== COMMAND PALETTE SYSTEM ==================
+        function toggleCommandPalette(show) {
+            const el = document.getElementById('command-palette');
+            const input = document.getElementById('cmd-input');
+            if (show) {
+                el.classList.remove('opacity-0', 'pointer-events-none');
+                input.focus();
+                renderCommandResults('');
+            } else {
+                el.classList.add('opacity-0', 'pointer-events-none');
+                input.value = '';
+            }
+        }
+
+        // Global key listeners
+        window.addEventListener('keydown', (e) => {
+            // CMD+K or CTRL+K toggles palette
+            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                const palette = document.getElementById('command-palette');
+                const isHidden = palette.classList.contains('opacity-0');
+                toggleCommandPalette(isHidden);
+            }
+
+            // ESC closes palette
+            if (e.key === 'Escape') {
+                toggleCommandPalette(false);
+            }
+        });
+
+        // Command mapping array
+        const commandsList = [
+            { name: "Switch View: Memory Center", desc: "Open indexed vector clusters and upload space", action: () => switchTab('memory') },
+            { name: "Switch View: Knowledge Graph", desc: "Interact with mapped enterprise relationships", action: () => switchTab('graph') },
+            { name: "Switch View: AI Assistant", desc: "Direct query gate with context indexes", action: () => switchTab('ai') },
+            { name: "Switch View: Decision Center", desc: "Approve, challenge, or audit resolution vectors", action: () => switchTab('decisions') },
+            { name: "Switch View: Simulation Center", desc: "Run what-if projections matrix on variables", action: () => switchTab('simulation') },
+            { name: "Force Re-index Memory Vaults", desc: "Trigger background RPC rebuild loops", action: () => { alert("Rebuild initiated for 3 active partitions."); toggleCommandPalette(false); } },
+            { name: "Deauthorize Current Session", desc: "Wipe memory cache and exit node connection", action: () => { window.location.href = "auth_v2.html"; } }
+        ];
+
+        document.getElementById('cmd-input').addEventListener('input', (e) => {
+            renderCommandResults(e.target.value);
+        });
+
+        function renderCommandResults(filterText) {
+            const query = filterText.toLowerCase().trim();
+            const container = document.getElementById('cmd-results');
+            container.innerHTML = '';
+
+            const filtered = commandsList.filter(cmd => 
+                cmd.name.toLowerCase().includes(query) || cmd.desc.toLowerCase().includes(query)
+            );
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="p-4 text-center text-xs text-muted">No commands mapped for query.</div>`;
+                return;
+            }
+
+            filtered.forEach((cmd, idx) => {
+                const item = document.createElement('div');
+                item.className = "p-3 rounded-lg hover:bg-surface-light border border-transparent hover:border-subtle cursor-pointer transition-all flex justify-between items-center text-xs";
+                item.innerHTML = `
+                    <div>
+                        <span class="font-semibold text-white block">${cmd.name}</span>
+                        <span class="text-[10px] text-muted">${cmd.desc}</span>
+                    </div>
+                    <span class="text-[10px] text-muted bg-surface font-semibold px-2 py-0.5 rounded border border-subtle">EXEC</span>
+                `;
+                item.onclick = () => {
+                    cmd.action();
+                    toggleCommandPalette(false);
+                };
+                container.appendChild(item);
+            });
+        }
+
+        // Global Initialize
+        window.onload = function() {
+            // Trigger first click on nexus node to load initial details
+            clickGraphNode('nexus');
+        }
+    </script>
+</body>
+</html>

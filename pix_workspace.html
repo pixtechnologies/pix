@@ -1,0 +1,2429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>πX Enterprise Intelligence Platform</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind Custom Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primaryBg: '#050816',
+            secondaryBg: '#0B1020',
+            cardBg: 'rgba(255, 255, 255, 0.03)',
+            cardBorder: 'rgba(255, 255, 255, 0.08)',
+            primaryAccent: '#7C3AED',
+            secondaryAccent: '#A855F7',
+            aiGlow: '#8B5CF6',
+            textPrimary: '#F8FAFC',
+            textSecondary: '#94A3B8',
+          },
+          borderRadius: {
+            '2xl': '16px',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom CSS Styles -->
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #050816;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #7C3AED;
+    }
+
+    /* Selection Color */
+    ::selection {
+      background: rgba(124, 58, 237, 0.3);
+      color: #F8FAFC;
+    }
+
+    /* Flow animation for SVG links */
+    @keyframes flow {
+      to {
+        stroke-dashoffset: -20;
+      }
+    }
+    .animated-edge {
+      stroke-dasharray: 6, 4;
+      animation: flow 1.2s linear infinite;
+    }
+
+    /* Gentle floating animation for nodes */
+    @keyframes float-slow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    @keyframes float-medium {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-7px); }
+    }
+    @keyframes float-fast {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-3px); }
+    }
+    .node-float-1 { animation: float-slow 6s ease-in-out infinite; }
+    .node-float-2 { animation: float-medium 5s ease-in-out infinite 1s; }
+    .node-float-3 { animation: float-fast 7s ease-in-out infinite 2s; }
+
+    /* Pulsing glow animation for active nodes */
+    @keyframes pulse-glow {
+      0% { r: 12; opacity: 0.2; }
+      50% { r: 24; opacity: 0.6; }
+      100% { r: 12; opacity: 0.2; }
+    }
+    .pulsing-halo {
+      animation: pulse-glow 2.5s ease-in-out infinite;
+    }
+
+    /* Glassmorphism utility */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .glass-card-hover {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card-hover:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(139, 92, 246, 0.3);
+      box-shadow: 0 0 25px rgba(139, 92, 246, 0.15);
+      transform: translateY(-2px);
+    }
+
+    /* Bouncing dots for streaming chat */
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); opacity: 0.4; }
+      50% { transform: translateY(-6px); opacity: 1; }
+    }
+    .bounce-dot {
+      animation: bounce 1.2s infinite;
+    }
+    .bounce-dot:nth-child(2) { animation-delay: 0.2s; }
+    .bounce-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    /* SVG projection chart elements */
+    .chart-line {
+      transition: stroke-dashoffset 2s ease-in-out;
+    }
+    .chart-dot {
+      transition: r 0.2s ease, fill 0.2s ease;
+    }
+    .chart-dot:hover {
+      r: 8;
+      fill: #8B5CF6;
+    }
+  </style>
+</head>
+<body class="h-screen overflow-hidden bg-primaryBg font-sans text-textPrimary flex flex-row">
+
+  <!-- ==================== LEFT SIDEBAR (60px) ==================== -->
+  <aside class="w-[60px] bg-secondaryBg border-r border-cardBorder flex flex-col items-center py-5 justify-between shrink-0 h-full z-20">
+    <!-- Platform Brand Icon -->
+    <div class="group relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primaryAccent to-secondaryAccent shadow-[0_0_15px_rgba(124,58,237,0.4)]">
+      <span class="text-white font-extrabold text-lg select-none">π</span>
+      <div class="absolute left-16 px-3 py-1.5 bg-secondaryBg border border-cardBorder text-xs text-textPrimary rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+        πX Enterprise Intelligence
+      </div>
+    </div>
+
+    <!-- Mini-Sidebar Navigation Sync Links -->
+    <nav class="flex flex-col gap-4 w-full px-2">
+      <button onclick="switchTab('memory')" id="side-tab-memory" class="nav-side-btn group relative flex items-center justify-center w-full aspect-square rounded-xl text-textSecondary hover:text-white hover:bg-cardBg transition-all duration-200">
+        <i class="fa-solid fa-database text-lg"></i>
+        <div class="absolute left-16 px-3 py-1.5 bg-secondaryBg border border-cardBorder text-xs text-textPrimary rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+          Memory Center
+        </div>
+      </button>
+
+      <button onclick="switchTab('graph')" id="side-tab-graph" class="nav-side-btn group relative flex items-center justify-center w-full aspect-square rounded-xl text-textSecondary hover:text-white hover:bg-cardBg transition-all duration-200">
+        <i class="fa-solid fa-circle-nodes text-lg"></i>
+        <div class="absolute left-16 px-3 py-1.5 bg-secondaryBg border border-cardBorder text-xs text-textPrimary rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+          Knowledge Graph
+        </div>
+      </button>
+
+      <button onclick="switchTab('chat')" id="side-tab-chat" class="nav-side-btn group relative flex items-center justify-center w-full aspect-square rounded-xl text-textSecondary hover:text-white hover:bg-cardBg transition-all duration-200">
+        <i class="fa-solid fa-sparkles text-lg"></i>
+        <div class="absolute left-16 px-3 py-1.5 bg-secondaryBg border border-cardBorder text-xs text-textPrimary rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+          AI Workspace
+        </div>
+      </button>
+
+      <button onclick="switchTab('decision')" id="side-tab-decision" class="nav-side-btn group relative flex items-center justify-center w-full aspect-square rounded-xl text-textSecondary hover:text-white hover:bg-cardBg transition-all duration-200">
+        <i class="fa-solid fa-scale-balanced text-lg"></i>
+        <div class="absolute left-16 px-3 py-1.5 bg-secondaryBg border border-cardBorder text-xs text-textPrimary rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+          Decision Intelligence
+        </div>
+      </button>
+
+      <button onclick="switchTab('simulation')" id="side-tab-simulation" class="nav-side-btn group relative flex items-center justify-center w-full aspect-square rounded-xl text-textSecondary hover:text-white hover:bg-cardBg transition-all duration-200">
+        <i class="fa-solid fa-microchip text-lg"></i>
+        <div class="absolute left-16 px-3 py-1.5 bg-secondaryBg border border-cardBorder text-xs text-textPrimary rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+          Simulation Center
+        </div>
+      </button>
+    </nav>
+
+    <!-- Sidebar Bottom Actions -->
+    <div class="flex flex-col items-center gap-4">
+      <div class="group relative flex items-center justify-center w-10 h-10 rounded-xl text-textSecondary hover:text-white hover:bg-cardBg transition-all duration-200 cursor-pointer">
+        <i class="fa-regular fa-bell text-lg"></i>
+        <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500"></span>
+        <div class="absolute left-16 px-3 py-1.5 bg-secondaryBg border border-cardBorder text-xs text-textPrimary rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+          Notifications
+        </div>
+      </div>
+      <div class="group relative w-9 h-9 rounded-xl overflow-hidden border border-cardBorder hover:border-primaryAccent transition-all cursor-pointer">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop" class="w-full h-full object-cover" alt="User Profile">
+        <div class="absolute left-16 px-3 py-1.5 bg-secondaryBg border border-cardBorder text-xs text-textPrimary rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+          Profile Settings
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN PLATFORM LAYOUT ==================== -->
+  <main class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+    
+    <!-- TOP BAR HEADER with Switchable Page Titles & Central Sliding Tabs -->
+    <header class="h-16 bg-secondaryBg border-b border-cardBorder flex items-center justify-between px-6 shrink-0 z-10">
+      
+      <!-- Left Branding / Breadcrumbs -->
+      <div class="flex items-center gap-3">
+        <h1 class="text-lg font-bold tracking-tight bg-gradient-to-r from-textPrimary via-textSecondary to-primaryAccent bg-clip-text text-transparent">
+          πX Enterprise
+        </h1>
+        <span class="text-cardBorder text-xl">|</span>
+        <div class="text-xs text-textSecondary font-medium px-2.5 py-1 bg-cardBg rounded-lg border border-cardBorder flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          Cluster Active
+        </div>
+      </div>
+
+      <!-- CENTRAL TOP TAB SWITCHER -->
+      <div class="flex items-center bg-primaryBg border border-cardBorder p-1 rounded-xl h-10 select-none">
+        <button onclick="switchTab('memory')" id="top-tab-memory" class="nav-tab-btn flex items-center gap-2 px-3.5 h-full rounded-lg text-xs font-semibold tracking-wide transition-all duration-200">
+          <i class="fa-solid fa-database"></i>
+          Memory Center
+        </button>
+        <button onclick="switchTab('graph')" id="top-tab-graph" class="nav-tab-btn flex items-center gap-2 px-3.5 h-full rounded-lg text-xs font-semibold tracking-wide transition-all duration-200">
+          <i class="fa-solid fa-circle-nodes"></i>
+          Knowledge Graph
+        </button>
+        <button onclick="switchTab('chat')" id="top-tab-chat" class="nav-tab-btn flex items-center gap-2 px-3.5 h-full rounded-lg text-xs font-semibold tracking-wide transition-all duration-200">
+          <i class="fa-solid fa-sparkles"></i>
+          AI Workspace
+        </button>
+        <button onclick="switchTab('decision')" id="top-tab-decision" class="nav-tab-btn flex items-center gap-2 px-3.5 h-full rounded-lg text-xs font-semibold tracking-wide transition-all duration-200">
+          <i class="fa-solid fa-scale-balanced"></i>
+          Decisions
+        </button>
+        <button onclick="switchTab('simulation')" id="top-tab-simulation" class="nav-tab-btn flex items-center gap-2 px-3.5 h-full rounded-lg text-xs font-semibold tracking-wide transition-all duration-200">
+          <i class="fa-solid fa-microchip"></i>
+          Simulations
+        </button>
+      </div>
+
+      <!-- Right Actions (Context Engine Status) -->
+      <div class="flex items-center gap-3">
+        <div class="text-xs text-textSecondary bg-cardBg px-3 py-1.5 rounded-lg border border-cardBorder flex items-center gap-2">
+          <span class="text-purple-400 font-bold">AIG</span> Core v1.9
+        </div>
+        <button onclick="showToast('Cluster synchronization initiated')" class="flex items-center justify-center w-8 h-8 rounded-lg border border-cardBorder hover:border-primaryAccent hover:bg-cardBg transition-all text-textSecondary hover:text-white">
+          <i class="fa-solid fa-rotate"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT DISPLAY AREA -->
+    <div class="flex-1 overflow-hidden relative">
+
+      <!-- ==================== PAGE 1: MEMORY CENTER ==================== -->
+      <div id="page-memory" class="tab-page h-full overflow-y-auto p-6 space-y-6">
+        
+        <!-- Header -->
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-bold tracking-tight">Universal Memory Center</h2>
+            <p class="text-sm text-textSecondary mt-1">Ingest, catalog, and query multi-format corporate enterprise knowledge assets.</p>
+          </div>
+          <button onclick="triggerFileUpload()" class="px-4 py-2 bg-gradient-to-r from-primaryAccent to-secondaryAccent hover:opacity-95 text-white text-xs font-semibold rounded-xl shadow-[0_0_15px_rgba(124,58,237,0.3)] transition-all flex items-center gap-2">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            Upload File
+          </button>
+        </div>
+
+        <!-- 4 KPI Small Pills -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="glass-panel p-4 rounded-2xl flex items-center justify-between">
+            <div>
+              <p class="text-[10px] uppercase font-bold tracking-wider text-textSecondary">Total Objects</p>
+              <h3 id="stat-objects" class="text-2xl font-bold text-white mt-1">1,248</h3>
+              <p class="text-xs text-emerald-400 mt-1 flex items-center gap-1"><i class="fa-solid fa-arrow-up"></i> +12.4% <span class="text-textSecondary">wk</span></p>
+            </div>
+            <div class="w-10 h-10 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-xl flex items-center justify-center"><i class="fa-solid fa-database text-lg"></i></div>
+          </div>
+          <div class="glass-panel p-4 rounded-2xl flex items-center justify-between">
+            <div>
+              <p class="text-[10px] uppercase font-bold tracking-wider text-textSecondary">Documents</p>
+              <h3 id="stat-docs" class="text-2xl font-bold text-white mt-1">582</h3>
+              <p class="text-xs text-emerald-400 mt-1 flex items-center gap-1"><i class="fa-solid fa-arrow-up"></i> +8.2% <span class="text-textSecondary">wk</span></p>
+            </div>
+            <div class="w-10 h-10 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center"><i class="fa-solid fa-file-text text-lg"></i></div>
+          </div>
+          <div class="glass-panel p-4 rounded-2xl flex items-center justify-between">
+            <div>
+              <p class="text-[10px] uppercase font-bold tracking-wider text-textSecondary">Extracted Entities</p>
+              <h3 class="text-2xl font-bold text-white mt-1">4,102</h3>
+              <p class="text-xs text-emerald-400 mt-1 flex items-center gap-1"><i class="fa-solid fa-arrow-up"></i> +24.1% <span class="text-textSecondary">wk</span></p>
+            </div>
+            <div class="w-10 h-10 bg-green-500/10 border border-green-500/20 text-green-400 rounded-xl flex items-center justify-center"><i class="fa-solid fa-circle-nodes text-lg"></i></div>
+          </div>
+          <div class="glass-panel p-4 rounded-2xl flex items-center justify-between">
+            <div>
+              <p class="text-[10px] uppercase font-bold tracking-wider text-textSecondary">Generated Insights</p>
+              <h3 class="text-2xl font-bold text-white mt-1">156</h3>
+              <p class="text-xs text-purple-400 mt-1 flex items-center gap-1"><i class="fa-solid fa-sparkles"></i> AI Synced</p>
+            </div>
+            <div class="w-10 h-10 bg-pink-500/10 border border-pink-500/20 text-pink-400 rounded-xl flex items-center justify-center"><i class="fa-solid fa-brain text-lg"></i></div>
+          </div>
+        </div>
+
+        <!-- Interactive Drag-Drop Area -->
+        <div id="drag-drop-zone" class="glass-panel border-dashed border-2 border-purple-500/20 hover:border-purple-500/50 p-8 rounded-2xl text-center cursor-pointer transition-all duration-300 relative overflow-hidden group">
+          <input type="file" id="hidden-file-input" class="hidden" multiple onchange="handleFileSelect(event)">
+          <div class="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/3 to-purple-500/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+          <div class="space-y-3 relative z-10">
+            <div class="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(139,92,246,0.1)]">
+              <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+            </div>
+            <div>
+              <p class="text-sm font-semibold">Drag & drop workspace files here, or <span class="text-primaryAccent hover:underline">browse files</span></p>
+              <p class="text-xs text-textSecondary mt-1">Supported formats: PDF, DOCX, XLSX, CSV, TXT, PNG, JPG (Max file size: 100MB)</p>
+            </div>
+          </div>
+          <!-- Upload Progress Indicator Overlay (Hidden by default) -->
+          <div id="upload-progress-overlay" class="absolute inset-0 bg-secondaryBg/95 flex flex-col justify-center items-center p-6 hidden">
+            <div class="w-full max-w-md space-y-2">
+              <div class="flex justify-between text-xs text-textSecondary">
+                <span id="upload-filename">Ingesting file...</span>
+                <span id="upload-percent">0%</span>
+              </div>
+              <div class="w-full h-1.5 bg-cardBg border border-cardBorder rounded-full overflow-hidden">
+                <div id="upload-progress-bar" class="h-full bg-gradient-to-r from-primaryAccent to-secondaryAccent w-[0%] transition-all duration-300"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Bar and Timeline Toggle -->
+        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+          <!-- Search -->
+          <div class="relative flex-1 max-w-md">
+            <span class="absolute inset-y-0 left-3 flex items-center text-textSecondary pointer-events-none">
+              <i class="fa-solid fa-magnifying-glass text-xs"></i>
+            </span>
+            <input type="text" id="memory-search" oninput="filterMemory()" placeholder="Search across all memory objects..." class="w-full bg-cardBg border border-cardBorder rounded-xl pl-9 pr-4 py-2.5 text-xs text-textPrimary placeholder:text-textSecondary focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all">
+          </div>
+          <!-- Right filter components -->
+          <div class="flex items-center gap-3 shrink-0">
+            <!-- Filter Pills -->
+            <div class="flex bg-cardBg border border-cardBorder rounded-xl p-1 text-xs">
+              <button onclick="setMemoryFilter('all')" id="mem-filter-all" class="mem-filter-btn px-3 py-1.5 rounded-lg font-medium text-white bg-purple-500/20 transition-all">All</button>
+              <button onclick="setMemoryFilter('documents')" id="mem-filter-documents" class="mem-filter-btn px-3 py-1.5 rounded-lg font-medium text-textSecondary hover:text-white transition-all">Docs</button>
+              <button onclick="setMemoryFilter('knowledge')" id="mem-filter-knowledge" class="mem-filter-btn px-3 py-1.5 rounded-lg font-medium text-textSecondary hover:text-white transition-all">Knowledge</button>
+              <button onclick="setMemoryFilter('entities')" id="mem-filter-entities" class="mem-filter-btn px-3 py-1.5 rounded-lg font-medium text-textSecondary hover:text-white transition-all">Entities</button>
+              <button onclick="setMemoryFilter('insights')" id="mem-filter-insights" class="mem-filter-btn px-3 py-1.5 rounded-lg font-medium text-textSecondary hover:text-white transition-all">Insights</button>
+            </div>
+            <!-- Timeline Toggle -->
+            <button onclick="toggleMemoryView()" id="view-toggle-btn" class="px-3.5 py-2.5 bg-cardBg border border-cardBorder hover:border-primaryAccent hover:bg-cardBg rounded-xl text-xs text-textSecondary hover:text-white transition-all flex items-center gap-1.5" title="Toggle Timeline/Grid View">
+              <i class="fa-solid fa-timeline"></i>
+              <span id="view-toggle-label">Timeline View</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3-Column Grid of Cards (GRID VIEW Container) -->
+        <div id="memory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-300">
+          <!-- 9 dynamic sample cards rendered here by JS initially -->
+        </div>
+
+        <!-- Vertical Timeline View Container (Hidden by default) -->
+        <div id="memory-timeline" class="relative hidden pl-8 border-l border-cardBorder space-y-8 py-4 transition-all duration-300">
+          <!-- Timed grouped memory entries rendered here by JS -->
+        </div>
+
+      </div>
+
+      <!-- ==================== PAGE 2: KNOWLEDGE GRAPH ==================== -->
+      <div id="page-graph" class="tab-page hidden h-full overflow-hidden p-6 flex flex-row gap-6">
+        
+        <!-- Left 70%: Graph Area -->
+        <div class="flex-1 flex flex-col glass-panel rounded-2xl overflow-hidden relative">
+          <!-- Canvas Top controls -->
+          <div class="absolute top-4 left-4 right-4 z-10 flex justify-between items-center pointer-events-none">
+            <!-- Title & Filters -->
+            <div class="flex flex-col gap-2 pointer-events-auto">
+              <div class="bg-secondaryBg/90 border border-cardBorder px-4 py-2 rounded-xl backdrop-blur-md">
+                <h3 class="text-sm font-bold">Relational Knowledge Engine</h3>
+                <p class="text-[10px] text-textSecondary mt-0.5">Live neural linkages between nodes and data schemas</p>
+              </div>
+              <!-- Checkbox Filters -->
+              <div class="flex flex-wrap gap-2 bg-secondaryBg/90 border border-cardBorder p-2 rounded-xl backdrop-blur-md text-[10px] font-bold">
+                <label class="flex items-center gap-1.5 cursor-pointer text-purple-400">
+                  <input type="checkbox" checked onchange="toggleGraphTypeFilter('Company', this.checked)" class="rounded border-cardBorder bg-cardBg focus:ring-purple-500 checked:bg-purple-500">
+                  Company
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer text-blue-400 ml-2">
+                  <input type="checkbox" checked onchange="toggleGraphTypeFilter('Customer', this.checked)" class="rounded border-cardBorder bg-cardBg focus:ring-blue-500 checked:bg-blue-500">
+                  Customer
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer text-emerald-400 ml-2">
+                  <input type="checkbox" checked onchange="toggleGraphTypeFilter('Product', this.checked)" class="rounded border-cardBorder bg-cardBg focus:ring-green-500 checked:bg-green-500">
+                  Product
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer text-amber-500 ml-2">
+                  <input type="checkbox" checked onchange="toggleGraphTypeFilter('Employee', this.checked)" class="rounded border-cardBorder bg-cardBg focus:ring-amber-500 checked:bg-amber-500">
+                  Employee
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer text-yellow-400 ml-2">
+                  <input type="checkbox" checked onchange="toggleGraphTypeFilter('Decision', this.checked)" class="rounded border-cardBorder bg-cardBg focus:ring-yellow-500 checked:bg-yellow-500">
+                  Decision
+                </label>
+              </div>
+            </div>
+
+            <!-- Graph Top Right: Zoom controls -->
+            <div class="flex items-center gap-2 bg-secondaryBg/90 border border-cardBorder p-1.5 rounded-xl backdrop-blur-md pointer-events-auto">
+              <button onclick="zoomGraph(1.1)" class="w-8 h-8 rounded-lg text-xs bg-cardBg border border-cardBorder hover:border-primaryAccent hover:bg-cardBg flex items-center justify-center transition-all" title="Zoom In"><i class="fa-solid fa-plus"></i></button>
+              <button onclick="zoomGraph(0.9)" class="w-8 h-8 rounded-lg text-xs bg-cardBg border border-cardBorder hover:border-primaryAccent hover:bg-cardBg flex items-center justify-center transition-all" title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
+              <button onclick="resetGraph()" class="w-8 h-8 rounded-lg text-xs bg-cardBg border border-cardBorder hover:border-primaryAccent hover:bg-cardBg flex items-center justify-center transition-all" title="Reset View"><i class="fa-solid fa-compress"></i></button>
+            </div>
+          </div>
+
+          <!-- Canvas / SVG Area -->
+          <div class="w-full flex-1 relative cursor-grab active:cursor-grabbing overflow-hidden bg-primaryBg/40" id="graph-viewport-container">
+            <svg id="graph-svg" class="w-full h-full" viewBox="0 0 800 500">
+              <defs>
+                <!-- Glowing Filter -->
+                <filter id="glow-node" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="6" result="blur"></feGaussianBlur>
+                  <feComposite in="SourceGraphic" in2="blur" operator="over"></feComposite>
+                </filter>
+              </defs>
+              <!-- Links rendered here -->
+              <g id="svg-links-group"></g>
+              <!-- Nodes rendered here -->
+              <g id="svg-nodes-group"></g>
+            </svg>
+          </div>
+
+          <!-- Legend at Bottom -->
+          <div class="h-10 bg-secondaryBg/90 border-t border-cardBorder flex items-center px-4 gap-4 text-xs select-none">
+            <span class="text-textSecondary">Legend:</span>
+            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(124,58,237,0.5)]"></span><span class="text-textSecondary">Company</span></div>
+            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></span><span class="text-textSecondary">Customer</span></div>
+            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span><span class="text-textSecondary">Product</span></div>
+            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></span><span class="text-textSecondary">Employee</span></div>
+            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(234,179,8,0.5)]"></span><span class="text-textSecondary">Decision</span></div>
+          </div>
+        </div>
+
+        <!-- Right 30%: Node Detail Panel -->
+        <div id="node-detail-panel" class="w-80 h-full glass-panel rounded-2xl flex flex-col p-5 overflow-y-auto space-y-5 shrink-0 transition-all duration-300">
+          <!-- Initial Default Panel (Updated Dynamically via JS) -->
+          <div class="text-center py-8 space-y-4">
+            <div class="w-14 h-14 rounded-full bg-cardBg border border-cardBorder flex items-center justify-center mx-auto text-textSecondary animate-pulse">
+              <i class="fa-solid fa-fingerprint text-2xl"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-sm text-white">Select a Node</h3>
+              <p class="text-xs text-textSecondary mt-1 leading-relaxed">Click any node on the knowledge workspace grid to query vector relations, file origins, and active linkages.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ==================== PAGE 3: AI ASSISTANT WORKSPACE ==================== -->
+      <div id="page-chat" class="tab-page hidden h-full overflow-hidden p-6 flex flex-row gap-6">
+        
+        <!-- Left 70%: Chat Interface -->
+        <div class="flex-1 flex flex-col glass-panel rounded-2xl overflow-hidden h-full">
+          <!-- Active Model Header -->
+          <div class="h-14 bg-secondaryBg/80 border-b border-cardBorder px-4 flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_10px_#8B5CF6] animate-pulse"></div>
+              <span id="active-model-display" class="text-xs font-bold tracking-wide">GPT-4o Proxy Ingestion</span>
+              <span class="text-textSecondary text-xs">•</span>
+              <span class="text-[10px] text-textSecondary font-semibold uppercase tracking-wider">Active Workspace Context</span>
+            </div>
+            <button onclick="clearChatHistory()" class="text-xs text-textSecondary hover:text-red-400 flex items-center gap-1 transition-colors">
+              <i class="fa-solid fa-trash-can"></i>
+              Clear
+            </button>
+          </div>
+
+          <!-- Message History Scroll container -->
+          <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Animated Streaming Dots (Hidden by default) -->
+          <div id="streaming-indicator" class="px-5 py-3 hidden shrink-0">
+            <div class="inline-flex items-center gap-1.5 bg-cardBg border border-cardBorder px-4 py-2.5 rounded-2xl">
+              <span class="w-1.5 h-1.5 bg-purple-400 rounded-full bounce-dot"></span>
+              <span class="w-1.5 h-1.5 bg-purple-500 rounded-full bounce-dot"></span>
+              <span class="w-1.5 h-1.5 bg-purple-600 rounded-full bounce-dot"></span>
+              <span class="text-xs text-textSecondary font-medium ml-1">AI generating reasoning trace...</span>
+            </div>
+          </div>
+
+          <!-- Bottom Chat Input Frame -->
+          <div class="p-4 bg-secondaryBg/40 border-t border-cardBorder shrink-0">
+            <div class="glass-panel border-cardBorder rounded-2xl p-2 flex flex-col gap-2 focus-within:border-purple-500/50 transition-colors">
+              <!-- Text area -->
+              <textarea id="chat-input" rows="2" onkeydown="handleChatKeydown(event)" placeholder="Ask πX Assistant... (e.g., 'What caused the drop in organic search conversions?')" class="w-full bg-transparent resize-none border-none outline-none text-xs text-textPrimary placeholder:text-textSecondary px-2 py-1"></textarea>
+              
+              <!-- Buttons & Inputs -->
+              <div class="flex justify-between items-center px-1">
+                <div class="flex items-center gap-3 text-textSecondary text-xs">
+                  <!-- File Attachment trigger -->
+                  <button onclick="triggerChatUpload()" class="hover:text-white transition-colors" title="Attach context files"><i class="fa-solid fa-paperclip text-sm"></i></button>
+                  <input type="file" id="chat-file-input" class="hidden" onchange="handleChatFileSelect(event)">
+                  
+                  <!-- Ingestion Context selector -->
+                  <div class="relative group">
+                    <button class="hover:text-white transition-colors flex items-center gap-1 text-[11px] font-medium" title="Context limits">
+                      <i class="fa-solid fa-sliders"></i>
+                      <span>Context: All (12 files)</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Send button -->
+                <button onclick="sendChatMessage()" class="w-8 h-8 rounded-xl bg-purple-600 hover:bg-purple-500 text-white flex items-center justify-center transition-all duration-200 hover:scale-105 shadow-[0_0_10px_rgba(124,58,237,0.4)]">
+                  <i class="fa-solid fa-arrow-up text-xs"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 30%: Context Settings Panel -->
+        <div class="w-80 h-full glass-panel rounded-2xl flex flex-col p-5 overflow-y-auto space-y-6 shrink-0">
+          <!-- Title -->
+          <div>
+            <h3 class="font-bold text-sm tracking-wide">AI Settings & Context</h3>
+            <p class="text-[10px] text-textSecondary mt-0.5">Configure weights and trace reasoning execution parameters</p>
+          </div>
+
+          <!-- Divider -->
+          <div class="border-t border-cardBorder"></div>
+
+          <!-- Models & Hyperparameters -->
+          <div class="space-y-4">
+            <!-- Model Selection -->
+            <div class="space-y-2">
+              <label class="text-[10px] uppercase font-bold tracking-wider text-textSecondary">Active Neural Model</label>
+              <select id="chat-model-select" onchange="updateModelDisplay()" class="w-full bg-cardBg border border-cardBorder text-xs text-textPrimary rounded-xl px-3 py-2.5 focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 outline-none">
+                <option value="gpt-4o">GPT-4o Proxy Ingestion</option>
+                <option value="claude-35">Claude 3.5 Sonnet</option>
+                <option value="pix-local">πX-Local-13B (Enterprise Core)</option>
+              </select>
+            </div>
+
+            <!-- Temperature Slider -->
+            <div class="space-y-2">
+              <div class="flex justify-between text-[10px] uppercase font-bold tracking-wider text-textSecondary">
+                <span>Temperature</span>
+                <span id="temp-val" class="text-primaryAccent font-bold">0.3</span>
+              </div>
+              <input type="range" id="chat-temp" min="0" max="100" value="30" oninput="updateTemperature(this.value)" class="w-full accent-primaryAccent bg-cardBg border border-cardBorder h-1.5 rounded-lg cursor-pointer">
+              <div class="flex justify-between text-[9px] text-textSecondary">
+                <span>Deterministic</span>
+                <span>Creative</span>
+              </div>
+            </div>
+
+            <!-- Reasoning Trace Toggle -->
+            <div class="flex justify-between items-center py-1">
+              <div class="flex flex-col">
+                <span class="text-xs font-semibold text-white">Expose Reasoning Trace</span>
+                <span class="text-[10px] text-textSecondary mt-0.5">Toggle live step-by-step logic expansion</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="reasoning-toggle" checked class="sr-only peer">
+                <div class="w-9 h-5 bg-cardBg border border-cardBorder rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-textSecondary peer-checked:after:bg-white after:border-cardBorder after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-purple-600"></div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="border-t border-cardBorder"></div>
+
+          <!-- Memory Sources Section -->
+          <div class="space-y-3">
+            <h4 class="text-[10px] uppercase font-bold tracking-wider text-textSecondary">Active Memory Sources (3)</h4>
+            
+            <div class="space-y-2">
+              <!-- Source 1 -->
+              <div class="flex justify-between items-center p-2 bg-cardBg border border-cardBorder rounded-xl">
+                <div class="flex items-center gap-2 min-w-0">
+                  <i class="fa-solid fa-file-excel text-green-400 text-xs shrink-0"></i>
+                  <span class="text-xs font-medium truncate">Customer Acquisition.xlsx</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input type="checkbox" checked class="sr-only peer">
+                  <div class="w-7 h-4 bg-cardBg border border-cardBorder rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-textSecondary peer-checked:after:bg-white after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-purple-600"></div>
+                </label>
+              </div>
+              <!-- Source 2 -->
+              <div class="flex justify-between items-center p-2 bg-cardBg border border-cardBorder rounded-xl">
+                <div class="flex items-center gap-2 min-w-0">
+                  <i class="fa-solid fa-file-pdf text-red-400 text-xs shrink-0"></i>
+                  <span class="text-xs font-medium truncate">Q4 Performance Report.pdf</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input type="checkbox" checked class="sr-only peer">
+                  <div class="w-7 h-4 bg-cardBg border border-cardBorder rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-textSecondary peer-checked:after:bg-white after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-purple-600"></div>
+                </label>
+              </div>
+              <!-- Source 3 -->
+              <div class="flex justify-between items-center p-2 bg-cardBg border border-cardBorder rounded-xl">
+                <div class="flex items-center gap-2 min-w-0">
+                  <i class="fa-solid fa-file-powerpoint text-orange-400 text-xs shrink-0"></i>
+                  <span class="text-xs font-medium truncate">Competitor Analysis.pptx</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input type="checkbox" class="sr-only peer">
+                  <div class="w-7 h-4 bg-cardBg border border-cardBorder rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-textSecondary peer-checked:after:bg-white after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-purple-600"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Knowledge Sources Section -->
+          <div class="space-y-3">
+            <h4 class="text-[10px] uppercase font-bold tracking-wider text-textSecondary">Active Knowledge Sources (2)</h4>
+            
+            <div class="space-y-2">
+              <div class="flex justify-between items-center p-2 bg-cardBg border border-cardBorder rounded-xl">
+                <div class="flex items-center gap-2 min-w-0">
+                  <i class="fa-solid fa-circle-nodes text-purple-400 text-xs shrink-0"></i>
+                  <span class="text-xs font-medium truncate">πX Headquarters Graph Hub</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input type="checkbox" checked class="sr-only peer">
+                  <div class="w-7 h-4 bg-cardBg border border-cardBorder rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-textSecondary peer-checked:after:bg-white after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-purple-600"></div>
+                </label>
+              </div>
+              <div class="flex justify-between items-center p-2 bg-cardBg border border-cardBorder rounded-xl">
+                <div class="flex items-center gap-2 min-w-0">
+                  <i class="fa-solid fa-circle-nodes text-emerald-400 text-xs shrink-0"></i>
+                  <span class="text-xs font-medium truncate">Customer-Product Web Linkage</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input type="checkbox" checked class="sr-only peer">
+                  <div class="w-7 h-4 bg-cardBg border border-cardBorder rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-textSecondary peer-checked:after:bg-white after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-purple-600"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ==================== PAGE 4: DECISION CENTER ==================== -->
+      <div id="page-decision" class="tab-page hidden h-full overflow-y-auto p-6 space-y-6">
+        
+        <!-- Header -->
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-bold tracking-tight">Decision Intelligence Center</h2>
+            <p class="text-sm text-textSecondary mt-1">Audit, validate, and execute operational and strategic directives proposed by the AI Engine.</p>
+          </div>
+          <button onclick="createNewDecision()" class="px-4 py-2 bg-gradient-to-r from-primaryAccent to-secondaryAccent hover:opacity-95 text-white text-xs font-semibold rounded-xl shadow-[0_0_15px_rgba(124,58,237,0.3)] transition-all flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i>
+            New Decision
+          </button>
+        </div>
+
+        <!-- KPI Row -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="glass-panel p-4 rounded-2xl">
+            <p class="text-[10px] uppercase font-bold tracking-wider text-textSecondary">Total Proposals</p>
+            <h3 class="text-2xl font-bold text-white mt-1">12</h3>
+            <p class="text-xs text-textSecondary mt-1">Across 4 system hubs</p>
+          </div>
+          <div class="glass-panel p-4 rounded-2xl">
+            <p class="text-[10px] uppercase font-bold tracking-wider text-textSecondary">Pending Review</p>
+            <h3 id="dec-count-pending" class="text-2xl font-bold text-amber-400 mt-1">3</h3>
+            <p class="text-xs text-textSecondary mt-1">Require executive signoff</p>
+          </div>
+          <div class="glass-panel p-4 rounded-2xl">
+            <p class="text-[10px] uppercase font-bold tracking-wider text-textSecondary">Executed / Approved</p>
+            <h3 id="dec-count-approved" class="text-2xl font-bold text-emerald-400 mt-1">8</h3>
+            <p class="text-xs text-emerald-400 mt-1">98% target capture rate</p>
+          </div>
+          <div class="glass-panel p-4 rounded-2xl">
+            <p class="text-[10px] uppercase font-bold tracking-wider text-textSecondary">Mean Confidence</p>
+            <h3 class="text-2xl font-bold text-purple-400 mt-1">91.8%</h3>
+            <p class="text-xs text-textSecondary mt-1">Validated against 1.2k elements</p>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="flex justify-between items-center">
+          <div class="flex bg-cardBg border border-cardBorder rounded-xl p-1 text-xs">
+            <button onclick="setDecisionFilter('all')" id="dec-filter-all" class="dec-filter-btn px-4 py-1.5 rounded-lg font-medium text-textSecondary hover:text-white transition-all">All</button>
+            <button onclick="setDecisionFilter('pending')" id="dec-filter-pending" class="dec-filter-btn px-4 py-1.5 rounded-lg font-medium text-white bg-purple-500/20 transition-all">Pending</button>
+            <button onclick="setDecisionFilter('approved')" id="dec-filter-approved" class="dec-filter-btn px-4 py-1.5 rounded-lg font-medium text-textSecondary hover:text-white transition-all">Approved</button>
+            <button onclick="setDecisionFilter('review')" id="dec-filter-review" class="dec-filter-btn px-4 py-1.5 rounded-lg font-medium text-textSecondary hover:text-white transition-all">In Review</button>
+          </div>
+          <p class="text-xs text-textSecondary">Showing <span id="displayed-decisions-count" class="text-white font-bold">4</span> decisions</p>
+        </div>
+
+        <!-- Decisions Grid -->
+        <div id="decisions-grid" class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <!-- Rendered dynamically by JS -->
+        </div>
+
+      </div>
+
+      <!-- ==================== PAGE 5: SIMULATION CENTER ==================== -->
+      <div id="page-simulation" class="tab-page hidden h-full overflow-y-auto p-6 space-y-6">
+        
+        <!-- Header -->
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-bold tracking-tight">Simulation Engine</h2>
+            <p class="text-sm text-textSecondary mt-1">Model strategic interventions and analyze multi-dimensional projection metrics.</p>
+          </div>
+          <button onclick="showScenarioModal()" class="px-4 py-2 bg-gradient-to-r from-primaryAccent to-secondaryAccent hover:opacity-95 text-white text-xs font-semibold rounded-xl shadow-[0_0_15px_rgba(124,58,237,0.3)] transition-all flex items-center gap-2">
+            <i class="fa-solid fa-circle-plus"></i>
+            New Scenario
+          </button>
+        </div>
+
+        <!-- Split Left: Setup Scenarios / Split Right: Risk Matrix -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- What-If Input Box (Col-span 2) -->
+          <div class="lg:col-span-2 glass-panel p-5 rounded-2xl space-y-4">
+            <div class="flex justify-between items-center">
+              <h3 class="text-sm font-bold tracking-wide flex items-center gap-2">
+                <i class="fa-solid fa-terminal text-purple-400"></i>
+                Define What-If Scenario Analysis
+              </h3>
+              <span class="text-[10px] text-textSecondary">GPU Engine Locked</span>
+            </div>
+
+            <textarea id="simulation-input" rows="3" placeholder="Describe the corporate scenario you want to model..." class="w-full bg-cardBg border border-cardBorder text-xs text-textPrimary placeholder:text-textSecondary rounded-xl p-3 focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 outline-none resize-none"></textarea>
+            
+            <!-- Clickable Prompts pills -->
+            <div class="space-y-2">
+              <p class="text-[10px] font-bold text-textSecondary uppercase tracking-wider">Example Interventions</p>
+              <div class="flex flex-wrap gap-2 text-xs">
+                <button onclick="usePromptTemplate('What happens if we increase standard subscription pricing by 10% next quarter while cutting paid advertising spend by 15%?')" class="px-3 py-1.5 bg-cardBg hover:bg-cardBg border border-cardBorder hover:border-purple-500/30 rounded-xl text-textSecondary hover:text-white transition-all text-left truncate max-w-xs">
+                  <i class="fa-solid fa-tag text-purple-400 text-[10px] mr-1"></i> Increase standard pricing by 10%
+                </button>
+                <button onclick="usePromptTemplate('Model the cash flow runway impact of a 3-month product release delay for SaaS Platform v4.0 enterprise client segment.')" class="px-3 py-1.5 bg-cardBg hover:bg-cardBg border border-cardBorder hover:border-purple-500/30 rounded-xl text-textSecondary hover:text-white transition-all text-left truncate max-w-xs">
+                  <i class="fa-solid fa-tag text-purple-400 text-[10px] mr-1"></i> Delay product launch by 1 quarter
+                </button>
+                <button onclick="usePromptTemplate('What is the operational risk profile of terminating the primary cloud database contract and transferring 100% vector compute load to local servers?')" class="px-3 py-1.5 bg-cardBg hover:bg-cardBg border border-cardBorder hover:border-purple-500/30 rounded-xl text-textSecondary hover:text-white transition-all text-left truncate max-w-xs">
+                  <i class="fa-solid fa-tag text-purple-400 text-[10px] mr-1"></i> Migrate DB vectors to local servers
+                </button>
+              </div>
+            </div>
+
+            <!-- Run simulation -->
+            <button onclick="runSimulationAnimation()" id="run-simulation-btn" class="w-full py-3 bg-gradient-to-r from-primaryAccent via-aiGlow to-secondaryAccent hover:opacity-95 text-white text-xs font-semibold rounded-xl shadow-[0_0_20px_rgba(139,92,246,0.3)] transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-circle-play"></i>
+              <span>Run Simulation Model</span>
+            </button>
+          </div>
+
+          <!-- Risk Analysis Grid (Probability vs Impact) (Col-span 1) -->
+          <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between h-full">
+            <div>
+              <h3 class="text-sm font-bold tracking-wide">AI Risk Assessment Matrix</h3>
+              <p class="text-[10px] text-textSecondary mt-0.5">Quadrant placement of dynamic simulation threats</p>
+            </div>
+
+            <!-- 2x2 Risk Grid -->
+            <div class="relative w-full aspect-square border-l-2 border-b-2 border-cardBorder mt-4 flex flex-col">
+              <!-- Grid background lines -->
+              <div class="absolute inset-0 grid grid-cols-2 grid-rows-2">
+                <div class="border-r border-b border-cardBorder/30"></div>
+                <div class="border-b border-cardBorder/30"></div>
+                <div class="border-r border-cardBorder/30"></div>
+                <div></div>
+              </div>
+
+              <!-- Risk Dot Items -->
+              <!-- Dot 1: Price Churn (Red) -->
+              <div class="absolute top-[25%] left-[75%] -translate-x-1/2 -translate-y-1/2 group cursor-pointer" onclick="showRiskDetail('churn')">
+                <span class="absolute w-4 h-4 bg-red-500 rounded-full animate-ping opacity-30"></span>
+                <span class="relative block w-3.5 h-3.5 bg-red-500 border border-white rounded-full"></span>
+                <div class="absolute bottom-5 left-1/2 -translate-x-1/2 px-2 py-1 bg-secondaryBg border border-cardBorder text-[9px] text-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-30">
+                  Critical: Price Churn (Red)
+                </div>
+              </div>
+
+              <!-- Dot 2: Team Burnout (Orange) -->
+              <div class="absolute top-[20%] left-[30%] -translate-x-1/2 -translate-y-1/2 group cursor-pointer" onclick="showRiskDetail('burnout')">
+                <span class="relative block w-3.5 h-3.5 bg-amber-500 border border-white rounded-full"></span>
+                <div class="absolute bottom-5 left-1/2 -translate-x-1/2 px-2 py-1 bg-secondaryBg border border-cardBorder text-[9px] text-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-30">
+                  Operational: Tech Debt
+                </div>
+              </div>
+
+              <!-- Dot 3: Competitor Counter (Yellow) -->
+              <div class="absolute top-[65%] left-[80%] -translate-x-1/2 -translate-y-1/2 group cursor-pointer" onclick="showRiskDetail('competitor')">
+                <span class="relative block w-3.5 h-3.5 bg-yellow-400 border border-white rounded-full"></span>
+                <div class="absolute bottom-5 left-1/2 -translate-x-1/2 px-2 py-1 bg-secondaryBg border border-cardBorder text-[9px] text-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-30">
+                  Strategic: Competitor Play
+                </div>
+              </div>
+
+              <!-- Dot 4: API Latency (Green) -->
+              <div class="absolute top-[80%] left-[20%] -translate-x-1/2 -translate-y-1/2 group cursor-pointer" onclick="showRiskDetail('latency')">
+                <span class="relative block w-3.5 h-3.5 bg-emerald-500 border border-white rounded-full"></span>
+                <div class="absolute bottom-5 left-1/2 -translate-x-1/2 px-2 py-1 bg-secondaryBg border border-cardBorder text-[9px] text-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-30">
+                  Minor: System Latency
+                </div>
+              </div>
+
+              <!-- Axis Labels -->
+              <!-- Y Axis Label -->
+              <div class="absolute -left-5 top-1/2 -translate-y-1/2 text-[9px] text-textSecondary select-none uppercase tracking-widest origin-center -rotate-90">
+                Probability
+              </div>
+              <!-- X Axis Label -->
+              <div class="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] text-textSecondary select-none uppercase tracking-widest">
+                Impact severity
+              </div>
+              <div class="absolute top-1 right-1 text-[8px] text-red-400 font-bold uppercase select-none">High Prob/Impact</div>
+            </div>
+
+            <!-- Risk detail indicator info -->
+            <div id="risk-matrix-detail" class="mt-6 p-2.5 bg-cardBg border border-cardBorder rounded-xl text-center">
+              <p class="text-[10px] text-textSecondary">Hover over or click a point in the threat grid for details.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Scenario Comparison Panel (3 Scenarios side by side) -->
+        <div>
+          <h3 class="text-sm font-bold tracking-wide mb-4">Intervention Comparison Hub</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- Scenario 1: Baseline -->
+            <div onclick="focusScenarioChart(0)" class="glass-panel p-5 rounded-2xl space-y-4 cursor-pointer border border-cardBorder hover:border-purple-500/20 hover:bg-cardBg transition-all duration-300 relative group" id="scenario-card-0">
+              <div class="flex justify-between items-center">
+                <h4 class="font-bold text-xs text-white">Scenario A: Baseline (Current Path)</h4>
+                <span class="text-[10px] text-emerald-400 font-bold bg-emerald-400/10 px-2 py-0.5 rounded-full">100% Prob</span>
+              </div>
+              <div class="space-y-2">
+                <p class="text-[10px] text-textSecondary uppercase font-bold tracking-wider">Revenue Path Projection</p>
+                <!-- SVG horizontal timeline bar -->
+                <svg class="w-full h-2 rounded-full overflow-hidden" viewBox="0 0 100 2">
+                  <line x1="0" y1="1" x2="100" y2="1" stroke="#475569" stroke-width="2"></line>
+                </svg>
+              </div>
+              <!-- Impact Metrics table -->
+              <div class="grid grid-cols-2 gap-3 text-xs pt-2">
+                <div>
+                  <p class="text-textSecondary text-[10px]">Proj. Revenue</p>
+                  <p id="sc0-revenue" class="font-bold mt-0.5 text-white">$14.2M <span class="text-textSecondary font-normal text-[10px]">(Baseline)</span></p>
+                </div>
+                <div>
+                  <p class="text-textSecondary text-[10px]">Ingestion Cost</p>
+                  <p id="sc0-cost" class="font-bold mt-0.5 text-white">$1.8M/yr</p>
+                </div>
+                <div>
+                  <p class="text-textSecondary text-[10px]">Strategic Risk</p>
+                  <p class="font-bold mt-0.5 text-emerald-400">Low Stable</p>
+                </div>
+                <div>
+                  <p class="text-textSecondary text-[10px]">User Satisfaction</p>
+                  <p id="sc0-satisfaction" class="font-bold mt-0.5 text-white">88%</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Scenario 2: Pricing Lift -->
+            <div onclick="focusScenarioChart(1)" class="glass-panel p-5 rounded-2xl space-y-4 cursor-pointer border border-cardBorder hover:border-purple-500/20 hover:bg-cardBg transition-all duration-300 relative group" id="scenario-card-1">
+              <div class="absolute -top-2.5 right-4 px-2.5 py-0.5 bg-purple-600 border border-purple-500/30 text-[9px] font-bold text-white rounded-full shadow-[0_0_8px_#7C3AED]">Selected</div>
+              <div class="flex justify-between items-center">
+                <h4 class="font-bold text-xs text-white">Scenario B: Pricing Lift (+10%)</h4>
+                <span class="text-[10px] text-purple-400 font-bold bg-purple-400/10 px-2 py-0.5 rounded-full">78% Prob</span>
+              </div>
+              <div class="space-y-2">
+                <p class="text-[10px] text-textSecondary uppercase font-bold tracking-wider">Revenue Path Projection</p>
+                <!-- SVG horizontal timeline bar -->
+                <svg class="w-full h-2 rounded-full overflow-hidden" viewBox="0 0 100 2">
+                  <line x1="0" y1="1" x2="100" y2="1" stroke="#8B5CF6" stroke-width="2" class="animated-edge"></line>
+                </svg>
+              </div>
+              <!-- Impact Metrics table -->
+              <div class="grid grid-cols-2 gap-3 text-xs pt-2">
+                <div>
+                  <p class="text-textSecondary text-[10px]">Proj. Revenue</p>
+                  <p id="sc1-revenue" class="font-bold mt-0.5 text-emerald-400">+$1.2M <span class="text-textSecondary font-normal text-[10px]">(+8.4%)</span></p>
+                </div>
+                <div>
+                  <p class="text-textSecondary text-[10px]">Ingestion Cost</p>
+                  <p id="sc1-cost" class="font-bold mt-0.5 text-white">$1.8M/yr</p>
+                </div>
+                <div>
+                  <p class="text-textSecondary text-[10px]">Strategic Risk</p>
+                  <p class="font-bold mt-0.5 text-amber-500">Medium Churn</p>
+                </div>
+                <div>
+                  <p class="text-textSecondary text-[10px]">User Satisfaction</p>
+                  <p id="sc1-satisfaction" class="font-bold mt-0.5 text-red-400">72% <span class="text-[10px] font-normal text-textSecondary">(-16%)</span></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Scenario 3: Delay Release -->
+            <div onclick="focusScenarioChart(2)" class="glass-panel p-5 rounded-2xl space-y-4 cursor-pointer border border-cardBorder hover:border-purple-500/20 hover:bg-cardBg transition-all duration-300 relative group" id="scenario-card-2">
+              <div class="flex justify-between items-center">
+                <h4 class="font-bold text-xs text-white">Scenario C: Delay Release (1 Qtr)</h4>
+                <span class="text-[10px] text-amber-500 font-bold bg-amber-500/10 px-2 py-0.5 rounded-full">85% Prob</span>
+              </div>
+              <div class="space-y-2">
+                <p class="text-[10px] text-textSecondary uppercase font-bold tracking-wider">Revenue Path Projection</p>
+                <!-- SVG horizontal timeline bar -->
+                <svg class="w-full h-2 rounded-full overflow-hidden" viewBox="0 0 100 2">
+                  <line x1="0" y1="1" x2="100" y2="1" stroke="#F59E0B" stroke-width="2"></line>
+                </svg>
+              </div>
+              <!-- Impact Metrics table -->
+              <div class="grid grid-cols-2 gap-3 text-xs pt-2">
+                <div>
+                  <p class="text-textSecondary text-[10px]">Proj. Revenue</p>
+                  <p id="sc2-revenue" class="font-bold mt-0.5 text-red-400">-$450K <span class="text-textSecondary font-normal text-[10px]">(-3.1%)</span></p>
+                </div>
+                <div>
+                  <p class="text-textSecondary text-[10px]">Ingestion Cost</p>
+                  <p id="sc2-cost" class="font-bold mt-0.5 text-emerald-400">-$120K <span class="text-textSecondary font-normal text-[10px]">(-6.6%)</span></p>
+                </div>
+                <div>
+                  <p class="text-textSecondary text-[10px]">Strategic Risk</p>
+                  <p class="font-bold mt-0.5 text-yellow-400">Medium Operational</p>
+                </div>
+                <div>
+                  <p class="text-textSecondary text-[10px]">User Satisfaction</p>
+                  <p id="sc2-satisfaction" class="font-bold mt-0.5 text-yellow-400">82% <span class="text-[10px] font-normal text-textSecondary">(-6%)</span></p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 12-Month Projection Line Chart (SVG) -->
+        <div class="glass-panel p-5 rounded-2xl space-y-4">
+          <div>
+            <h3 class="text-sm font-bold tracking-wide">12-Month Revenue Cumulative Forecast</h3>
+            <p class="text-[10px] text-textSecondary mt-0.5">Scenario projection modeling based on active memory variables</p>
+          </div>
+
+          <!-- SVG Chart Area -->
+          <div class="w-full h-64 relative">
+            <svg id="projection-chart-svg" class="w-full h-full overflow-visible" viewBox="0 0 1000 250">
+              <!-- Y Axis Lines -->
+              <g stroke="rgba(255,255,255,0.04)" stroke-width="1">
+                <line x1="80" y1="20" x2="950" y2="20"></line>
+                <line x1="80" y1="70" x2="950" y2="70"></line>
+                <line x1="80" y1="120" x2="950" y2="120"></line>
+                <line x1="80" y1="170" x2="950" y2="170"></line>
+                <line x1="80" y1="220" x2="950" y2="220"></line>
+              </g>
+
+              <!-- X Axis Text Months -->
+              <g fill="#94A3B8" font-size="10" text-anchor="middle" font-family="Inter, sans-serif" opacity="0.8">
+                <text x="80" y="240">Jan</text>
+                <text x="160" y="240">Feb</text>
+                <text x="240" y="240">Mar</text>
+                <text x="320" y="240">Apr</text>
+                <text x="400" y="240">May</text>
+                <text x="480" y="240">Jun</text>
+                <text x="560" y="240">Jul</text>
+                <text x="640" y="240">Aug</text>
+                <text x="720" y="240">Sep</text>
+                <text x="800" y="240">Oct</text>
+                <text x="880" y="240">Nov</text>
+                <text x="950" y="240">Dec</text>
+              </g>
+
+              <!-- Y Axis Text Labels -->
+              <g fill="#94A3B8" font-size="10" text-anchor="end" font-family="Inter, sans-serif" opacity="0.8">
+                <text x="65" y="24">$16.0M</text>
+                <text x="65" y="74">$14.0M</text>
+                <text x="65" y="124">$12.0M</text>
+                <text x="65" y="174">$10.0M</text>
+                <text x="65" y="224">$8.0M</text>
+              </g>
+
+              <!-- Dynamic Hover Columns -->
+              <g id="chart-hover-cols"></g>
+
+              <!-- Line Paths (Rendered dynamically based on focused state) -->
+              <g id="chart-paths-group"></g>
+
+              <!-- Dot points & tooltips -->
+              <g id="chart-interactive-overlay"></g>
+            </svg>
+
+            <!-- Dynamic Tooltip Box floating above SVG -->
+            <div id="chart-tooltip" class="absolute hidden p-2 bg-secondaryBg border border-cardBorder text-[10px] text-white rounded-lg shadow-xl pointer-events-none z-30 space-y-1">
+              <p class="font-bold border-b border-cardBorder pb-1 text-textSecondary" id="tooltip-month">Month</p>
+              <p class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Baseline: <span class="font-bold" id="tooltip-val-0"></span></p>
+              <p class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span> Pricing Lift: <span class="font-bold" id="tooltip-val-1"></span></p>
+              <p class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Delay Release: <span class="font-bold" id="tooltip-val-2"></span></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ==================== TOAST NOTIFICATION CONTAINER ==================== -->
+  <div id="toast-container" class="fixed bottom-6 right-6 flex flex-col gap-3 z-50 pointer-events-none"></div>
+
+  <!-- ==================== LOGIC & SCRIPTS ==================== -->
+  <script>
+    // State management
+    let activeTab = 'memory';
+    let memorySearchQuery = '';
+    let memoryFilter = 'all';
+    let isMemoryTimelineView = false;
+    
+    // Knowledge Graph State
+    let selectedNodeId = 'n1';
+    let graphZoom = 1.0;
+    let graphOffset = { x: 0, y: 0 };
+    let graphTypeFilters = { Company: true, Customer: true, Product: true, Employee: true, Decision: true };
+
+    // Chat State
+    let temperatureValue = 0.3;
+    let currentModel = 'gpt-4o';
+    let chatHistory = [
+      { sender: 'user', content: 'Analyze our Q4 customer acquisition costs compared to the previous quarter. Any alarming trends?' },
+      { sender: 'ai', content: 'Q4 customer acquisition costs rose from $120 to $145 (+20.8%). This is primarily caused by declining organic traffic in search engines, which forced our marketing team to route more budget into competitive paid search bidding.', score: 96, citations: ['Customer Acquisition Metrics.xlsx', 'Q4 Report.pdf'], trace: '1. Ingested Customer Acquisition Metrics.xlsx, Q4 Report.pdf.<br>2. Located CAC field: Q3=$120, Q4=$145.<br>3. Extracted Marketing Spend distribution: Organic lead volume -35%, Paid lead volume +15%.<br>4. Compiled mathematical calculation: Δ CAC = (+20.8%).' },
+      { sender: 'user', content: 'What caused the 35% drop in organic conversions?' },
+      { sender: 'ai', content: 'The drop is tied to performance degradation on our core landing pages following the Google Search Core Update on October 24th. In particular, our Core Web Vitals metrics dropped due to an ingestion bundle size increase in standard JS templates, as highlighted in the Product Roadmap file.', score: 89, citations: ['Product Roadmap & Milestones.docx'], trace: '1. Queried organic search console logs.<br>2. Cross-referenced update date Oct 24 with Google Search algorithm calendar.<br>3. Parsed Product Roadmap bundle details: Mobile SEO Lighthouse score dropped from 91 to 58.<br>4. Confirmed page speed load delay (+1.4s).' },
+      { sender: 'user', content: 'Let\'s formulate a strategic decision to address this. What options do we have?' },
+      { sender: 'ai', content: 'I have compiled 4 operational decisions in the **Decision Intelligence** console. The standard recommendations suggest either restricting the Standard API limits to curb enterprise tier cannibalization or proceeding with an immediate mobile performance optimization deployment to recover search authority. Let\'s explore those alternatives.', score: 92, citations: ['Decision Intelligence Engine'], trace: '1. Synthesized solutions for search recover and pricing tier limits.<br>2. Simulated pricing lift and standard plan feature gating.' }
+    ];
+
+    // Decisions Data State
+    let decisionsData = [
+      {
+        id: 'dec-1',
+        title: 'Pricing Tier Restructuring',
+        status: 'pending',
+        problem: 'Standard subscription tier is cannibalizing Enterprise custom contract acquisitions.',
+        context: 'Our mid-market standard tier currently provides unlimited API endpoints, offering too much utility to mid-market enterprise teams who would otherwise upgrade to custom annual SLAs.',
+        evidence: 5,
+        options: [
+          { text: 'Option A: Restrict API throughput on Standard plan to 10k calls/month.', recommended: true },
+          { text: 'Option B: Increase monthly price of Standard from $49 to $79/mo.' }
+        ],
+        risk: 'Medium',
+        riskColor: 'amber-400',
+        score: 94
+      },
+      {
+        id: 'dec-2',
+        title: 'European Market Compliance Expansion',
+        status: 'review',
+        problem: 'Determine localized cloud infrastructure deployment for EMEA financial datasets.',
+        context: 'Stricter banking compliance protocols require isolating certain transactional vector metrics to EU sovereign nodes. Frankfurt vs Dublin are under evaluation.',
+        evidence: 3,
+        options: [
+          { text: 'Option A: Commission sovereign cloud nodes in Frankfurt center.', recommended: true },
+          { text: 'Option B: Implement regional proxy filter on Dublin base infrastructure.' }
+        ],
+        risk: 'High',
+        riskColor: 'red-400',
+        score: 88
+      },
+      {
+        id: 'dec-3',
+        title: 'Enterprise Cloud DB Connector Provider',
+        status: 'approved',
+        problem: 'Choose cloud vendor layer for scaling active memory vector repository.',
+        context: 'The Core Neural Engine vector index has outgrown single-node configurations. We must select the host cloud configuration.',
+        evidence: 8,
+        options: [
+          { text: 'Option A: AWS Aurora PostgreSQL with native pgvector index.', recommended: true },
+          { text: 'Option B: Dedicated Enterprise Pinecone DB subscription.' }
+        ],
+        risk: 'Low',
+        riskColor: 'emerald-400',
+        score: 96
+      },
+      {
+        id: 'dec-4',
+        title: 'Next-Gen Core Model Deployment',
+        status: 'pending',
+        problem: 'Decide whether to cut over all production workflows to πX-Local-13B custom model.',
+        context: 'Our localized 13B configuration reduces execution cost profiles by 74% compared to standard API providers, but introduces a minor 5% latency penalty on heavy token outputs.',
+        evidence: 12,
+        options: [
+          { text: 'Option A: Hybrid fallback configuration (90% local, 10% GPT-4o proxy backup).', recommended: true },
+          { text: 'Option B: Complete cutover to 100% on-premises vector compute.' }
+        ],
+        risk: 'Medium',
+        riskColor: 'amber-400',
+        score: 91
+      }
+    ];
+    let decisionFilter = 'pending';
+
+    // Simulation Data & State
+    let selectedScenarioIndex = 1; // 1 is Scenario B (Pricing Lift)
+    let simulationLoading = false;
+    const scenariosData = [
+      { name: 'Baseline', color: '#475569', points: [80, 95, 110, 115, 120, 130, 135, 140, 142, 142, 142, 142] },
+      { name: 'Pricing Lift', color: '#8B5CF6', points: [80, 85, 95, 105, 125, 135, 145, 150, 154, 154, 154, 154] },
+      { name: 'Delay Release', color: '#F59E0B', points: [80, 95, 110, 115, 110, 105, 112, 120, 128, 134, 137, 137] }
+    ];
+
+    // Raw Graph Nodes Data (For Knowledge Graph Page)
+    const graphNodes = [
+      { id: 'n1', name: 'πX Headquarters', type: 'Company', x: 400, y: 250, details: 'Core intellectual and server hosting hub of the enterprise.', rels: ['Host to: Dr. Sarah Jenkins', 'Manages: SaaS Platform v4.0', 'Manages: Neural Core Engine'], docs: ['Q4 Financial Performance Report.pdf', 'Product Roadmap & Milestones.docx'] },
+      { id: 'n2', name: 'Global Enterprises Corp', type: 'Company', x: 550, y: 150, details: 'Principal investment and co-development tier partner.', rels: ['Contracts: Dr. Sarah Jenkins', 'Leverages: Neural Core Engine'], docs: ['Enterprise Knowledge Base Dump.json'] },
+      { id: 'n3', name: 'Acme Analytics', type: 'Customer', x: 250, y: 130, details: 'Foundational enterprise consumer utilizing API pipelines.', rels: ['Subscribed to: SaaS Platform v4.0', 'Consulted: Marcus Aurelius'], docs: ['Client Feedback Sentiment Log.csv'] },
+      { id: 'n4', name: 'Beta Distribution', type: 'Customer', x: 620, y: 350, details: 'European logistics provider scaling analytical routing limits.', rels: ['Subscribed to: Enterprise Database Connector'], docs: ['Customer Acquisition Metrics.xlsx'] },
+      { id: 'n5', name: 'SaaS Platform v4.0', type: 'Product', x: 420, y: 120, details: 'Unified consumer frontend application and pipeline visualizer.', rels: ['Hosted by: πX Headquarters', 'Proposed Upgrade: Pricing Tier restructuring'], docs: ['Product Roadmap & Milestones.docx'] },
+      { id: 'n6', name: 'Enterprise Database Connector', type: 'Product', x: 300, y: 330, details: 'Direct relational database transactional loader index.', rels: ['Maintained by: πX Headquarters', 'Engineered by: Elena Rostova'], docs: ['Employee Directory & Skills Matrix.xlsx'] },
+      { id: 'n7', name: 'Neural Core Engine', type: 'Product', x: 480, y: 360, details: 'Unified 13B custom model resolving contextual text parameters.', rels: ['Maintained by: πX Headquarters', 'Linked target: Next-Gen AI Model Rollout'], docs: ['Q4 Financial Performance Report.pdf'] },
+      { id: 'n8', name: 'Dr. Sarah Jenkins', type: 'Employee', x: 550, y: 260, details: 'Chief AI Architect and Principal Developer of Neural Core.', rels: ['Works at: πX Headquarters', 'Sponsor: European Expansion Campaign'], docs: ['Employee Directory & Skills Matrix.xlsx'] },
+      { id: 'n9', name: 'Marcus Aurelius', type: 'Employee', x: 280, y: 220, details: 'Lead Enterprise Client Solutions architect.', rels: ['Works at: πX Headquarters', 'Architect: Pricing Tier restructuring'], docs: ['Client Feedback Sentiment Log.csv'] },
+      { id: 'n10', name: 'Elena Rostova', type: 'Employee', x: 180, y: 300, details: 'Database systems designer and compliance Lead.', rels: ['Works at: πX Headquarters', 'Architect: Vendor Cloud Migration'], docs: ['Employee Directory & Skills Matrix.xlsx'] },
+      { id: 'n11', name: 'Pricing Tier restructuring', type: 'Decision', x: 380, y: 40, details: 'Ongoing compliance and sales repositioning strategy.', rels: ['Formulated by: Marcus Aurelius', 'Validates: SaaS Platform v4.0'], docs: ['Q4 Financial Performance Report.pdf'] },
+      { id: 'n12', name: 'European Expansion Campaign', type: 'Decision', x: 680, y: 180, details: 'Determining physical server hub location for EU banking compliance.', rels: ['Led by: Dr. Sarah Jenkins', 'Co-developed by: Global Enterprises Corp'], docs: ['Competitor Analysis Presentation.pptx'] },
+      { id: 'n13', name: 'Vendor Cloud Migration', type: 'Decision', x: 200, y: 410, details: 'Evaluating PostgreSQL vs Pinecone for localized cluster loads.', rels: ['Formulated by: Elena Rostova', 'Modifies: Enterprise Database Connector'], docs: ['Employee Directory & Skills Matrix.xlsx'] },
+      { id: 'n14', name: 'Adept Security', type: 'Customer', x: 100, y: 200, details: 'Sovereign security client executing air-gapped on-premise clusters.', rels: ['Consultant: Marcus Aurelius', 'Deploys: AI Chat Agent'], docs: ['Executive Board Meeting Minutes.txt'] },
+      { id: 'n15', name: 'AI Chat Agent', type: 'Product', x: 120, y: 80, details: 'Local on-prem workspace helper node.', rels: ['Core layer: Neural Core Engine', 'Deployed: Adept Security'], docs: ['Executive Board Meeting Minutes.txt'] },
+      { id: 'n16', name: 'David Kim', type: 'Employee', x: 670, y: 80, details: 'Executive Vice President of EMEA Business Operations.', rels: ['Co-sponsor: European Expansion Campaign', 'Liaison: Global Enterprises Corp'], docs: ['Competitor Analysis Presentation.pptx'] }
+    ];
+
+    const graphLinks = [
+      { source: 'n1', target: 'n5' },
+      { source: 'n1', target: 'n6' },
+      { source: 'n1', target: 'n7' },
+      { source: 'n1', target: 'n8' },
+      { source: 'n1', target: 'n9' },
+      { source: 'n1', target: 'n10' },
+      { source: 'n5', target: 'n3' },
+      { source: 'n6', target: 'n4' },
+      { source: 'n7', target: 'n2' },
+      { source: 'n8', target: 'n12' },
+      { source: 'n9', target: 'n11' },
+      { source: 'n10', target: 'n13' },
+      { source: 'n3', target: 'n15' },
+      { source: 'n14', target: 'n15' },
+      { source: 'n14', target: 'n9' },
+      { source: 'n16', target: 'n2' },
+      { source: 'n16', target: 'n12' }
+    ];
+
+    // Memory Center static raw collection
+    let memoryObjects = [
+      { id: 'mem-o1', title: 'Q4 Financial Performance Report', type: 'PDF', category: 'documents', date: 'Dec 15, 2025', size: '4.2 MB', iconClass: 'fa-file-pdf text-red-400' },
+      { id: 'mem-o2', title: 'Customer Acquisition Metrics', type: 'XLSX', category: 'documents', date: 'Jan 10, 2026', size: '12.8 MB', iconClass: 'fa-file-excel text-green-400' },
+      { id: 'mem-o3', title: 'Product Roadmap & Milestones', type: 'DOCX', category: 'documents', date: 'Feb 18, 2026', size: '1.1 MB', iconClass: 'fa-file-word text-blue-400' },
+      { id: 'mem-o4', title: 'Enterprise Knowledge Base Dump', type: 'JSON', category: 'knowledge', date: 'Mar 01, 2026', size: '8.4 MB', iconClass: 'fa-file-code text-indigo-400' },
+      { id: 'mem-o5', title: 'Executive Board Meeting Minutes', type: 'TXT', category: 'documents', date: 'Apr 20, 2026', size: '150 KB', iconClass: 'fa-file-lines text-slate-400' },
+      { id: 'mem-o6', title: 'Competitor Analysis Presentation', type: 'PPTX', category: 'documents', date: 'May 05, 2026', size: '15.6 MB', iconClass: 'fa-file-powerpoint text-orange-400' },
+      { id: 'mem-o7', title: 'Client Feedback Sentiment Log', type: 'CSV', category: 'knowledge', date: 'Jun 12, 2026', size: '3.1 MB', iconClass: 'fa-file-csv text-teal-400' },
+      { id: 'mem-o8', title: 'SaaS Product Architecture Map', type: 'PNG', category: 'entities', date: 'Jul 01, 2026', size: '2.4 MB', iconClass: 'fa-file-image text-pink-400' },
+      { id: 'mem-o9', title: 'Employee Directory & Skills Matrix', type: 'XLSX', category: 'entities', date: 'Jul 24, 2026', size: '5.2 MB', iconClass: 'fa-file-excel text-emerald-400' }
+    ];
+
+    // Page initialization
+    window.onload = function() {
+      switchTab('memory');
+      renderMemoryCards();
+      setupDragDrop();
+      renderGraph();
+      selectGraphNode('n1');
+      renderChatMessages();
+      renderDecisions();
+      renderProjectionChart();
+      initChartHovers();
+    };
+
+    // Global Tab Switching Mechanism
+    function switchTab(tabId) {
+      activeTab = tabId;
+      
+      // Hide all pages
+      document.querySelectorAll('.tab-page').forEach(page => {
+        page.classList.add('hidden');
+      });
+
+      // Show requested page
+      document.getElementById(`page-${tabId}`).classList.remove('hidden');
+
+      // Update sidebar icons active status
+      document.querySelectorAll('.nav-side-btn').forEach(btn => {
+        btn.classList.remove('text-primaryAccent', 'bg-cardBg', 'border', 'border-cardBorder');
+        btn.classList.add('text-textSecondary');
+      });
+      const activeSideBtn = document.getElementById(`side-tab-${tabId}`);
+      if (activeSideBtn) {
+        activeSideBtn.classList.add('text-primaryAccent', 'bg-cardBg', 'border', 'border-cardBorder');
+        activeSideBtn.classList.remove('text-textSecondary');
+      }
+
+      // Update top bar tabs active status
+      document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+        btn.classList.remove('bg-purple-500/20', 'text-white', 'border', 'border-purple-500/30', 'shadow-[0_0_12px_rgba(139,92,246,0.15)]');
+        btn.classList.add('text-textSecondary', 'hover:text-white');
+      });
+      const activeTopBtn = document.getElementById(`top-tab-${tabId}`);
+      if (activeTopBtn) {
+        activeTopBtn.classList.add('bg-purple-500/20', 'text-white', 'border', 'border-purple-500/30', 'shadow-[0_0_12px_rgba(139,92,246,0.15)]');
+        activeTopBtn.classList.remove('text-textSecondary', 'hover:text-white');
+      }
+
+      showToast(`Switched workspace to: ${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`);
+      
+      // Re-trigger layout math for complex SVGs if needed
+      if (tabId === 'graph') {
+        renderGraph();
+      } else if (tabId === 'simulation') {
+        renderProjectionChart();
+      }
+    }
+
+    // Toast Engine Helper
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'glass-panel px-4 py-3 rounded-xl border border-cardBorder shadow-[0_4px_20px_rgba(0,0,0,0.4)] flex items-center gap-3 text-xs text-white pointer-events-auto animate-fade-in translate-y-2 opacity-0 transition-all duration-300';
+      
+      let icon = '<i class="fa-solid fa-circle-info text-blue-400"></i>';
+      if (type === 'success') {
+        icon = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+        toast.style.borderColor = 'rgba(16,185,129,0.3)';
+      } else if (type === 'warn') {
+        icon = '<i class="fa-solid fa-triangle-exclamation text-amber-500"></i>';
+        toast.style.borderColor = 'rgba(245,158,11,0.3)';
+      }
+      
+      toast.innerHTML = `
+        ${icon}
+        <span class="font-medium">${message}</span>
+      `;
+      
+      container.appendChild(toast);
+      
+      // Animate entry
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 50);
+
+      // Dismiss timer
+      setTimeout(() => {
+        toast.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 4000);
+    }
+
+    // ==================== PAGE 1: MEMORY CENTER CODE ====================
+    
+    function renderMemoryCards() {
+      const grid = document.getElementById('memory-grid');
+      const searchVal = memorySearchQuery.toLowerCase();
+      
+      // Filter list
+      let filtered = memoryObjects.filter(item => {
+        const matchesSearch = item.title.toLowerCase().includes(searchVal) || item.type.toLowerCase().includes(searchVal);
+        const matchesCategory = memoryFilter === 'all' || item.category === memoryFilter;
+        return matchesSearch && matchesCategory;
+      });
+
+      // Clear layout
+      grid.innerHTML = '';
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-16 text-center space-y-4">
+            <div class="w-12 h-12 bg-cardBg border border-cardBorder rounded-full flex items-center justify-center mx-auto text-textSecondary"><i class="fa-solid fa-folder-open text-xl"></i></div>
+            <p class="text-xs text-textSecondary">No memory objects match the active query.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'glass-panel p-4 rounded-2xl glass-card-hover flex flex-col justify-between h-40 group';
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-lg shadow-inner group-hover:scale-105 transition-transform">
+                <i class="fa-solid ${item.iconClass}"></i>
+              </div>
+              <div class="min-w-0">
+                <h4 class="font-bold text-xs truncate text-white" title="${item.title}">${item.title}</h4>
+                <div class="flex items-center gap-1.5 mt-1">
+                  <span class="text-[9px] font-bold uppercase px-1.5 py-0.5 bg-white/5 border border-white/10 rounded text-textSecondary">${item.type}</span>
+                  <span class="text-[9px] text-textSecondary truncate">${item.category.charAt(0).toUpperCase() + item.category.slice(1)}</span>
+                </div>
+              </div>
+            </div>
+            <!-- Menu action -->
+            <div class="relative">
+              <button onclick="toggleCardMenu(event, '${item.id}')" class="w-7 h-7 hover:bg-white/5 rounded-lg text-textSecondary hover:text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-ellipsis-vertical text-xs"></i></button>
+              <div id="menu-${item.id}" class="hidden absolute right-0 mt-1 w-32 bg-secondaryBg border border-cardBorder rounded-xl p-1 shadow-2xl z-40 text-left">
+                <button onclick="queryMemoryInChat('${item.title}')" class="w-full text-left px-2.5 py-1.5 hover:bg-cardBg rounded-lg text-[10px] text-white flex items-center gap-2"><i class="fa-solid fa-sparkles text-purple-400"></i> Query In Chat</button>
+                <button onclick="deleteMemoryCard('${item.id}')" class="w-full text-left px-2.5 py-1.5 hover:bg-red-500/10 rounded-lg text-[10px] text-red-400 flex items-center gap-2"><i class="fa-solid fa-trash"></i> Delete Object</button>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-[10px] text-textSecondary border-t border-cardBorder pt-3 mt-3">
+            <span class="flex items-center gap-1"><i class="fa-regular fa-clock"></i> ${item.date}</span>
+            <span class="font-semibold text-white">${item.size}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function renderTimelineView() {
+      const timeline = document.getElementById('memory-timeline');
+      const searchVal = memorySearchQuery.toLowerCase();
+
+      let filtered = memoryObjects.filter(item => {
+        const matchesSearch = item.title.toLowerCase().includes(searchVal) || item.type.toLowerCase().includes(searchVal);
+        const matchesCategory = memoryFilter === 'all' || item.category === memoryFilter;
+        return matchesSearch && matchesCategory;
+      });
+
+      timeline.innerHTML = '';
+
+      if (filtered.length === 0) {
+        timeline.innerHTML = '<p class="text-xs text-textSecondary text-center py-8">No matching records found.</p>';
+        return;
+      }
+
+      filtered.forEach(item => {
+        const entry = document.createElement('div');
+        entry.className = 'relative flex items-start gap-4 group';
+        entry.innerHTML = `
+          <!-- Bullet Marker -->
+          <span class="absolute -left-[37px] top-1.5 w-4 h-4 rounded-full bg-primaryBg border-2 border-purple-500 shadow-[0_0_8px_#7C3AED] group-hover:scale-125 transition-transform z-10"></span>
+          <!-- Ingestion Box -->
+          <div class="glass-panel p-4 rounded-2xl flex-1 glass-card-hover flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="w-9 h-9 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-md shrink-0"><i class="fa-solid ${item.iconClass}"></i></div>
+              <div>
+                <h4 class="text-xs font-bold text-white">${item.title}</h4>
+                <div class="flex items-center gap-2 text-[10px] text-textSecondary mt-1">
+                  <span class="font-bold uppercase text-purple-400">${item.type}</span>
+                  <span>•</span>
+                  <span>Ingested on ${item.date}</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="text-xs font-semibold text-white">${item.size}</span>
+              <button onclick="queryMemoryInChat('${item.title}')" class="px-2.5 py-1.5 bg-cardBg hover:bg-purple-500/20 text-white hover:text-purple-400 text-[10px] font-bold rounded-lg border border-cardBorder hover:border-purple-500/30 transition-all flex items-center gap-1">
+                <i class="fa-solid fa-sparkles"></i> Query
+              </button>
+            </div>
+          </div>
+        `;
+        timeline.appendChild(entry);
+      });
+    }
+
+    function toggleMemoryView() {
+      isMemoryTimelineView = !isMemoryTimelineView;
+      const grid = document.getElementById('memory-grid');
+      const timeline = document.getElementById('memory-timeline');
+      const btn = document.getElementById('view-toggle-btn');
+      const label = document.getElementById('view-toggle-label');
+
+      if (isMemoryTimelineView) {
+        grid.classList.add('hidden');
+        timeline.classList.remove('hidden');
+        label.innerText = 'Grid View';
+        btn.querySelector('i').className = 'fa-solid fa-grip';
+        renderTimelineView();
+      } else {
+        timeline.classList.add('hidden');
+        grid.classList.remove('hidden');
+        label.innerText = 'Timeline View';
+        btn.querySelector('i').className = 'fa-solid fa-timeline';
+        renderMemoryCards();
+      }
+    }
+
+    function setMemoryFilter(category) {
+      memoryFilter = category;
+      document.querySelectorAll('.mem-filter-btn').forEach(btn => {
+        btn.classList.remove('bg-purple-500/20', 'text-white');
+        btn.classList.add('text-textSecondary');
+      });
+      document.getElementById(`mem-filter-${category}`).classList.add('bg-purple-500/20', 'text-white');
+      
+      if (isMemoryTimelineView) {
+        renderTimelineView();
+      } else {
+        renderMemoryCards();
+      }
+    }
+
+    function filterMemory() {
+      memorySearchQuery = document.getElementById('memory-search').value;
+      if (isMemoryTimelineView) {
+        renderTimelineView();
+      } else {
+        renderMemoryCards();
+      }
+    }
+
+    function toggleCardMenu(event, id) {
+      event.stopPropagation();
+      const menu = document.getElementById(`menu-${id}`);
+      const isCurrentlyVisible = !menu.classList.contains('hidden');
+      
+      // Hide all open menus first
+      document.querySelectorAll('[id^="menu-"]').forEach(el => el.classList.add('hidden'));
+      
+      if (!isCurrentlyVisible) {
+        menu.classList.remove('hidden');
+      }
+
+      // Click listener to hide on body click
+      const hideMenu = () => {
+        menu.classList.add('hidden');
+        document.removeEventListener('click', hideMenu);
+      };
+      setTimeout(() => document.addEventListener('click', hideMenu), 50);
+    }
+
+    function deleteMemoryCard(id) {
+      const idx = memoryObjects.findIndex(item => item.id === id);
+      if (idx !== -1) {
+        const deletedTitle = memoryObjects[idx].title;
+        memoryObjects.splice(idx, 1);
+        
+        // Update stats
+        document.getElementById('stat-objects').innerText = memoryObjects.length + 1239; // Maintain relative offset
+        document.getElementById('stat-docs').innerText = memoryObjects.filter(o => o.category === 'documents').length + 574;
+
+        if (isMemoryTimelineView) {
+          renderTimelineView();
+        } else {
+          renderMemoryCards();
+        }
+        showToast(`Permanently deleted memory object: ${deletedTitle}`, 'warn');
+      }
+    }
+
+    function queryMemoryInChat(title) {
+      switchTab('chat');
+      const chatInput = document.getElementById('chat-input');
+      chatInput.value = `Load the following file source and analyze potential risks: "${title}"`;
+      chatInput.focus();
+    }
+
+    // Drag and Drop simulation
+    function triggerFileUpload() {
+      document.getElementById('hidden-file-input').click();
+    }
+
+    function setupDragDrop() {
+      const dropZone = document.getElementById('drag-drop-zone');
+
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('border-purple-500', 'bg-purple-500/5');
+      });
+
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('border-purple-500', 'bg-purple-500/5');
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-purple-500', 'bg-purple-500/5');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleIncomingFiles(files);
+        }
+      });
+    }
+
+    function handleFileSelect(event) {
+      const files = event.target.files;
+      if (files.length > 0) {
+        handleIncomingFiles(files);
+      }
+    }
+
+    function handleIncomingFiles(files) {
+      const file = files[0];
+      const name = file.name;
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+      const extension = name.split('.').pop().toUpperCase();
+      
+      // Map extension to icon
+      let iconClass = 'fa-file-text text-purple-400';
+      let category = 'documents';
+      if (['XLSX', 'XLS'].includes(extension)) {
+        iconClass = 'fa-file-excel text-green-400';
+      } else if (['PDF'].includes(extension)) {
+        iconClass = 'fa-file-pdf text-red-400';
+        category = 'documents';
+      } else if (['PNG', 'JPG', 'JPEG'].includes(extension)) {
+        iconClass = 'fa-file-image text-pink-400';
+        category = 'entities';
+      } else if (['CSV'].includes(extension)) {
+        iconClass = 'fa-file-csv text-teal-400';
+        category = 'knowledge';
+      }
+
+      // Show overlay progress
+      const overlay = document.getElementById('upload-progress-overlay');
+      const filenameLabel = document.getElementById('upload-filename');
+      const percentLabel = document.getElementById('upload-percent');
+      const progressBar = document.getElementById('upload-progress-bar');
+
+      filenameLabel.innerText = `Analyzing Vector Matrix for: ${name}`;
+      percentLabel.innerText = '0%';
+      progressBar.style.width = '0%';
+      overlay.classList.remove('hidden');
+
+      let percent = 0;
+      const interval = setInterval(() => {
+        percent += 10;
+        percentLabel.innerText = `${percent}%`;
+        progressBar.style.width = `${percent}%`;
+        
+        if (percent >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            overlay.classList.add('hidden');
+            
+            // Add to model array
+            const newObj = {
+              id: `mem-custom-${Date.now()}`,
+              title: name,
+              type: extension,
+              category: category,
+              date: 'Just Now',
+              size: sizeMB,
+              iconClass: iconClass
+            };
+            
+            memoryObjects.unshift(newObj);
+            
+            // Update stats
+            document.getElementById('stat-objects').innerText = memoryObjects.length + 1239;
+            if (category === 'documents') {
+              document.getElementById('stat-docs').innerText = memoryObjects.filter(o => o.category === 'documents').length + 574;
+            }
+
+            if (isMemoryTimelineView) {
+              renderTimelineView();
+            } else {
+              renderMemoryCards();
+            }
+            showToast(`Successfully embedded & mapped: ${name}`, 'success');
+          }, 300);
+        }
+      }, 150);
+    }
+
+
+    // ==================== PAGE 2: KNOWLEDGE GRAPH CODE ====================
+
+    function renderGraph() {
+      const nodesContainer = document.getElementById('svg-nodes-group');
+      const linksContainer = document.getElementById('svg-links-group');
+      
+      nodesContainer.innerHTML = '';
+      linksContainer.innerHTML = '';
+
+      // Render connection lines
+      graphLinks.forEach(link => {
+        const sourceNode = graphNodes.find(n => n.id === link.source);
+        const targetNode = graphNodes.find(n => n.id === link.target);
+
+        if (sourceNode && targetNode) {
+          // Check if either of the nodes is disabled via checkboxes
+          const sourceVisible = graphTypeFilters[sourceNode.type];
+          const targetVisible = graphTypeFilters[targetNode.type];
+          const isLinkVisible = sourceVisible && targetVisible;
+
+          // Check opacity logic based on selections
+          let linkOpacity = isLinkVisible ? 0.35 : 0.05;
+          let isHighlighted = false;
+          
+          if (selectedNodeId && isLinkVisible) {
+            if (link.source === selectedNodeId || link.target === selectedNodeId) {
+              linkOpacity = 1.0;
+              isHighlighted = true;
+            } else {
+              linkOpacity = 0.1;
+            }
+          }
+
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', sourceNode.x);
+          line.setAttribute('y1', sourceNode.y);
+          line.setAttribute('x2', targetNode.x);
+          line.setAttribute('y2', targetNode.y);
+          line.setAttribute('stroke', isHighlighted ? '#8B5CF6' : 'rgba(255, 255, 255, 0.2)');
+          line.setAttribute('stroke-width', isHighlighted ? '2' : '1.2');
+          line.setAttribute('opacity', linkOpacity);
+          
+          if (isHighlighted) {
+            line.setAttribute('class', 'animated-edge');
+          }
+
+          linksContainer.appendChild(line);
+        }
+      });
+
+      // Render nodes
+      graphNodes.forEach((node, i) => {
+        const nodeVisible = graphTypeFilters[node.type];
+        let nodeOpacity = nodeVisible ? 1.0 : 0.15;
+        let isSelected = selectedNodeId === node.id;
+
+        if (selectedNodeId && nodeVisible) {
+          if (selectedNodeId === node.id) {
+            nodeOpacity = 1.0;
+          } else {
+            // Check connection
+            const isConnected = graphLinks.some(link => 
+              (link.source === node.id && link.target === selectedNodeId) ||
+              (link.target === node.id && link.source === selectedNodeId)
+            );
+            nodeOpacity = isConnected ? 0.9 : 0.25;
+          }
+        }
+
+        // Color mapping
+        let fillColor = '#7C3AED'; // Purple Company
+        let shadowColor = 'rgba(124, 58, 237, 0.6)';
+        if (node.type === 'Customer') {
+          fillColor = '#3B82F6';
+          shadowColor = 'rgba(59, 130, 246, 0.6)';
+        } else if (node.type === 'Product') {
+          fillColor = '#10B981';
+          shadowColor = 'rgba(16, 185, 129, 0.6)';
+        } else if (node.type === 'Employee') {
+          fillColor = '#F59E0B';
+          shadowColor = 'rgba(245, 158, 11, 0.6)';
+        } else if (node.type === 'Decision') {
+          fillColor = '#EAB308';
+          shadowColor = 'rgba(234, 179, 8, 0.6)';
+        }
+
+        // Float speed classes based on modulus
+        const floatClass = i % 3 === 0 ? 'node-float-1' : (i % 3 === 1 ? 'node-float-2' : 'node-float-3');
+
+        // Node Group
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', `cursor-pointer transition-all duration-300 ${floatClass}`);
+        g.setAttribute('style', `transform-origin: ${node.x}px ${node.y}px;`);
+        g.setAttribute('opacity', nodeOpacity);
+        g.addEventListener('click', () => selectGraphNode(node.id));
+
+        // Pulsing halo if selected
+        if (isSelected && nodeVisible) {
+          const halo = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          halo.setAttribute('cx', node.x);
+          halo.setAttribute('cy', node.y);
+          halo.setAttribute('r', 16);
+          halo.setAttribute('fill', 'none');
+          halo.setAttribute('stroke', fillColor);
+          halo.setAttribute('stroke-width', '2.5');
+          halo.setAttribute('class', 'pulsing-halo');
+          g.appendChild(halo);
+        }
+
+        // Core Circle
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', node.x);
+        circle.setAttribute('cy', node.y);
+        circle.setAttribute('r', isSelected ? 12 : 9);
+        circle.setAttribute('fill', fillColor);
+        circle.setAttribute('stroke', '#050816');
+        circle.setAttribute('stroke-width', '2');
+        circle.setAttribute('style', `filter: drop-shadow(0 0 8px ${shadowColor});`);
+        g.appendChild(circle);
+
+        // Label
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', node.x);
+        text.setAttribute('y', node.y + (isSelected ? 26 : 22));
+        text.setAttribute('fill', isSelected ? '#ffffff' : '#94A3B8');
+        text.setAttribute('font-size', isSelected ? '10' : '8.5');
+        text.setAttribute('font-family', 'Inter, sans-serif');
+        text.setAttribute('font-weight', isSelected ? '700' : '500');
+        text.setAttribute('text-anchor', 'middle');
+        text.textContent = node.name;
+        g.appendChild(text);
+
+        nodesContainer.appendChild(g);
+      });
+    }
+
+    function selectGraphNode(id) {
+      selectedNodeId = id;
+      const node = graphNodes.find(n => n.id === id);
+      if (!node) return;
+
+      // Update node details right side panel
+      const panel = document.getElementById('node-detail-panel');
+
+      // Setup badge color
+      let badgeBg = 'bg-purple-500/10 text-purple-400 border-purple-500/20';
+      if (node.type === 'Customer') badgeBg = 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+      if (node.type === 'Product') badgeBg = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+      if (node.type === 'Employee') badgeBg = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+      if (node.type === 'Decision') badgeBg = 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
+
+      // Build Relationships HTML list
+      let relsHTML = '';
+      node.rels.forEach(rel => {
+        relsHTML += `
+          <li class="flex items-start gap-2 text-xs py-1">
+            <span class="text-purple-400 font-bold shrink-0">→</span>
+            <span class="text-textSecondary font-medium">${rel}</span>
+          </li>
+        `;
+      });
+
+      // Build Docs list HTML
+      let docsHTML = '';
+      node.docs.forEach(doc => {
+        docsHTML += `
+          <button onclick="queryMemoryInChat('${doc}')" class="w-full flex items-center justify-between p-2 bg-cardBg border border-cardBorder hover:border-purple-500/30 rounded-xl text-left text-xs transition-all text-white group mt-1.5">
+            <span class="truncate flex items-center gap-2"><i class="fa-regular fa-file text-textSecondary group-hover:text-purple-400"></i> ${doc}</span>
+            <i class="fa-solid fa-sparkles text-purple-400/0 group-hover:opacity-100 group-hover:text-purple-400 text-[10px] transition-all"></i>
+          </button>
+        `;
+      });
+
+      panel.innerHTML = `
+        <div class="space-y-4">
+          <!-- Back trigger for mobile / Header detail -->
+          <div class="flex justify-between items-start">
+            <span class="text-[9px] font-bold uppercase tracking-widest text-textSecondary">Extracted Node Specs</span>
+            <span class="text-xs px-2.5 py-0.5 border rounded-full font-bold uppercase ${badgeBg}">${node.type}</span>
+          </div>
+
+          <div>
+            <h3 class="text-base font-bold text-white tracking-tight">${node.name}</h3>
+            <p class="text-[10px] text-textSecondary mt-1">Vector Registry ID: ${node.id}</p>
+          </div>
+
+          <!-- Description -->
+          <div class="space-y-1.5">
+            <span class="text-[9px] font-bold uppercase tracking-wider text-textSecondary">Intelligence Bio</span>
+            <p class="text-xs text-white leading-relaxed bg-cardBg border border-cardBorder p-3 rounded-xl">${node.details}</p>
+          </div>
+
+          <!-- Core relationships link -->
+          <div class="space-y-2">
+            <span class="text-[9px] font-bold uppercase tracking-wider text-textSecondary">Mapped Links (${node.rels.length})</span>
+            <ul class="divide-y divide-cardBorder/30 bg-cardBg border border-cardBorder p-3 rounded-xl">
+              ${relsHTML}
+            </ul>
+          </div>
+
+          <!-- Associated files -->
+          <div class="space-y-2">
+            <span class="text-[9px] font-bold uppercase tracking-wider text-textSecondary">Origin Documents (${node.docs.length})</span>
+            <div>
+              ${docsHTML}
+            </div>
+          </div>
+        </div>
+      `;
+
+      renderGraph();
+    }
+
+    function toggleGraphTypeFilter(type, isChecked) {
+      graphTypeFilters[type] = isChecked;
+      renderGraph();
+    }
+
+    // Zoom Matrix controls
+    function zoomGraph(factor) {
+      graphZoom *= factor;
+      // Cap zoom limits
+      if (graphZoom < 0.6) graphZoom = 0.6;
+      if (graphZoom > 2.5) graphZoom = 2.5;
+      
+      applyGraphTransform();
+    }
+
+    function resetGraph() {
+      graphZoom = 1.0;
+      graphOffset = { x: 0, y: 0 };
+      applyGraphTransform();
+    }
+
+    function applyGraphTransform() {
+      const linksG = document.getElementById('svg-links-group');
+      const nodesG = document.getElementById('svg-nodes-group');
+      
+      linksG.setAttribute('transform', `scale(${graphZoom})`);
+      nodesG.setAttribute('transform', `scale(${graphZoom})`);
+    }
+
+
+    // ==================== PAGE 3: AI ASSISTANT CODE ====================
+
+    function renderChatMessages() {
+      const container = document.getElementById('chat-messages');
+      container.innerHTML = '';
+
+      chatHistory.forEach((msg, idx) => {
+        const isAI = msg.sender === 'ai';
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `flex flex-col max-w-[85%] ${isAI ? 'self-start mr-auto' : 'self-end ml-auto'} mt-3`;
+        
+        if (!isAI) {
+          // User Message Style
+          msgDiv.innerHTML = `
+            <div class="bg-purple-600 text-white text-xs px-4 py-3 rounded-2xl rounded-tr-none font-medium leading-relaxed shadow-lg">
+              ${msg.content}
+            </div>
+            <span class="text-[9px] text-textSecondary text-right mt-1 font-semibold select-none">Executive Staff</span>
+          `;
+        } else {
+          // AI Message Style
+          let citationsHTML = '';
+          if (msg.citations && msg.citations.length > 0) {
+            msg.citations.forEach(cit => {
+              citationsHTML += `
+                <span class="inline-flex items-center gap-1 text-[9px] font-bold text-purple-400 bg-purple-400/5 border border-purple-500/20 px-2 py-0.5 rounded-lg select-none cursor-pointer hover:bg-purple-500/10 transition-colors">
+                  <i class="fa-regular fa-file-lines text-[8px]"></i>
+                  ${cit}
+                </span>
+              `;
+            });
+          }
+
+          let traceHTML = '';
+          if (msg.trace) {
+            traceHTML = `
+              <details class="group mt-2 border border-cardBorder rounded-xl overflow-hidden text-[10px]" open>
+                <summary class="list-none flex justify-between items-center px-3 py-2 bg-cardBg hover:bg-cardBg/10 cursor-pointer text-textSecondary hover:text-white transition-all select-none">
+                  <span class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-code-merge text-purple-400 text-[9px]"></i> Reasoning Execution Trace</span>
+                  <i class="fa-solid fa-chevron-down text-[8px] group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <div class="p-3 bg-secondaryBg/80 text-textSecondary leading-relaxed border-t border-cardBorder space-y-1">
+                  ${msg.trace}
+                </div>
+              </details>
+            `;
+          }
+
+          msgDiv.innerHTML = `
+            <div class="glass-panel p-4 rounded-2xl rounded-tl-none space-y-3 shadow-md relative">
+              <!-- Confidence badge -->
+              <span class="absolute right-3 top-3 text-[9px] font-bold tracking-wide text-emerald-400 px-1.5 py-0.5 bg-emerald-400/10 border border-emerald-500/20 rounded-md select-none">
+                <i class="fa-solid fa-shield-halved text-[8px]"></i> ${msg.score}% Conf
+              </span>
+
+              <!-- Content text -->
+              <div class="text-xs text-white leading-relaxed pr-16">
+                ${msg.content}
+              </div>
+
+              <!-- Collapsible Trace -->
+              ${traceHTML}
+
+              <!-- Citation Chips -->
+              <div class="flex flex-wrap gap-1.5 pt-1">
+                ${citationsHTML}
+              </div>
+            </div>
+            <span class="text-[9px] text-textSecondary mt-1 font-semibold flex items-center gap-1 select-none">
+              <i class="fa-solid fa-sparkles text-[8px] text-purple-400"></i> πX Neural Engine v1.9
+            </span>
+          `;
+        }
+
+        container.appendChild(msgDiv);
+      });
+
+      // Scroll to bottom
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function handleChatKeydown(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendChatMessage();
+      }
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      // Add user message to history
+      chatHistory.push({ sender: 'user', content: text });
+      input.value = '';
+      renderChatMessages();
+
+      // Show streaming indicator
+      const streaming = document.getElementById('streaming-indicator');
+      streaming.classList.remove('hidden');
+      
+      const chatContainer = document.getElementById('chat-messages');
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+
+      // AI Response simulations
+      setTimeout(() => {
+        streaming.classList.add('hidden');
+        
+        let replyText = "Based on our active Memory workspace and Graph Intelligence nodes, I recommend proceeding with Scenario B (Pricing Lift). The projections indicate +$1.2M incremental revenue capture over the next 12 months with high-confidence probability vectors.";
+        let trace = "1. Scanned 9 memory documents.<br>2. Selected active pricing Restructuring specifications.<br>3. Extracted Standard tier limits.";
+        let citations = ['Customer Acquisition Metrics.xlsx', 'Product Roadmap & Milestones.docx'];
+        let conf = 93;
+
+        // Custom Context Analysis based on input tags
+        const lowerText = text.toLowerCase();
+        if (lowerText.includes('competitor') || lowerText.includes('market')) {
+          replyText = "Competitor mapping models trace that standard pricing boundaries on external products average $75/mo. repointing our API Limits to capped levels recovers direct custom tier acquisition vectors.";
+          trace = "1. Consulted Competitor Analysis Presentation.pptx.<br>2. Pulled regional SaaS averages across APAC & EMEA.";
+          citations = ['Competitor Analysis Presentation.pptx'];
+          conf = 95;
+        } else if (lowerText.includes('database') || lowerText.includes('postgres') || lowerText.includes('postgres')) {
+          replyText = "Aurora PostgreSQL database clusters show optimal scale capabilities. Benchmarks prove vector retrieval is resolved within sub-millisecond ranges (8.2ms p99) under heavy concurrency layers.";
+          trace = "1. Parsed technical vector index notes.<br>2. Compared Postgres pgvector benchmarks with standalone cluster indexes.";
+          citations = ['Employee Directory & Skills Matrix.xlsx'];
+          conf = 89;
+        } else if (lowerText.includes('pricing') || lowerText.includes('tier')) {
+          replyText = "Simulations for Standard plan limits reveal that capping API calls to 10k/mo would drive 18% of mid-market client integrations directly to Enterprise contracts within 1 Quarter.";
+          trace = "1. Scanned historical contract transitions.<br>2. Synthesized pricing Restructuring proposal values.";
+          citations = ['Q4 Financial Performance Report.pdf', 'Customer Acquisition Metrics.xlsx'];
+          conf = 94;
+        }
+
+        chatHistory.push({
+          sender: 'ai',
+          content: replyText,
+          score: conf,
+          citations: citations,
+          trace: document.getElementById('reasoning-toggle').checked ? trace : null
+        });
+
+        renderChatMessages();
+        showToast('AI response stream received', 'success');
+      }, 1500);
+    }
+
+    function clearChatHistory() {
+      chatHistory = [];
+      renderChatMessages();
+      showToast('Chat history cleared', 'warn');
+    }
+
+    function triggerChatUpload() {
+      document.getElementById('chat-file-input').click();
+    }
+
+    function handleChatFileSelect(event) {
+      const files = event.target.files;
+      if (files.length > 0) {
+        showToast(`File attached as temporary chat context: ${files[0].name}`, 'success');
+      }
+    }
+
+    function updateModelDisplay() {
+      const select = document.getElementById('chat-model-select');
+      const val = select.value;
+      currentModel = val;
+
+      const display = document.getElementById('active-model-display');
+      if (val === 'gpt-4o') display.innerText = 'GPT-4o Proxy Ingestion';
+      if (val === 'claude-35') display.innerText = 'Claude 3.5 Sonnet';
+      if (val === 'pix-local') display.innerText = 'πX-Local-13B (Enterprise Core)';
+    }
+
+    function updateTemperature(val) {
+      temperatureValue = (val / 100).toFixed(1);
+      document.getElementById('temp-val').innerText = temperatureValue;
+    }
+
+
+    // ==================== PAGE 4: DECISION CENTER CODE ====================
+
+    function renderDecisions() {
+      const grid = document.getElementById('decisions-grid');
+      const filtered = decisionsData.filter(item => {
+        if (decisionFilter === 'all') return true;
+        return item.status === decisionFilter;
+      });
+
+      document.getElementById('displayed-decisions-count').innerText = filtered.length;
+      grid.innerHTML = '';
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-16 text-center space-y-4">
+            <div class="w-12 h-12 bg-cardBg border border-cardBorder rounded-full flex items-center justify-center mx-auto text-textSecondary"><i class="fa-solid fa-list-check text-xl"></i></div>
+            <p class="text-xs text-textSecondary font-medium">No proposals found under this filter.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        
+        // Status styles
+        let statusBadge = '<span class="text-[9px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-500/20 px-2 py-0.5 rounded-full">Pending REVIEW</span>';
+        let statusBorderClass = 'border-cardBorder';
+        let actionsDisabled = false;
+
+        if (item.status === 'approved') {
+          statusBadge = '<span class="text-[9px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-400/10 border border-emerald-500/20 px-2 py-0.5 rounded-full"><i class="fa-solid fa-circle-check"></i> EXECUTED / APPROVED</span>';
+          statusBorderClass = 'border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.08)]';
+          actionsDisabled = true;
+        } else if (item.status === 'review') {
+          statusBadge = '<span class="text-[9px] font-bold uppercase tracking-wider text-orange-400 bg-orange-400/10 border border-orange-500/20 px-2 py-0.5 rounded-full">In Active Review</span>';
+          statusBorderClass = 'border-orange-500/30';
+        } else if (item.status === 'rejected') {
+          statusBadge = '<span class="text-[9px] font-bold uppercase tracking-wider text-red-400 bg-red-400/10 border border-red-500/20 px-2 py-0.5 rounded-full">REJECTED / SUSPENDED</span>';
+          statusBorderClass = 'border-red-500/30 opacity-70';
+          actionsDisabled = true;
+        }
+
+        // Build options html
+        let optionsHTML = '';
+        item.options.forEach(opt => {
+          if (opt.recommended) {
+            optionsHTML += `
+              <div class="p-3 bg-purple-500/10 border border-purple-500/30 rounded-xl flex items-center justify-between group">
+                <span class="text-xs text-white font-medium">${opt.text}</span>
+                <span class="text-[8px] font-bold uppercase bg-purple-500 text-white px-2 py-0.5 rounded shadow-[0_0_8px_#7C3AED] shrink-0 ml-4 flex items-center gap-1"><i class="fa-solid fa-sparkles"></i> AI Choice</span>
+              </div>
+            `;
+          } else {
+            optionsHTML += `
+              <div class="p-3 bg-cardBg border border-cardBorder rounded-xl flex items-center justify-between">
+                <span class="text-xs text-textSecondary">${opt.text}</span>
+              </div>
+            `;
+          }
+        });
+
+        // Set action buttons disabled or active states
+        let buttonsHTML = '';
+        if (!actionsDisabled) {
+          buttonsHTML = `
+            <div class="grid grid-cols-3 gap-3">
+              <button onclick="updateDecisionStatus('${item.id}', 'approved')" class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl transition-colors shadow-lg shadow-emerald-950/20 flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-circle-check"></i> Approve
+              </button>
+              <button onclick="updateDecisionStatus('${item.id}', 'review')" class="py-2.5 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-400 text-xs font-semibold rounded-xl transition-colors flex items-center justify-center gap-1.5">
+                <i class="fa-regular fa-clock"></i> Hold Review
+              </button>
+              <button onclick="updateDecisionStatus('${item.id}', 'rejected')" class="py-2.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-semibold rounded-xl transition-colors flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-ban"></i> Reject
+              </button>
+            </div>
+          `;
+        } else {
+          buttonsHTML = `
+            <div class="text-center p-2.5 bg-cardBg border border-cardBorder rounded-xl text-[10px] text-textSecondary font-semibold">
+              Action Lock Applied • Signature Authenticated
+            </div>
+          `;
+        }
+
+        card.className = `glass-panel p-5 rounded-2xl flex flex-col justify-between ${statusBorderClass} transition-all duration-300 gap-4`;
+        card.innerHTML = `
+          <!-- Header -->
+          <div class="flex justify-between items-start">
+            <div class="space-y-1">
+              <span class="text-[9px] font-bold uppercase tracking-widest text-textSecondary">Dec-UUID: ${item.id}</span>
+              <h3 class="text-base font-bold text-white tracking-tight">${item.title}</h3>
+            </div>
+            ${statusBadge}
+          </div>
+
+          <!-- Problem statement -->
+          <div class="space-y-1">
+            <span class="text-[9px] font-bold uppercase tracking-wider text-textSecondary">Proposed Intervention Target</span>
+            <p class="text-xs text-white leading-relaxed font-semibold">${item.problem}</p>
+          </div>
+
+          <!-- Context summary -->
+          <div class="space-y-1">
+            <span class="text-[9px] font-bold uppercase tracking-wider text-textSecondary">Mathematical Grounding Context</span>
+            <p class="text-xs text-textSecondary leading-relaxed">${item.context}</p>
+          </div>
+
+          <!-- Evidence Badge -->
+          <div class="flex items-center gap-4 text-[10px]">
+            <span class="px-2 py-0.5 bg-white/5 border border-white/10 text-white rounded font-medium flex items-center gap-1"><i class="fa-solid fa-code-branch"></i> ${item.evidence} vector sources</span>
+            <span class="px-2 py-0.5 bg-${item.riskColor}/10 border border-${item.riskColor}/20 text-${item.riskColor} rounded font-semibold flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> Risk: ${item.risk}</span>
+          </div>
+
+          <!-- Options -->
+          <div class="space-y-2">
+            <span class="text-[9px] font-bold uppercase tracking-wider text-textSecondary">Analyzed Resolution Vectors</span>
+            <div class="space-y-2">
+              ${optionsHTML}
+            </div>
+          </div>
+
+          <!-- Confidence Score & Actions -->
+          <div class="border-t border-cardBorder pt-4 mt-1 flex flex-col gap-4">
+            <div class="flex justify-between items-center">
+              <span class="text-[10px] font-bold text-textSecondary uppercase tracking-wider">Neural Engine Confidence</span>
+              <div class="flex items-baseline gap-1">
+                <span class="text-2xl font-extrabold text-purple-400">${item.score}%</span>
+                <span class="text-[9px] text-textSecondary font-semibold">probability success rate</span>
+              </div>
+            </div>
+            ${buttonsHTML}
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    function setDecisionFilter(status) {
+      decisionFilter = status;
+      document.querySelectorAll('.dec-filter-btn').forEach(btn => {
+        btn.classList.remove('bg-purple-500/20', 'text-white');
+        btn.classList.add('text-textSecondary');
+      });
+      document.getElementById(`dec-filter-${status}`).classList.add('bg-purple-500/20', 'text-white');
+      renderDecisions();
+    }
+
+    function updateDecisionStatus(id, newStatus) {
+      const idx = decisionsData.findIndex(d => d.id === id);
+      if (idx !== -1) {
+        decisionsData[idx].status = newStatus;
+        
+        // Update stats
+        const pending = decisionsData.filter(d => d.status === 'pending' || d.status === 'review').length;
+        const approved = decisionsData.filter(d => d.status === 'approved').length;
+        document.getElementById('dec-count-pending').innerText = pending;
+        document.getElementById('dec-count-approved').innerText = approved;
+
+        renderDecisions();
+        showToast(`Strategic directive [${decisionsData[idx].title}] status changed to ${newStatus.toUpperCase()}`, 'success');
+      }
+    }
+
+    function createNewDecision() {
+      const newD = {
+        id: `dec-${Date.now()}`,
+        title: 'New Workspace Asset Routing',
+        status: 'pending',
+        problem: 'Direct vector sync for incoming uploaded documents must be partitioned.',
+        context: 'Unregulated global replication results in latency spikes on on-prem configurations. Route through specific security checkpoints.',
+        evidence: 2,
+        options: [
+          { text: 'Option A: Segment uploads using direct local storage buckets.', recommended: true },
+          { text: 'Option B: Replicate across Dublin sovereign server regions.' }
+        ],
+        risk: 'Low',
+        riskColor: 'emerald-400',
+        score: 92
+      };
+      decisionsData.unshift(newD);
+      renderDecisions();
+      showToast('New Strategic Decision proposed by Core Model', 'success');
+    }
+
+
+    // ==================== PAGE 5: SIMULATION CENTER CODE ====================
+
+    function usePromptTemplate(prompt) {
+      document.getElementById('simulation-input').value = prompt;
+      showToast('Simulation directive prefilled', 'info');
+    }
+
+    function runSimulationAnimation() {
+      const btn = document.getElementById('run-simulation-btn');
+      const input = document.getElementById('simulation-input').value.trim();
+      
+      if (!input) {
+        showToast('Please outline a what-if query first', 'warn');
+        return;
+      }
+
+      simulationLoading = true;
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Running GPU Ingestion Core...`;
+      
+      showToast('Directing scenario variables to CUDA compute node', 'info');
+
+      setTimeout(() => {
+        // Randomize some metric values to prove calculations took place!
+        const rand0Rev = (14.2 + (Math.random() - 0.5) * 0.1).toFixed(1);
+        const rand1Rev = (1.2 + (Math.random() - 0.5) * 0.2).toFixed(1);
+        const rand2Rev = (450 + (Math.random() - 0.5) * 30).toFixed(0);
+
+        document.getElementById('sc0-revenue').innerHTML = `$${rand0Rev}M <span class="text-textSecondary font-normal text-[10px]">(Baseline)</span>`;
+        document.getElementById('sc1-revenue').innerHTML = `+$${rand1Rev}M <span class="text-textSecondary font-normal text-[10px]">(+8.4%)</span>`;
+        document.getElementById('sc2-revenue').innerHTML = `-$${rand2Rev}K <span class="text-textSecondary font-normal text-[10px]">(-3.1%)</span>`;
+
+        // Update SVG Projection Curves slightly
+        scenariosData.forEach(sc => {
+          sc.points = sc.points.map(pt => pt + Math.round((Math.random() - 0.5) * 4));
+        });
+
+        renderProjectionChart();
+
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-circle-play"></i> Run Simulation Model`;
+        showToast('Simulation complete. 12-Month revenue forecasting vectors recalculated.', 'success');
+      }, 1400);
+    }
+
+    function showRiskDetail(riskKey) {
+      const detail = document.getElementById('risk-matrix-detail');
+      
+      let info = '';
+      if (riskKey === 'churn') {
+        info = `<span class="text-red-400 font-bold">Price Churn (High Prob / High Impact)</span>: Standard pricing limits may drive 14% of mid-tier developers to open source self-hosted databases within 30 days.`;
+      } else if (riskKey === 'burnout') {
+        info = `<span class="text-amber-400 font-bold">Tech Debt (High Prob / Low Impact)</span>: Forcing localized node builds increases standard core team maintenance latency by 12 hours/week.`;
+      } else if (riskKey === 'competitor') {
+        info = `<span class="text-yellow-400 font-bold">Competitor Counter (Low Prob / High Impact)</span>: Competitor tier could launch a direct free tier in Europe to combat our Expansion Campaign.`;
+      } else if (riskKey === 'latency') {
+        info = `<span class="text-emerald-400 font-bold">System Latency (Low Prob / Low Impact)</span>: Local vector cluster scaling causes 12ms degradation on secondary endpoints.`;
+      }
+
+      detail.innerHTML = `<p class="text-xs text-white">${info}</p>`;
+      showToast('Risk analysis context updated', 'info');
+    }
+
+    function focusScenarioChart(idx) {
+      selectedScenarioIndex = idx;
+      
+      // Update comparison cards layout
+      for (let i = 0; i < 3; i++) {
+        const card = document.getElementById(`scenario-card-${i}`);
+        card.classList.remove('border-purple-500', 'shadow-[0_0_15px_rgba(124,58,237,0.15)]');
+        const badge = card.querySelector('.absolute');
+        if (badge) badge.remove();
+      }
+
+      const activeCard = document.getElementById(`scenario-card-${idx}`);
+      activeCard.classList.add('border-purple-500', 'shadow-[0_0_15px_rgba(124,58,237,0.15)]');
+      
+      const indicatorBadge = document.createElement('div');
+      indicatorBadge.className = 'absolute -top-2.5 right-4 px-2.5 py-0.5 bg-purple-600 border border-purple-500/30 text-[9px] font-bold text-white rounded-full shadow-[0_0_8px_#7C3AED]';
+      indicatorBadge.innerText = 'Selected';
+      activeCard.appendChild(indicatorBadge);
+
+      renderProjectionChart();
+      showToast(`Projection chart focused on scenario: ${scenariosData[idx].name}`, 'info');
+    }
+
+    function renderProjectionChart() {
+      const svgPaths = document.getElementById('chart-paths-group');
+      const interactiveGroup = document.getElementById('chart-interactive-overlay');
+      
+      svgPaths.innerHTML = '';
+      interactiveGroup.innerHTML = '';
+
+      // Chart configuration limits
+      const xStart = 80;
+      const xEnd = 950;
+      const xSpacing = (xEnd - xStart) / 11;
+      const yMin = 220;
+      const yMax = 20;
+
+      // Draw Paths
+      scenariosData.forEach((sc, scIdx) => {
+        let isFocused = selectedScenarioIndex === scIdx;
+        
+        let pathD = '';
+        sc.points.forEach((pt, ptIdx) => {
+          // Normalize point (80 to 160 range mapping to coordinates 220 to 20)
+          const pct = (pt - 80) / (160 - 80);
+          const yCoord = yMin - pct * (yMin - yMax);
+          const xCoord = xStart + ptIdx * xSpacing;
+
+          if (ptIdx === 0) {
+            pathD += `M ${xCoord} ${yCoord}`;
+          } else {
+            // Cubic Bezier curve calculation
+            const prevX = xStart + (ptIdx - 1) * xSpacing;
+            const prevPct = (sc.points[ptIdx - 1] - 80) / (160 - 80);
+            const prevY = yMin - prevPct * (yMin - yMax);
+            
+            const cp1x = prevX + xSpacing / 2;
+            const cp1y = prevY;
+            const cp2x = prevX + xSpacing / 2;
+            const cp2y = yCoord;
+
+            pathD += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${xCoord} ${yCoord}`;
+          }
+        });
+
+        // Add glow filters for paths
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', pathD);
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke', sc.color);
+        path.setAttribute('stroke-width', isFocused ? '4' : '1.8');
+        path.setAttribute('opacity', isFocused ? '1.0' : '0.2');
+        path.setAttribute('class', 'chart-line');
+        if (isFocused) {
+          path.setAttribute('style', `filter: drop-shadow(0 0 10px ${sc.color}80);`);
+        }
+        svgPaths.appendChild(path);
+
+        // Render Dots on focused line
+        if (isFocused) {
+          sc.points.forEach((pt, ptIdx) => {
+            const pct = (pt - 80) / (160 - 80);
+            const yCoord = yMin - pct * (yMin - yMax);
+            const xCoord = xStart + ptIdx * xSpacing;
+
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', xCoord);
+            circle.setAttribute('cy', yCoord);
+            circle.setAttribute('r', '5.5');
+            circle.setAttribute('fill', sc.color);
+            circle.setAttribute('stroke', '#050816');
+            circle.setAttribute('stroke-width', '2.5');
+            circle.setAttribute('class', 'chart-dot');
+            interactiveGroup.appendChild(circle);
+          });
+        }
+      });
+    }
+
+    // Chart tooltips mapping
+    function initChartHovers() {
+      const hoverGroup = document.getElementById('chart-hover-cols');
+      hoverGroup.innerHTML = '';
+
+      const xStart = 80;
+      const xEnd = 950;
+      const xSpacing = (xEnd - xStart) / 11;
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+      for (let i = 0; i < 12; i++) {
+        const xCoord = xStart + i * xSpacing;
+        const width = xSpacing;
+
+        // Hover anchor rectangles
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', xCoord - width / 2);
+        rect.setAttribute('y', '10');
+        rect.setAttribute('width', width);
+        rect.setAttribute('height', '220');
+        rect.setAttribute('fill', 'rgba(255, 255, 255, 0)');
+        rect.setAttribute('class', 'cursor-crosshair');
+        
+        rect.addEventListener('mouseover', (e) => showChartTooltip(e, i, months[i]));
+        rect.addEventListener('mousemove', (e) => positionTooltip(e));
+        rect.addEventListener('mouseout', () => hideChartTooltip());
+
+        hoverGroup.appendChild(rect);
+      }
+    }
+
+    function showChartTooltip(event, idx, monthName) {
+      const tooltip = document.getElementById('chart-tooltip');
+      const val0 = (scenariosData[0].points[idx] / 10).toFixed(1);
+      const val1 = (scenariosData[1].points[idx] / 10).toFixed(1);
+      const val2 = (scenariosData[2].points[idx] / 10).toFixed(1);
+
+      document.getElementById('tooltip-month').innerText = `${monthName} Cumulative Projection`;
+      document.getElementById('tooltip-val-0').innerText = `$${val0}M`;
+      document.getElementById('tooltip-val-1').innerText = `$${val1}M`;
+      document.getElementById('tooltip-val-2').innerText = `$${val2}M`;
+
+      tooltip.classList.remove('hidden');
+      positionTooltip(event);
+    }
+
+    function positionTooltip(event) {
+      const tooltip = document.getElementById('chart-tooltip');
+      const container = document.getElementById('page-simulation');
+      
+      // Calculate cursor position relative to page scroll wrapper
+      const rect = container.getBoundingClientRect();
+      const x = event.clientX - rect.left + 15;
+      const y = event.clientY - rect.top + container.scrollTop - 80;
+
+      tooltip.style.left = `${x}px`;
+      tooltip.style.top = `${y}px`;
+    }
+
+    function hideChartTooltip() {
+      document.getElementById('chart-tooltip').classList.add('hidden');
+    }
+
+    function showScenarioModal() {
+      showToast('New Strategic Scenario framework initialized', 'info');
+    }
+  </script>
+
+</body>
+</html>

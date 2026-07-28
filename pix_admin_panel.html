@@ -1,0 +1,3134 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#050816]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>πX Admin Panel & Analytics Center</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primaryBg: '#050816',
+            secondaryBg: '#0B1020',
+            cardBg: 'rgba(255, 255, 255, 0.03)',
+            cardBorder: 'rgba(255, 255, 255, 0.08)',
+            primaryAccent: '#7C3AED',
+            secondaryAccent: '#A855F7',
+            aiGlow: '#8B5CF6',
+            textPrimary: '#F8FAFC',
+            textSecondary: '#94A3B8'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          borderRadius: {
+            'card': '16px',
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/css">
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #050816;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(139, 92, 246, 0.4);
+    }
+
+    /* Custom styles for animations & glows */
+    .glow-purple {
+      box-shadow: 0 0 25px -5px rgba(124, 58, 237, 0.4);
+    }
+    .glow-ai-border:focus {
+      outline: none;
+      border-color: #8B5CF6;
+      box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+    }
+    .glow-card {
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .glass-input {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.2s ease-in-out;
+    }
+    .glass-input:focus {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: #8B5CF6;
+      box-shadow: 0 0 12px rgba(139, 92, 246, 0.25);
+      outline: none;
+    }
+    
+    /* CSS Switches */
+    .switch-checkbox:checked + .switch-label {
+      background-color: #7C3AED;
+      box-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
+    }
+    .switch-checkbox:checked + .switch-label .switch-dot {
+      transform: translateX(1.5rem);
+    }
+
+    /* Table sorting header styles */
+    th.sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+    th.sortable:hover {
+      color: #F8FAFC;
+      background: rgba(255, 255, 255, 0.02);
+    }
+  </style>
+</head>
+<body class="h-full bg-primaryBg text-textPrimary font-sans antialiased flex flex-col overflow-x-hidden">
+
+  <!-- TOP HEADER BANNER (Glow effect) -->
+  <header class="relative z-10 border-b border-cardBorder bg-secondaryBg/90 backdrop-blur-md px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+    <!-- Brand / Logo -->
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-primaryAccent to-secondaryAccent p-[1px] flex items-center justify-center glow-purple">
+        <div class="w-full h-full bg-[#050816] rounded-[11px] flex items-center justify-center">
+          <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primaryAccent to-secondaryAccent">πX</span>
+        </div>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+          πX Control Hub
+          <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Operational
+          </span>
+        </h1>
+        <p class="text-xs text-textSecondary">Enterprise Management & Analytics Suite</p>
+      </div>
+    </div>
+
+    <!-- MAIN NAVIGATION TABS -->
+    <nav class="flex items-center gap-1 bg-primaryBg p-1 rounded-xl border border-cardBorder">
+      <button onclick="switchTab('analytics')" id="tab-btn-analytics" class="tab-btn px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 text-white bg-secondaryBg shadow border border-cardBorder">
+        <svg class="w-4 h-4 text-primaryAccent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        Analytics Center
+      </button>
+      <button onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 text-textSecondary hover:text-white">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+        Settings
+      </button>
+      <button onclick="switchTab('users')" id="tab-btn-users" class="tab-btn px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 text-textSecondary hover:text-white">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        Users & Roles
+      </button>
+      <button onclick="switchTab('providers')" id="tab-btn-providers" class="tab-btn px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 text-textSecondary hover:text-white">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+        AI Providers
+      </button>
+      <button onclick="switchTab('security')" id="tab-btn-security" class="tab-btn px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 text-textSecondary hover:text-white">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        Security & Audit
+      </button>
+      <button onclick="switchTab('billing')" id="tab-btn-billing" class="tab-btn px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 text-textSecondary hover:text-white">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+        Billing
+      </button>
+    </nav>
+
+    <!-- USER PANEL / DATE RANGE CHANGER -->
+    <div class="flex items-center gap-3">
+      <!-- User Profile (Simulated) -->
+      <div class="flex items-center gap-2.5 pl-3 border-l border-cardBorder">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center font-bold text-xs text-white border border-white/10 glow-purple">
+          EP
+        </div>
+        <div class="hidden sm:block text-left">
+          <p class="text-xs font-semibold text-white">Dr. Evelyn Pierce</p>
+          <p class="text-[10px] text-textSecondary">System Owner</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- TOAST CONTAINER (Lower right floating toast notifications) -->
+  <div id="toast-container" class="fixed bottom-6 right-6 flex flex-col gap-3 z-50"></div>
+
+  <!-- MAIN VIEWPORT CONTENT -->
+  <main class="flex-1 p-6 md:p-8 max-w-[1600px] w-full mx-auto relative">
+
+    <!-- TAB 1: ANALYTICS CENTER -->
+    <section id="tab-content-analytics" class="tab-pane space-y-6">
+      
+      <!-- Analytics Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-white">Enterprise Analytics</h2>
+          <p class="text-sm text-textSecondary mt-0.5">Real-time compute cost, system utilization, latency metrics, and API accuracy dashboard.</p>
+        </div>
+        <!-- Time Range Selector -->
+        <div class="inline-flex bg-secondaryBg p-1 rounded-xl border border-cardBorder">
+          <button onclick="changeTimeRange('7d')" id="range-btn-7d" class="range-btn px-3.5 py-1.5 text-xs font-medium rounded-lg text-textSecondary hover:text-white transition-all">7 days</button>
+          <button onclick="changeTimeRange('30d')" id="range-btn-30d" class="range-btn px-3.5 py-1.5 text-xs font-medium rounded-lg text-white bg-cardBg border border-cardBorder shadow transition-all">30 days</button>
+          <button onclick="changeTimeRange('90d')" id="range-btn-90d" class="range-btn px-3.5 py-1.5 text-xs font-medium rounded-lg text-textSecondary hover:text-white transition-all">90 days</button>
+        </div>
+      </div>
+
+      <!-- KPI METRIC CARDS (6 cards in 2 rows or 1 responsive grid) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
+        
+        <!-- KPI 1: AI Cost -->
+        <div class="bg-cardBg border border-cardBorder rounded-card p-5 glow-card relative overflow-hidden group hover:border-purple-500/30 transition-all duration-300">
+          <div class="absolute -right-3 -top-3 w-16 h-16 bg-purple-600/10 rounded-full blur-xl group-hover:bg-purple-600/20 transition-all"></div>
+          <p class="text-xs font-semibold text-textSecondary uppercase tracking-wider">AI Compute Cost</p>
+          <h3 id="kpi-cost" class="text-2xl font-bold text-white mt-2 font-mono">$12,847.40</h3>
+          <div class="flex items-center gap-1.5 mt-2.5">
+            <span id="kpi-cost-pct" class="inline-flex items-center text-[11px] font-semibold text-emerald-400">
+              <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+              4.2%
+            </span>
+            <span class="text-[10px] text-textSecondary">vs previous period</span>
+          </div>
+        </div>
+
+        <!-- KPI 2: System Performance -->
+        <div class="bg-cardBg border border-cardBorder rounded-card p-5 glow-card relative overflow-hidden group hover:border-purple-500/30 transition-all duration-300">
+          <div class="absolute -right-3 -top-3 w-16 h-16 bg-emerald-600/10 rounded-full blur-xl group-hover:bg-emerald-600/20 transition-all"></div>
+          <p class="text-xs font-semibold text-textSecondary uppercase tracking-wider">System Performance</p>
+          <h3 id="kpi-perf" class="text-2xl font-bold text-white mt-2 font-mono">99.24%</h3>
+          <div class="flex items-center gap-1.5 mt-2.5">
+            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">
+              Stable
+            </span>
+            <span class="text-[10px] text-textSecondary">99.9% SLAs met</span>
+          </div>
+        </div>
+
+        <!-- KPI 3: Avg Latency -->
+        <div class="bg-cardBg border border-cardBorder rounded-card p-5 glow-card relative overflow-hidden group hover:border-purple-500/30 transition-all duration-300">
+          <div class="absolute -right-3 -top-3 w-16 h-16 bg-blue-600/10 rounded-full blur-xl group-hover:bg-blue-600/20 transition-all"></div>
+          <p class="text-xs font-semibold text-textSecondary uppercase tracking-wider">Avg Response Latency</p>
+          <h3 id="kpi-latency" class="text-2xl font-bold text-white mt-2 font-mono">47.2ms</h3>
+          <div class="flex items-center gap-1.5 mt-2.5">
+            <span id="kpi-latency-pct" class="inline-flex items-center text-[11px] font-semibold text-emerald-400">
+              <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+              12% faster
+            </span>
+          </div>
+        </div>
+
+        <!-- KPI 4: Accuracy -->
+        <div class="bg-cardBg border border-cardBorder rounded-card p-5 glow-card relative overflow-hidden group hover:border-purple-500/30 transition-all duration-300">
+          <div class="absolute -right-3 -top-3 w-16 h-16 bg-indigo-600/10 rounded-full blur-xl group-hover:bg-indigo-600/20 transition-all"></div>
+          <p class="text-xs font-semibold text-textSecondary uppercase tracking-wider">Model Accuracy</p>
+          <h3 id="kpi-accuracy" class="text-2xl font-bold text-white mt-2 font-mono">97.10%</h3>
+          <div class="flex items-center gap-1.5 mt-2.5">
+            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/15">
+              High Fidelity
+            </span>
+            <span class="text-[10px] text-textSecondary">0.05% Hallucinations</span>
+          </div>
+        </div>
+
+        <!-- KPI 5: Total Requests -->
+        <div class="bg-cardBg border border-cardBorder rounded-card p-5 glow-card relative overflow-hidden group hover:border-purple-500/30 transition-all duration-300">
+          <div class="absolute -right-3 -top-3 w-16 h-16 bg-pink-600/10 rounded-full blur-xl group-hover:bg-pink-600/20 transition-all"></div>
+          <p class="text-xs font-semibold text-textSecondary uppercase tracking-wider">Total API Requests</p>
+          <h3 id="kpi-requests" class="text-2xl font-bold text-white mt-2 font-mono">2,410,250</h3>
+          <div class="flex items-center gap-1.5 mt-2.5">
+            <span id="kpi-requests-pct" class="inline-flex items-center text-[11px] font-semibold text-emerald-400">
+              <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg>
+              18.4%
+            </span>
+            <span class="text-[10px] text-textSecondary">vs previous period</span>
+          </div>
+        </div>
+
+        <!-- KPI 6: Knowledge Growth -->
+        <div class="bg-cardBg border border-cardBorder rounded-card p-5 glow-card relative overflow-hidden group hover:border-purple-500/30 transition-all duration-300">
+          <div class="absolute -right-3 -top-3 w-16 h-16 bg-violet-600/10 rounded-full blur-xl group-hover:bg-violet-600/20 transition-all"></div>
+          <p class="text-xs font-semibold text-textSecondary uppercase tracking-wider">Knowledge Growth</p>
+          <h3 id="kpi-growth" class="text-2xl font-bold text-white mt-2 font-mono">+12.4%</h3>
+          <div class="flex items-center gap-1.5 mt-2.5">
+            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-violet-500/10 text-violet-400 border border-violet-500/15">
+              14.2k nodes
+            </span>
+            <span class="text-[10px] text-textSecondary">Active context index</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CHARTS SECTION (2x2 grid) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- CHART 1: AI Cost Over Time (SVG Line Chart) -->
+        <div class="bg-cardBg border border-cardBorder rounded-card p-5 glow-card flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h4 class="font-bold text-white text-sm">AI Cost Over Time ($)</h4>
+              <p class="text-xs text-textSecondary">Aggregated token cost across LLM models</p>
+            </div>
+            <div id="chart-cost-tooltip-display" class="text-xs font-mono text-secondaryAccent px-2.5 py-1 bg-secondaryAccent/10 border border-secondaryAccent/20 rounded-lg hidden"></div>
+          </div>
+          <div class="relative w-full h-[250px] flex items-center justify-center">
+            <!-- Custom Dynamic SVG Line Chart -->
+            <svg id="svg-cost-chart" class="w-full h-full" viewBox="0 0 800 250" preserveAspectRatio="none">
+              <!-- Definitions for gradients -->
+              <defs>
+                <linearGradient id="area-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.35" />
+                  <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0.0" />
+                </linearGradient>
+                <linearGradient id="line-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#7C3AED" />
+                  <stop offset="50%" stop-color="#A855F7" />
+                  <stop offset="100%" stop-color="#8B5CF6" />
+                </linearGradient>
+                <filter id="svg-glow">
+                  <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              <!-- Grid Lines -->
+              <g id="cost-grid-lines"></g>
+              <!-- Area Fill -->
+              <path id="cost-area-path" d="" fill="url(#area-grad)"></path>
+              <!-- Line -->
+              <path id="cost-line-path" d="" fill="none" stroke="url(#line-grad)" stroke-width="3" filter="url(#svg-glow)"></path>
+              <!-- Hover dot tracking -->
+              <circle id="cost-hover-dot" cx="0" cy="0" r="6" fill="#8B5CF6" stroke="#F8FAFC" stroke-width="2.5" class="hidden" filter="url(#svg-glow)"></circle>
+            </svg>
+            <!-- X and Y Axes markers positioned on top -->
+            <div class="absolute bottom-1 left-2 right-2 flex justify-between text-[9px] text-textSecondary font-mono pointer-events-none" id="cost-x-labels"></div>
+          </div>
+        </div>
+
+        <!-- CHART 2: Request Volume (SVG Bar Chart) -->
+        <div class="bg-cardBg border border-cardBorder rounded-card p-5 glow-card">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h4 class="font-bold text-white text-sm">Request Volume</h4>
+              <p class="text-xs text-textSecondary">Daily volume of incoming API queries</p>
+            </div>
+            <span class="text-xs text-emerald-400 font-mono font-bold" id="bar-total-val"></span>
+          </div>
+          <div class="w-full h-[250px] relative">
+            <svg id="svg-bar-chart" class="w-full h-full" viewBox="0 0 600 250" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="bar-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#A855F7" stop-opacity="0.9" />
+                  <stop offset="100%" stop-color="#7C3AED" stop-opacity="0.3" />
+                </linearGradient>
+              </defs>
+              <g id="bar-grid-lines"></g>
+              <!-- Group for bar elements -->
+              <g id="bars-container"></g>
+            </svg>
+            <div class="absolute bottom-1 left-1 right-1 flex justify-between px-4 text-[9px] text-textSecondary font-mono pointer-events-none" id="bar-x-labels"></div>
+          </div>
+        </div>
+
+        <!-- CHART 3: Latency Distribution (SVG Histogram) -->
+        <div class="bg-cardBg border border-cardBorder rounded-card p-5 glow-card">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h4 class="font-bold text-white text-sm">Latency Distribution</h4>
+              <p class="text-xs text-textSecondary">Requests count mapped against response time intervals</p>
+            </div>
+            <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/15 font-mono text-[10px]">Optimal Range</span>
+          </div>
+          <div class="w-full h-[250px] relative">
+            <svg class="w-full h-full" viewBox="0 0 600 250" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="hist-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.5" />
+                  <stop offset="100%" stop-color="#1D4ED8" stop-opacity="0.05" />
+                </linearGradient>
+              </defs>
+              <!-- Horizontal gridlines -->
+              <line x1="0" y1="50" x2="600" y2="50" stroke="rgba(255,255,255,0.04)" stroke-dasharray="3"></line>
+              <line x1="0" y1="110" x2="600" y2="110" stroke="rgba(255,255,255,0.04)" stroke-dasharray="3"></line>
+              <line x1="0" y1="170" x2="600" y2="170" stroke="rgba(255,255,255,0.04)" stroke-dasharray="3"></line>
+              <line x1="0" y1="220" x2="600" y2="220" stroke="rgba(255,255,255,0.08)"></line>
+
+              <!-- Histogram bars -->
+              <!-- <10ms -->
+              <rect x="25" y="170" width="45" height="50" rx="3" fill="url(#hist-grad)" stroke="#3B82F6" stroke-opacity="0.4" stroke-width="1.5"></rect>
+              <text x="47" y="160" fill="#94A3B8" font-size="9" text-anchor="middle">85k</text>
+              <!-- 10-25ms -->
+              <rect x="95" y="90" width="45" height="130" rx="3" fill="url(#hist-grad)" stroke="#3B82F6" stroke-opacity="0.4" stroke-width="1.5"></rect>
+              <text x="117" y="80" fill="#94A3B8" font-size="9" text-anchor="middle">245k</text>
+              <!-- 25-50ms (peak) -->
+              <rect x="165" y="40" width="45" height="180" rx="3" fill="url(#hist-grad)" stroke="#3B82F6" stroke-opacity="0.4" stroke-width="1.5"></rect>
+              <text x="187" y="30" fill="#F8FAFC" font-size="9" text-anchor="middle">580k</text>
+              <!-- 50-75ms -->
+              <rect x="235" y="60" width="45" height="160" rx="3" fill="url(#hist-grad)" stroke="#3B82F6" stroke-opacity="0.4" stroke-width="1.5"></rect>
+              <text x="257" y="50" fill="#94A3B8" font-size="9" text-anchor="middle">412k</text>
+              <!-- 75-100ms -->
+              <rect x="305" y="110" width="45" height="110" rx="3" fill="url(#hist-grad)" stroke="#3B82F6" stroke-opacity="0.4" stroke-width="1.5"></rect>
+              <text x="327" y="100" fill="#94A3B8" font-size="9" text-anchor="middle">190k</text>
+              <!-- 100-150ms -->
+              <rect x="375" y="150" width="45" height="70" rx="3" fill="url(#hist-grad)" stroke="#3B82F6" stroke-opacity="0.4" stroke-width="1.5"></rect>
+              <text x="397" y="140" fill="#94A3B8" font-size="9" text-anchor="middle">120k</text>
+              <!-- 150-250ms -->
+              <rect x="445" y="180" width="45" height="40" rx="3" fill="url(#hist-grad)" stroke="#3B82F6" stroke-opacity="0.4" stroke-width="1.5"></rect>
+              <text x="467" y="170" fill="#94A3B8" font-size="9" text-anchor="middle">48k</text>
+              <!-- >250ms -->
+              <rect x="515" y="200" width="45" height="20" rx="3" fill="url(#hist-grad)" stroke="#3B82F6" stroke-opacity="0.4" stroke-width="1.5"></rect>
+              <text x="537" y="190" fill="#94A3B8" font-size="9" text-anchor="middle">15k</text>
+
+              <!-- Standard Bell-Curve Overlay Line -->
+              <path d="M 10 220 Q 187 -30, 360 140 T 590 220" fill="none" stroke="#F43F5E" stroke-width="2" stroke-dasharray="3" filter="url(#svg-glow)"></path>
+            </svg>
+            <div class="absolute bottom-1 left-0 right-0 flex justify-between px-2 text-[9px] text-textSecondary font-mono pointer-events-none">
+              <span class="w-16 text-center">&lt;10ms</span>
+              <span class="w-16 text-center">10-25ms</span>
+              <span class="w-16 text-center">25-50ms</span>
+              <span class="w-16 text-center">50-75ms</span>
+              <span class="w-16 text-center">75-100ms</span>
+              <span class="w-16 text-center">100-150ms</span>
+              <span class="w-16 text-center">150-250ms</span>
+              <span class="w-16 text-center">&gt;250ms</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHART 4: Accuracy by Module (SVG Horizontal Bar Chart) -->
+        <div class="bg-cardBg border border-cardBorder rounded-card p-5 glow-card">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h4 class="font-bold text-white text-sm">Accuracy by Module</h4>
+              <p class="text-xs text-textSecondary">Average evaluation benchmark accuracies per functional pipeline</p>
+            </div>
+            <span class="text-xs text-secondaryAccent font-mono font-semibold">97.1% Overall</span>
+          </div>
+          <div class="w-full h-[250px] relative flex flex-col justify-between py-2">
+            <!-- Row 1 -->
+            <div class="flex items-center justify-between gap-4">
+              <span class="w-32 text-xs text-textSecondary font-medium truncate">RAG Context Finder</span>
+              <div class="flex-1 h-3.5 bg-white/5 rounded-full relative overflow-hidden">
+                <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full" style="width: 98.4%"></div>
+              </div>
+              <span class="w-10 text-right text-xs font-mono text-white font-semibold">98.4%</span>
+            </div>
+            <!-- Row 2 -->
+            <div class="flex items-center justify-between gap-4">
+              <span class="w-32 text-xs text-textSecondary font-medium truncate">Intent Classification</span>
+              <div class="flex-1 h-3.5 bg-white/5 rounded-full relative overflow-hidden">
+                <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full" style="width: 99.1%"></div>
+              </div>
+              <span class="w-10 text-right text-xs font-mono text-white font-semibold">99.1%</span>
+            </div>
+            <!-- Row 3 -->
+            <div class="flex items-center justify-between gap-4">
+              <span class="w-32 text-xs text-textSecondary font-medium truncate">Code Generation</span>
+              <div class="flex-1 h-3.5 bg-white/5 rounded-full relative overflow-hidden">
+                <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full" style="width: 94.6%"></div>
+              </div>
+              <span class="w-10 text-right text-xs font-mono text-white font-semibold">94.6%</span>
+            </div>
+            <!-- Row 4 -->
+            <div class="flex items-center justify-between gap-4">
+              <span class="w-32 text-xs text-textSecondary font-medium truncate">Doc Summarization</span>
+              <div class="flex-1 h-3.5 bg-white/5 rounded-full relative overflow-hidden">
+                <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full" style="width: 96.8%"></div>
+              </div>
+              <span class="w-10 text-right text-xs font-mono text-white font-semibold">96.8%</span>
+            </div>
+            <!-- Row 5 -->
+            <div class="flex items-center justify-between gap-4">
+              <span class="w-32 text-xs text-textSecondary font-medium truncate">SQL Query Synthesis</span>
+              <div class="flex-1 h-3.5 bg-white/5 rounded-full relative overflow-hidden">
+                <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full" style="width: 95.2%"></div>
+              </div>
+              <span class="w-10 text-right text-xs font-mono text-white font-semibold">95.2%</span>
+            </div>
+            <!-- Row 6 -->
+            <div class="flex items-center justify-between gap-4">
+              <span class="w-32 text-xs text-textSecondary font-medium truncate">Agent Tool Routing</span>
+              <div class="flex-1 h-3.5 bg-white/5 rounded-full relative overflow-hidden">
+                <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full" style="width: 92.5%"></div>
+              </div>
+              <span class="w-10 text-right text-xs font-mono text-white font-semibold">92.5%</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TABLE: TOP AI OPERATIONS -->
+      <div class="bg-cardBg border border-cardBorder rounded-card glow-card overflow-hidden">
+        <div class="p-5 border-b border-cardBorder flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h4 class="font-bold text-white text-base">Top AI Operations</h4>
+            <p class="text-xs text-textSecondary">High-usage execution pipelines and API operations.</p>
+          </div>
+          <span class="text-xs px-2.5 py-1 bg-[#101935] text-[#8B5CF6] border border-purple-500/10 rounded-lg font-mono">8 Operations Tracked</span>
+        </div>
+        <div class="overflow-x-auto w-full">
+          <table class="w-full text-left border-collapse" id="table-operations">
+            <thead>
+              <tr class="border-b border-cardBorder bg-[#070b18] text-xs font-semibold text-textSecondary uppercase tracking-wider">
+                <th onclick="sortTable('table-operations', 0)" class="sortable px-6 py-4.5">Operation Name <span class="text-[10px] ml-1">⇅</span></th>
+                <th onclick="sortTable('table-operations', 1, 'num')" class="sortable px-6 py-4.5 text-right">Requests <span class="text-[10px] ml-1">⇅</span></th>
+                <th onclick="sortTable('table-operations', 2, 'num')" class="sortable px-6 py-4.5 text-right">Avg Execution Time <span class="text-[10px] ml-1">⇅</span></th>
+                <th onclick="sortTable('table-operations', 3, 'currency')" class="sortable px-6 py-4.5 text-right">Cost <span class="text-[10px] ml-1">⇅</span></th>
+                <th onclick="sortTable('table-operations', 4)" class="sortable px-6 py-4.5 text-center">Status <span class="text-[10px] ml-1">⇅</span></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-cardBorder/40 text-sm text-textSecondary">
+              <tr class="hover:bg-white/[0.01] transition-colors">
+                <td class="px-6 py-4 font-medium text-white flex flex-col">
+                  <span>RAG Search Context Retrieval</span>
+                  <span class="text-[10px] text-textSecondary font-normal mt-0.5">Custom Embeddings Database v2</span>
+                </td>
+                <td class="px-6 py-4 text-right font-mono text-white">840,200</td>
+                <td class="px-6 py-4 text-right font-mono text-white">120ms</td>
+                <td class="px-6 py-4 text-right font-mono text-white">$1,260.30</td>
+                <td class="px-6 py-4 text-center">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">Active</span>
+                </td>
+              </tr>
+              <tr class="hover:bg-white/[0.01] transition-colors">
+                <td class="px-6 py-4 font-medium text-white flex flex-col">
+                  <span>Intent Classification</span>
+                  <span class="text-[10px] text-textSecondary font-normal mt-0.5">Dynamic router pipeline</span>
+                </td>
+                <td class="px-6 py-4 text-right font-mono text-white">520,000</td>
+                <td class="px-6 py-4 text-right font-mono text-white">15ms</td>
+                <td class="px-6 py-4 text-right font-mono text-white">$52.00</td>
+                <td class="px-6 py-4 text-center">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">Active</span>
+                </td>
+              </tr>
+              <tr class="hover:bg-white/[0.01] transition-colors">
+                <td class="px-6 py-4 font-medium text-white flex flex-col">
+                  <span>Code Generation (GPT-4o)</span>
+                  <span class="text-[10px] text-textSecondary font-normal mt-0.5">Developer copilot integration</span>
+                </td>
+                <td class="px-6 py-4 text-right font-mono text-white">320,150</td>
+                <td class="px-6 py-4 text-right font-mono text-white">450ms</td>
+                <td class="px-6 py-4 text-right font-mono text-white">$6,403.00</td>
+                <td class="px-6 py-4 text-center">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">Active</span>
+                </td>
+              </tr>
+              <tr class="hover:bg-white/[0.01] transition-colors">
+                <td class="px-6 py-4 font-medium text-white flex flex-col">
+                  <span>Document Summarization</span>
+                  <span class="text-[10px] text-textSecondary font-normal mt-0.5">Recursive PDF context map</span>
+                </td>
+                <td class="px-6 py-4 text-right font-mono text-white">210,500</td>
+                <td class="px-6 py-4 text-right font-mono text-white">320ms</td>
+                <td class="px-6 py-4 text-right font-mono text-white">$1,684.00</td>
+                <td class="px-6 py-4 text-center">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">Active</span>
+                </td>
+              </tr>
+              <tr class="hover:bg-white/[0.01] transition-colors">
+                <td class="px-6 py-4 font-medium text-white flex flex-col">
+                  <span>SQL Query Translation</span>
+                  <span class="text-[10px] text-textSecondary font-normal mt-0.5">Analytics translation agent</span>
+                </td>
+                <td class="px-6 py-4 text-right font-mono text-white">180,400</td>
+                <td class="px-6 py-4 text-right font-mono text-white">180ms</td>
+                <td class="px-6 py-4 text-right font-mono text-white">$721.60</td>
+                <td class="px-6 py-4 text-center">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">Active</span>
+                </td>
+              </tr>
+              <tr class="hover:bg-white/[0.01] transition-colors">
+                <td class="px-6 py-4 font-medium text-white flex flex-col">
+                  <span>Sentiment Analysis</span>
+                  <span class="text-[10px] text-textSecondary font-normal mt-0.5">Real-time support monitoring</span>
+                </td>
+                <td class="px-6 py-4 text-right font-mono text-white">150,000</td>
+                <td class="px-6 py-4 text-right font-mono text-white">12ms</td>
+                <td class="px-6 py-4 text-right font-mono text-white">$15.00</td>
+                <td class="px-6 py-4 text-center">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/15">Optimizing</span>
+                </td>
+              </tr>
+              <tr class="hover:bg-white/[0.01] transition-colors">
+                <td class="px-6 py-4 font-medium text-white flex flex-col">
+                  <span>Embedding Generation</span>
+                  <span class="text-[10px] text-textSecondary font-normal mt-0.5">Vector cache pre-compute</span>
+                </td>
+                <td class="px-6 py-4 text-right font-mono text-white">120,000</td>
+                <td class="px-6 py-4 text-right font-mono text-white">8ms</td>
+                <td class="px-6 py-4 text-right font-mono text-white">$12.00</td>
+                <td class="px-6 py-4 text-center">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">Active</span>
+                </td>
+              </tr>
+              <tr class="hover:bg-white/[0.01] transition-colors">
+                <td class="px-6 py-4 font-medium text-white flex flex-col">
+                  <span>Multi-Agent Planning</span>
+                  <span class="text-[10px] text-textSecondary font-normal mt-0.5">Cooperative reasoning loop</span>
+                </td>
+                <td class="px-6 py-4 text-right font-mono text-white">60,000</td>
+                <td class="px-6 py-4 text-right font-mono text-white">1,200ms</td>
+                <td class="px-6 py-4 text-right font-mono text-white">$2,700.00</td>
+                <td class="px-6 py-4 text-center">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/15">Latency Warn</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 2: ORGANIZATION SETTINGS -->
+    <section id="tab-content-settings" class="tab-pane hidden space-y-6">
+      
+      <div>
+        <h2 class="text-2xl font-bold tracking-tight text-white">Organization Settings</h2>
+        <p class="text-sm text-textSecondary mt-0.5">Configure organization identity, custom security levels, data retention periods, and notification alert thresholds.</p>
+      </div>
+
+      <!-- Two-Column Form Grid -->
+      <form id="org-settings-form" onsubmit="saveSettings(event)" class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        
+        <!-- Left Column: Profile & Notification Settings -->
+        <div class="space-y-6">
+          
+          <!-- Card: Profile Settings -->
+          <div class="bg-cardBg border border-cardBorder rounded-card p-6 glow-card space-y-5">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-primaryAccent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+              Organization Profile
+            </h3>
+            
+            <div class="space-y-4">
+              <!-- Org Name -->
+              <div>
+                <label for="org-name" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider mb-2">Organization Name</label>
+                <input type="text" id="org-name" value="πX Technologies Inc." required class="w-full rounded-xl px-4 py-3 text-sm text-white glass-input font-medium">
+              </div>
+              
+              <!-- Domain -->
+              <div>
+                <label for="org-domain" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider mb-2">Primary Domain</label>
+                <input type="text" id="org-domain" value="pix-tech.ai" required class="w-full rounded-xl px-4 py-3 text-sm text-white glass-input font-mono">
+              </div>
+
+              <!-- Industry -->
+              <div>
+                <label for="org-industry" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider mb-2">Industry Verticals</label>
+                <select id="org-industry" class="w-full rounded-xl px-4 py-3 text-sm text-white bg-secondaryBg border border-cardBorder focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none font-medium">
+                  <option value="tech">Artificial Intelligence & SaaS</option>
+                  <option value="finance">Banking & Financial Services</option>
+                  <option value="health">Healthcare & Pharmaceuticals</option>
+                  <option value="retail">Retail & E-commerce</option>
+                  <option value="defense">Defense & Aerospace</option>
+                </select>
+              </div>
+
+              <!-- Logo Upload Area -->
+              <div>
+                <label class="block text-xs font-semibold text-textSecondary uppercase tracking-wider mb-2">Enterprise Logo</label>
+                <div class="border-2 border-dashed border-cardBorder hover:border-purple-500/40 rounded-card p-6 flex flex-col items-center justify-center cursor-pointer bg-white/[0.01] hover:bg-white/[0.02] transition-all relative overflow-hidden" onclick="triggerLogoUpload()">
+                  <input type="file" id="logo-input" accept="image/*" class="hidden" onchange="previewLogo(event)">
+                  <div id="logo-upload-placeholder" class="text-center space-y-2">
+                    <svg class="w-8 h-8 text-textSecondary mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <p class="text-xs text-textPrimary font-semibold">Upload high-res PNG or SVG</p>
+                    <p class="text-[10px] text-textSecondary">Drag and drop or browse (Max 2MB)</p>
+                  </div>
+                  <div id="logo-preview-container" class="hidden flex items-center gap-4">
+                    <img id="logo-preview" src="" alt="Logo Preview" class="h-14 w-auto rounded-lg object-contain bg-[#050816] p-2 border border-cardBorder">
+                    <div class="text-left">
+                      <p class="text-xs font-semibold text-white" id="logo-filename">logo.png</p>
+                      <button type="button" onclick="removeLogo(event)" class="text-[10px] text-rose-400 hover:text-rose-300 font-semibold underline mt-1">Remove logo</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card: Notification Preferences -->
+          <div class="bg-cardBg border border-cardBorder rounded-card p-6 glow-card space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-primaryAccent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+              Notification & Alarm Preferences
+            </h3>
+            
+            <div class="space-y-3.5 divide-y divide-cardBorder/30">
+              <div class="flex items-center justify-between pt-1">
+                <div>
+                  <p class="text-xs font-semibold text-white">Critical Billing Alerts</p>
+                  <p class="text-[10px] text-textSecondary">Send emails when credit runs below 15% or usage spikes abnormally</p>
+                </div>
+                <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                  <input type="checkbox" name="notif_billing" id="notif_billing" checked class="switch-checkbox hidden">
+                  <label for="notif_billing" class="switch-label block overflow-hidden h-5 rounded-full bg-white/10 cursor-pointer transition-colors duration-200">
+                    <span class="switch-dot block h-4 w-4 rounded-full bg-white shadow transform translate-x-0.5 mt-0.5 transition-transform duration-200"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between pt-3.5">
+                <div>
+                  <p class="text-xs font-semibold text-white">Security Breaches & Lockouts</p>
+                  <p class="text-[10px] text-textSecondary">Instant warning emails for unauthorized IPs or SSO connection issues</p>
+                </div>
+                <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                  <input type="checkbox" name="notif_security" id="notif_security" checked class="switch-checkbox hidden">
+                  <label for="notif_security" class="switch-label block overflow-hidden h-5 rounded-full bg-white/10 cursor-pointer transition-colors duration-200">
+                    <span class="switch-dot block h-4 w-4 rounded-full bg-white shadow transform translate-x-0.5 mt-0.5 transition-transform duration-200"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between pt-3.5">
+                <div>
+                  <p class="text-xs font-semibold text-white">Model Deployment Status</p>
+                  <p class="text-[10px] text-textSecondary">Alert on slow cold starts, endpoint degradation, or fallbacks</p>
+                </div>
+                <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                  <input type="checkbox" name="notif_models" id="notif_models" class="switch-checkbox hidden">
+                  <label for="notif_models" class="switch-label block overflow-hidden h-5 rounded-full bg-white/10 cursor-pointer transition-colors duration-200">
+                    <span class="switch-dot block h-4 w-4 rounded-full bg-white shadow transform translate-x-0.5 mt-0.5 transition-transform duration-200"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between pt-3.5">
+                <div>
+                  <p class="text-xs font-semibold text-white">Weekly Usage Digests</p>
+                  <p class="text-[10px] text-textSecondary">Summary metrics of token expenditure, queries, and module accuracies</p>
+                </div>
+                <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                  <input type="checkbox" name="notif_digests" id="notif_digests" checked class="switch-checkbox hidden">
+                  <label for="notif_digests" class="switch-label block overflow-hidden h-5 rounded-full bg-white/10 cursor-pointer transition-colors duration-200">
+                    <span class="switch-dot block h-4 w-4 rounded-full bg-white shadow transform translate-x-0.5 mt-0.5 transition-transform duration-200"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Security & Data Retention -->
+        <div class="space-y-6">
+          
+          <!-- Card: Security Policies -->
+          <div class="bg-cardBg border border-cardBorder rounded-card p-6 glow-card space-y-5">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-primaryAccent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              Enterprise Security Settings
+            </h3>
+
+            <div class="space-y-4">
+              <!-- Security Profile status visual -->
+              <div class="bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-3.5 flex items-center justify-between" id="sec-level-badge">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                  <div>
+                    <h4 class="text-xs font-bold text-emerald-400">Security Status: HIGH SECURITY</h4>
+                    <p class="text-[9px] text-textSecondary">SSO and MFA active across all domains</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SSO Toggle -->
+              <div class="flex items-center justify-between py-1">
+                <div>
+                  <p class="text-xs font-semibold text-white">SAML SSO Integration</p>
+                  <p class="text-[10px] text-textSecondary">Force user logins through Okta or Azure AD</p>
+                </div>
+                <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                  <input type="checkbox" name="sec_sso" id="sec_sso" checked onchange="toggleSecurityVisual()" class="switch-checkbox hidden">
+                  <label for="sec_sso" class="switch-label block overflow-hidden h-5 rounded-full bg-white/10 cursor-pointer transition-colors duration-200">
+                    <span class="switch-dot block h-4 w-4 rounded-full bg-white shadow transform translate-x-0.5 mt-0.5 transition-transform duration-200"></span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- MFA Toggle -->
+              <div class="flex items-center justify-between py-1">
+                <div>
+                  <p class="text-xs font-semibold text-white">Mandatory Multi-Factor (MFA)</p>
+                  <p class="text-[10px] text-textSecondary">Enforce TOTP or hardware keys on all non-SSO members</p>
+                </div>
+                <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                  <input type="checkbox" name="sec_mfa" id="sec_mfa" checked onchange="toggleSecurityVisual()" class="switch-checkbox hidden">
+                  <label for="sec_mfa" class="switch-label block overflow-hidden h-5 rounded-full bg-white/10 cursor-pointer transition-colors duration-200">
+                    <span class="switch-dot block h-4 w-4 rounded-full bg-white shadow transform translate-x-0.5 mt-0.5 transition-transform duration-200"></span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Session Timeout -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label for="sec_timeout" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider">Session Timeout Limit</label>
+                  <span class="text-xs font-semibold text-secondaryAccent font-mono" id="timeout-value">120 minutes</span>
+                </div>
+                <input type="range" id="sec_timeout" min="15" max="720" step="15" value="120" oninput="updateTimeoutValue(this.value)" class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-primaryAccent">
+                <div class="flex justify-between text-[9px] text-textSecondary mt-1">
+                  <span>15 min</span>
+                  <span>4 hours</span>
+                  <span>12 hours</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card: Data Retention policies -->
+          <div class="bg-cardBg border border-cardBorder rounded-card p-6 glow-card space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-primaryAccent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+              Data Retention Policy
+            </h3>
+            <p class="text-xs text-textSecondary">Configure automatic purging thresholds for RAG indexes, prompt contexts, logs, and query caches.</p>
+            
+            <div class="grid grid-cols-5 gap-2.5 pt-1.5">
+              <label class="cursor-pointer">
+                <input type="radio" name="retention_period" value="30" class="peer hidden">
+                <div class="border border-cardBorder rounded-xl p-2.5 text-center text-xs text-textSecondary peer-checked:border-primaryAccent peer-checked:bg-primaryAccent/10 peer-checked:text-white font-medium hover:border-white/20 transition-all font-mono">30d</div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="retention_period" value="60" class="peer hidden">
+                <div class="border border-cardBorder rounded-xl p-2.5 text-center text-xs text-textSecondary peer-checked:border-primaryAccent peer-checked:bg-primaryAccent/10 peer-checked:text-white font-medium hover:border-white/20 transition-all font-mono">60d</div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="retention_period" value="90" checked class="peer hidden">
+                <div class="border border-cardBorder rounded-xl p-2.5 text-center text-xs text-textSecondary peer-checked:border-primaryAccent peer-checked:bg-primaryAccent/10 peer-checked:text-white font-medium hover:border-white/20 transition-all font-mono">90d</div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="retention_period" value="180" class="peer hidden">
+                <div class="border border-cardBorder rounded-xl p-2.5 text-center text-xs text-textSecondary peer-checked:border-primaryAccent peer-checked:bg-primaryAccent/10 peer-checked:text-white font-medium hover:border-white/20 transition-all font-mono">180d</div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="retention_period" value="365" class="peer hidden">
+                <div class="border border-cardBorder rounded-xl p-2.5 text-center text-xs text-textSecondary peer-checked:border-primaryAccent peer-checked:bg-primaryAccent/10 peer-checked:text-white font-medium hover:border-white/20 transition-all font-mono">365d</div>
+              </label>
+            </div>
+            <p class="text-[10px] text-textSecondary mt-2">Retention Purges are processed daily at 00:00 UTC. Encrypted cold-storage logs are kept for compliance auditing up to 7 years independently.</p>
+          </div>
+
+          <!-- Bottom Action Buttons -->
+          <div class="flex items-center justify-end gap-3 pt-2">
+            <button type="button" onclick="resetSettingsForm()" class="px-5 py-3 text-xs font-semibold text-textSecondary bg-white/5 hover:bg-white/10 border border-cardBorder rounded-xl transition-all">Discard Changes</button>
+            <button type="submit" id="save-settings-btn" class="px-6 py-3 text-xs font-semibold text-white bg-gradient-to-r from-primaryAccent to-secondaryAccent hover:opacity-90 rounded-xl glow-purple flex items-center gap-2 transition-all">
+              Save Settings Modifications
+            </button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- TAB 3: USERS & ROLES -->
+    <section id="tab-content-users" class="tab-pane hidden space-y-6">
+      
+      <!-- Users Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-white">Users & Role Directory</h2>
+          <p class="text-sm text-textSecondary mt-0.5">Manage team access credentials, invite new members, configure security permissions, and edit global RBAC policies.</p>
+        </div>
+        <!-- Invite User Trigger Button -->
+        <button onclick="openInviteModal()" class="px-4 py-2.5 text-xs font-semibold text-white bg-gradient-to-r from-primaryAccent to-secondaryAccent hover:opacity-95 rounded-xl glow-purple flex items-center gap-2 self-start sm:self-auto transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1" d="M12 4v16m8-8H4"/></svg>
+          Invite New User
+        </button>
+      </div>
+
+      <!-- FILTER CONTROLS & SEARCH BAR -->
+      <div class="bg-cardBg border border-cardBorder rounded-card p-4 glow-card flex flex-col md:flex-row items-center justify-between gap-4">
+        <!-- Search Input -->
+        <div class="relative w-full md:w-80">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
+            <svg class="w-4 h-4 text-textSecondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </span>
+          <input type="text" id="user-search-input" onkeyup="filterUserDirectory()" placeholder="Search user directory by name or email..." class="w-full bg-[#050816]/60 border border-cardBorder focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white outline-none">
+        </div>
+
+        <!-- Role Filter Tabs (All | Admin | Member | Viewer | API Only) -->
+        <div class="flex flex-wrap gap-1 bg-[#050816]/80 p-1 rounded-xl border border-cardBorder w-full md:w-auto">
+          <button onclick="filterUsersByRole('All')" id="role-filter-All" class="role-filter-btn px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-cardBg border border-cardBorder text-white transition-all">All</button>
+          <button onclick="filterUsersByRole('Admin')" id="role-filter-Admin" class="role-filter-btn px-3.5 py-1.5 text-xs font-medium rounded-lg text-textSecondary hover:text-white transition-all">Admin</button>
+          <button onclick="filterUsersByRole('Member')" id="role-filter-Member" class="role-filter-btn px-3.5 py-1.5 text-xs font-medium rounded-lg text-textSecondary hover:text-white transition-all">Member</button>
+          <button onclick="filterUsersByRole('Viewer')" id="role-filter-Viewer" class="role-filter-btn px-3.5 py-1.5 text-xs font-medium rounded-lg text-textSecondary hover:text-white transition-all">Viewer</button>
+          <button onclick="filterUsersByRole('API Only')" id="role-filter-API-Only" class="role-filter-btn px-3.5 py-1.5 text-xs font-medium rounded-lg text-textSecondary hover:text-white transition-all">API Only</button>
+        </div>
+      </div>
+
+      <!-- MAIN USERS DIRECTORY TABLE -->
+      <div class="bg-cardBg border border-cardBorder rounded-card glow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse" id="table-users">
+            <thead>
+              <tr class="border-b border-cardBorder bg-[#070b18] text-xs font-semibold text-textSecondary uppercase tracking-wider">
+                <th onclick="sortTable('table-users', 0)" class="sortable px-6 py-4">Avatar & Name <span class="text-[10px] ml-1">⇅</span></th>
+                <th onclick="sortTable('table-users', 1)" class="sortable px-6 py-4">Email Address <span class="text-[10px] ml-1">⇅</span></th>
+                <th onclick="sortTable('table-users', 2)" class="sortable px-6 py-4">Role Assigned <span class="text-[10px] ml-1">⇅</span></th>
+                <th onclick="sortTable('table-users', 3)" class="sortable px-6 py-4 text-center">Status <span class="text-[10px] ml-1">⇅</span></th>
+                <th onclick="sortTable('table-users', 4)" class="sortable px-6 py-4">Last Activity <span class="text-[10px] ml-1">⇅</span></th>
+                <th class="px-6 py-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-cardBorder/40 text-sm text-textSecondary" id="user-rows-container">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Table empty state -->
+        <div id="users-empty-state" class="hidden p-12 text-center flex flex-col items-center justify-center">
+          <svg class="w-12 h-12 text-textSecondary mb-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          <p class="text-sm font-semibold text-white">No users found</p>
+          <p class="text-xs text-textSecondary mt-1">Try updating your search string or role filters.</p>
+        </div>
+      </div>
+
+      <!-- ROLE MANAGEMENT / RBAC PERMISSIONS SECTION BELOW -->
+      <div class="space-y-4 pt-4">
+        <div>
+          <h3 class="text-lg font-bold text-white">Role-Based Access Policies (RBAC)</h3>
+          <p class="text-xs text-textSecondary mt-0.5">Permissions mapped and assigned across directory roles. Expand to view granular permissions.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <!-- Role Card 1: Admin -->
+          <div class="bg-cardBg border border-cardBorder rounded-card p-5 glow-card relative overflow-hidden group flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="inline-flex px-2.5 py-0.5 rounded text-[10px] font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20 uppercase tracking-wider">Full Access</span>
+                <span class="text-xs font-bold text-white">Role: Admin</span>
+              </div>
+              <p class="text-xs text-textSecondary leading-relaxed">Full system governance capability. Authorized for billing, organization configurations, API provider key setup, security locks, and directories.</p>
+            </div>
+            
+            <div class="mt-4 pt-4 border-t border-cardBorder/30">
+              <button onclick="toggleRolePermissions('admin-details')" class="w-full flex items-center justify-between text-xs text-white/80 hover:text-white font-semibold group-hover:text-primaryAccent transition-colors">
+                <span>View Access Granularity</span>
+                <span id="admin-details-arrow">▼</span>
+              </button>
+              
+              <!-- Collapsible checkboxes list -->
+              <div id="admin-details" class="hidden mt-3 space-y-2 bg-[#050816] p-3 rounded-xl border border-cardBorder text-[11px]">
+                <label class="flex items-center gap-2 text-white">
+                  <input type="checkbox" checked disabled class="accent-primaryAccent rounded h-3.5 w-3.5 bg-primaryBg border-cardBorder">
+                  <span>Manage Billings & Subscriptions</span>
+                </label>
+                <label class="flex items-center gap-2 text-white">
+                  <input type="checkbox" checked disabled class="accent-primaryAccent rounded h-3.5 w-3.5 bg-primaryBg border-cardBorder">
+                  <span>Configure AI Providers & API Keys</span>
+                </label>
+                <label class="flex items-center gap-2 text-white">
+                  <input type="checkbox" checked disabled class="accent-primaryAccent rounded h-3.5 w-3.5 bg-primaryBg border-cardBorder">
+                  <span>Edit System Security & IP Policies</span>
+                </label>
+                <label class="flex items-center gap-2 text-white">
+                  <input type="checkbox" checked disabled class="accent-primaryAccent rounded h-3.5 w-3.5 bg-primaryBg border-cardBorder">
+                  <span>Read / Export Secure Audit Logs</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Role Card 2: Member -->
+          <div class="bg-cardBg border border-cardBorder rounded-card p-5 glow-card relative overflow-hidden group flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="inline-flex px-2.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">Standard Access</span>
+                <span class="text-xs font-bold text-white">Role: Member</span>
+              </div>
+              <p class="text-xs text-textSecondary leading-relaxed">Execute queries, benchmark evaluation modules, integrate models, configure internal pipeline deployments, and inspect operational metrics.</p>
+            </div>
+            
+            <div class="mt-4 pt-4 border-t border-cardBorder/30">
+              <button onclick="toggleRolePermissions('member-details')" class="w-full flex items-center justify-between text-xs text-white/80 hover:text-white font-semibold group-hover:text-primaryAccent transition-colors">
+                <span>View Access Granularity</span>
+                <span id="member-details-arrow">▼</span>
+              </button>
+              
+              <!-- Collapsible checkboxes list -->
+              <div id="member-details" class="hidden mt-3 space-y-2 bg-[#050816] p-3 rounded-xl border border-cardBorder text-[11px]">
+                <label class="flex items-center gap-2 text-white/50">
+                  <input type="checkbox" disabled class="rounded h-3.5 w-3.5 bg-primaryBg border-cardBorder">
+                  <span>Manage Billings & Subscriptions</span>
+                </label>
+                <label class="flex items-center gap-2 text-white/50">
+                  <input type="checkbox" disabled class="rounded h-3.5 w-3.5 bg-primaryBg border-cardBorder">
+                  <span>Configure AI Providers & API Keys</span>
+                </label>
+                <label class="flex items-center gap-2 text-white">
+                  <input type="checkbox" checked disabled class="accent-primaryAccent rounded h-3.5 w-3.5 bg-primaryBg border-cardBorder">
+                  <span>Integrate Models & Run Queries</span>
+                </label>
+                <label class="flex items-center gap-2 text-white">
+                  <input type="checkbox" checked disabled class="accent-primaryAccent rounded h-3.5 w-3.5 bg-primaryBg border-cardBorder">
+                  <span>Inspect Operational Metrics</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Role Card 3: Viewer -->
+          <div class="bg-cardBg border border-cardBorder rounded-card p-5 glow-card relative overflow-hidden group flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="inline-flex px-2.5 py-0.5 rounded text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 uppercase tracking-wider">Read Only</span>
+                <span class="text-xs font-bold text-white">Role: Viewer</span>
+              </div>
+              <p class="text-xs text-textSecondary leading-relaxed">Read-only operational analytics, performance statistics, system alerts, and provider uptime metrics. Barred from any form submission or pipeline modifications.</p>
+            </div>
+            
+            <div class="mt-4 pt-4 border-t border-cardBorder/30">
+              <button onclick="toggleRolePermissions('viewer-details')" class="w-full flex items-center justify-between text-xs text-white/80 hover:text-white font-semibold group-hover:text-primaryAccent transition-colors">
+                <span>View Access Granularity</span>
+                <span id="viewer-details-arrow">▼</span>
+              </button>
+              
+              <!-- Collapsible checkboxes list -->
+              <div id="viewer-details" class="hidden mt-3 space-y-2 bg-[#050816] p-3 rounded-xl border border-cardBorder text-[11px]">
+                <label class="flex items-center gap-2 text-white/50">
+                  <input type="checkbox" disabled class="rounded h-3.5 w-3.5 bg-primaryBg border-cardBorder">
+                  <span>Modify Core Configurations</span>
+                </label>
+                <label class="flex items-center gap-2 text-white">
+                  <input type="checkbox" checked disabled class="accent-primaryAccent rounded h-3.5 w-3.5 bg-primaryBg border-cardBorder">
+                  <span>View Cost & Consumption Analytics</span>
+                </label>
+                <label class="flex items-center gap-2 text-white">
+                  <input type="checkbox" checked disabled class="accent-primaryAccent rounded h-3.5 w-3.5 bg-primaryBg border-cardBorder">
+                  <span>Inspect Pipeline Accuracies</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 4: AI PROVIDERS -->
+    <section id="tab-content-providers" class="tab-pane hidden space-y-6">
+      
+      <!-- Providers Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-white font-sans">AI Provider Configuration</h2>
+          <p class="text-sm text-textSecondary mt-0.5">Route requests, manage secure API credentials, select default models, and view provider token metrics.</p>
+        </div>
+        <!-- Add Provider Button -->
+        <button onclick="openAddProviderModal()" class="px-4 py-2.5 text-xs font-semibold text-white bg-gradient-to-r from-primaryAccent to-secondaryAccent hover:opacity-95 rounded-xl glow-purple flex items-center gap-2 self-start sm:self-auto transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Add Custom Provider
+        </button>
+      </div>
+
+      <!-- PROVIDER CARDS GRID -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="providers-container">
+        <!-- OpenAI Provider Card -->
+        <div id="provider-card-openai" class="bg-cardBg border border-cardBorder rounded-card p-6 glow-card space-y-5 hover:border-purple-500/20 transition-all flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[#10A37F]/10 flex items-center justify-center border border-[#10A37F]/20">
+                  <svg class="w-5 h-5 text-[#10A37F]" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21.74 11.9a.86.86 0 00-.09-.32c-.06-.11-.14-.2-.25-.27L17.8 8.94a.82.82 0 00-1.12.3c-.27.46-.11 1.05.35 1.31l1.83 1.1h-4.3c-.53 0-.96.43-.96.96v.05c0 .53.43.96.96.96h4.3l-1.83 1.1c-.46.27-.62.86-.35 1.32.18.3.5.47.83.47a.8.8 0 00.41-.11l3.6-2.1a.88.88 0 00.32-.41.87.87 0 00-.05-.83zM2.26 12.1c.03.11.09.21.18.3l3.6 2.1c.13.08.28.11.42.11a.82.82 0 00.72-.44.82.82 0 00-.31-1.12l-1.82-1.1h4.31c.53 0 .96-.43.96-.96v-.05c0-.53-.43-.96-.96-.96H5.05l1.82-1.1a.82.82 0 00.31-1.12.82.82 0 00-1.14-.3l-3.6 2.1a.83.83 0 00-.31.41c-.04.14-.04.29 0 .43zM12 2.26a.82.82 0 00-.83.41c-.04.11-.05.24-.04.36V7.4c0 .53.43.96.96.96h.05c.53 0 .96-.43.96-.96V3.03a.82.82 0 00-.41-.72l-.12-.04c-.2-.05-.41-.04-.57.03zm0 19.48c.2 0 .4-.05.57-.15l.12-.08a.82.82 0 00.41-.72v-4.36c0-.53-.43-.96-.96-.96h-.05c-.53 0-.96.43-.96.96v4.36c0 .53.43.96.96.96h.05zM5.38 6.53a.82.82 0 001.13-.3.82.82 0 00-.31-1.13l-3.6-2.1a.82.82 0 00-1.13.3.82.82 0 00.31 1.13l3.6 2.1zM18.62 17.47a.82.82 0 00-1.13.3.82.82 0 00.31 1.13l3.6 2.1c.15.09.32.13.49.13a.82.82 0 00.64-.31.82.82 0 00-.31-1.13l-3.6-2.1z"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="text-sm font-bold text-white">OpenAI</h3>
+                  <p class="text-[10px] text-textSecondary">Official Direct Endpoint</p>
+                </div>
+              </div>
+              <span id="provider-status-openai" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                Connected
+              </span>
+            </div>
+
+            <!-- Configuration Form Inside Card -->
+            <div class="space-y-3 pt-1">
+              <!-- API Key (Masked) -->
+              <div>
+                <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Secure API Key</label>
+                <div class="relative">
+                  <input type="password" id="api-key-openai" value="sk-proj-783A92hG90F...J8916" class="w-full rounded-lg pl-3 pr-9 py-2 text-xs text-white glass-input font-mono">
+                  <button onclick="toggleKeyMask('api-key-openai')" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-textSecondary hover:text-white transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Available Models -->
+              <div>
+                <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Primary Model Select</label>
+                <select class="w-full rounded-lg px-2.5 py-2 text-xs text-white bg-secondaryBg border border-cardBorder focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none font-medium font-mono">
+                  <option value="gpt-4o">GPT-4o (Default)</option>
+                  <option value="gpt-4o-mini">GPT-4o-mini (Lightweight)</option>
+                  <option value="o1-preview">o1-preview (Reasoning)</option>
+                  <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                </select>
+              </div>
+
+              <!-- Usage Progress Bar -->
+              <div class="space-y-1 pt-1">
+                <div class="flex justify-between text-[10px] font-mono text-textSecondary">
+                  <span>Quota Limit (85% consumed)</span>
+                  <span>1.7M / 2.0M tokens</span>
+                </div>
+                <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div class="h-full bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full" style="width: 85%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-cardBorder/30">
+            <button onclick="testProviderConnection('openai')" id="test-btn-openai" class="w-full py-2 bg-white/5 hover:bg-white/10 border border-cardBorder rounded-lg text-xs font-semibold text-white flex items-center justify-center gap-1.5 transition-all">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Test Connection
+            </button>
+          </div>
+        </div>
+
+        <!-- Anthropic Provider Card -->
+        <div id="provider-card-anthropic" class="bg-cardBg border border-cardBorder rounded-card p-6 glow-card space-y-5 hover:border-purple-500/20 transition-all flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[#CC9B6D]/10 flex items-center justify-center border border-[#CC9B6D]/20">
+                  <span class="text-base font-bold text-[#CC9B6D] font-mono">A</span>
+                </div>
+                <div>
+                  <h3 class="text-sm font-bold text-white">Anthropic</h3>
+                  <p class="text-[10px] text-textSecondary">Claude API Console</p>
+                </div>
+              </div>
+              <span id="provider-status-anthropic" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                Connected
+              </span>
+            </div>
+
+            <!-- Configuration Form Inside Card -->
+            <div class="space-y-3 pt-1">
+              <!-- API Key (Masked) -->
+              <div>
+                <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Secure API Key</label>
+                <div class="relative">
+                  <input type="password" id="api-key-anthropic" value="sk-ant-api03-9037HGK-294H" class="w-full rounded-lg pl-3 pr-9 py-2 text-xs text-white glass-input font-mono">
+                  <button onclick="toggleKeyMask('api-key-anthropic')" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-textSecondary hover:text-white transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Available Models -->
+              <div>
+                <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Primary Model Select</label>
+                <select class="w-full rounded-lg px-2.5 py-2 text-xs text-white bg-secondaryBg border border-cardBorder focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none font-medium font-mono">
+                  <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (Default)</option>
+                  <option value="claude-3-opus">Claude 3 Opus (Premium)</option>
+                  <option value="claude-3-haiku">Claude 3 Haiku (Fast)</option>
+                </select>
+              </div>
+
+              <!-- Usage Progress Bar -->
+              <div class="space-y-1 pt-1">
+                <div class="flex justify-between text-[10px] font-mono text-textSecondary">
+                  <span>Quota Limit (42% consumed)</span>
+                  <span>421k / 1.0M tokens</span>
+                </div>
+                <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div class="h-full bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full" style="width: 42%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-cardBorder/30">
+            <button onclick="testProviderConnection('anthropic')" id="test-btn-anthropic" class="w-full py-2 bg-white/5 hover:bg-white/10 border border-cardBorder rounded-lg text-xs font-semibold text-white flex items-center justify-center gap-1.5 transition-all">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Test Connection
+            </button>
+          </div>
+        </div>
+
+        <!-- Google Gemini Provider Card -->
+        <div id="provider-card-google" class="bg-cardBg border border-cardBorder rounded-card p-6 glow-card space-y-5 hover:border-purple-500/20 transition-all flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[#4285F4]/10 flex items-center justify-center border border-[#4285F4]/20">
+                  <svg class="w-5 h-5 text-[#4285F4]" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.211 4.114a5.87 5.87 0 01-5.87-5.87 5.87 5.87 0 015.87-5.87c2.19 0 3.93.93 5.02 1.83l3.223-3.223C19.86 3.195 16.32 1.5 12.24 1.5c-5.805 0-10.5 4.695-10.5 10.5s4.695 10.5 10.5 10.5c5.07 0 9.255-3.66 9.255-9.255 0-.63-.06-1.23-.165-1.76H12.24z"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="text-sm font-bold text-white">Google Cloud Vertex</h3>
+                  <p class="text-[10px] text-textSecondary">Gemini Model Suite</p>
+                </div>
+              </div>
+              <span id="provider-status-google" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/15">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                Connected
+              </span>
+            </div>
+
+            <!-- Configuration Form Inside Card -->
+            <div class="space-y-3 pt-1">
+              <!-- API Key (Masked) -->
+              <div>
+                <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Secure API Key</label>
+                <div class="relative">
+                  <input type="password" id="api-key-google" value="AIzaSyA89G-J892hfG8H0" class="w-full rounded-lg pl-3 pr-9 py-2 text-xs text-white glass-input font-mono">
+                  <button onclick="toggleKeyMask('api-key-google')" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-textSecondary hover:text-white transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Available Models -->
+              <div>
+                <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Primary Model Select</label>
+                <select class="w-full rounded-lg px-2.5 py-2 text-xs text-white bg-secondaryBg border border-cardBorder focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none font-medium font-mono">
+                  <option value="gemini-pro-1.5">Gemini 1.5 Pro (Default)</option>
+                  <option value="gemini-flash">Gemini 1.5 Flash</option>
+                  <option value="gemma-2">Gemma 2 Open Models</option>
+                </select>
+              </div>
+
+              <!-- Usage Progress Bar -->
+              <div class="space-y-1 pt-1">
+                <div class="flex justify-between text-[10px] font-mono text-textSecondary">
+                  <span>Quota Limit (15% consumed)</span>
+                  <span>152k / 1.0M tokens</span>
+                </div>
+                <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div class="h-full bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full" style="width: 15%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-cardBorder/30">
+            <button onclick="testProviderConnection('google')" id="test-btn-google" class="w-full py-2 bg-white/5 hover:bg-white/10 border border-cardBorder rounded-lg text-xs font-semibold text-white flex items-center justify-center gap-1.5 transition-all">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Test Connection
+            </button>
+          </div>
+        </div>
+
+        <!-- Azure OpenAI Provider Card -->
+        <div id="provider-card-azure" class="bg-cardBg border border-cardBorder rounded-card p-6 glow-card space-y-5 hover:border-purple-500/20 transition-all flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[#0078D4]/10 flex items-center justify-center border border-[#0078D4]/20">
+                  <svg class="w-5 h-5 text-[#0078D4]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                </div>
+                <div>
+                  <h3 class="text-sm font-bold text-white">Azure OpenAI</h3>
+                  <p class="text-[10px] text-textSecondary">Private Cloud Endpoint</p>
+                </div>
+              </div>
+              <span id="provider-status-azure" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-white/5 text-textSecondary border border-cardBorder">
+                Disconnected
+              </span>
+            </div>
+
+            <!-- Configuration Form Inside Card -->
+            <div class="space-y-3 pt-1">
+              <!-- Custom Endpoint URL -->
+              <div>
+                <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Custom Private Endpoint</label>
+                <input type="text" id="azure-endpoint" value="https://pix-private.openai.azure.com" class="w-full rounded-lg px-3 py-2 text-xs text-white glass-input font-mono">
+              </div>
+
+              <!-- API Key (Masked) -->
+              <div>
+                <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Secure API Key</label>
+                <div class="relative">
+                  <input type="password" id="api-key-azure" value="" placeholder="Enter Azure Private Key" class="w-full rounded-lg pl-3 pr-9 py-2 text-xs text-white glass-input font-mono">
+                  <button onclick="toggleKeyMask('api-key-azure')" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-textSecondary hover:text-white transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Model Deployment Selector -->
+              <div>
+                <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Deployment Name</label>
+                <input type="text" id="azure-deployment" value="gpt4o-enterprise-v1" class="w-full rounded-lg px-3 py-2 text-xs text-white glass-input font-mono">
+              </div>
+
+              <!-- Usage Progress Bar (Inactive) -->
+              <div class="space-y-1 pt-1 opacity-50">
+                <div class="flex justify-between text-[10px] font-mono text-textSecondary">
+                  <span>Quota Limit (0% consumed)</span>
+                  <span>0 / 5.0M tokens</span>
+                </div>
+                <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div class="h-full bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-cardBorder/30">
+            <button onclick="testProviderConnection('azure')" id="test-btn-azure" class="w-full py-2 bg-white/5 hover:bg-white/10 border border-cardBorder rounded-lg text-xs font-semibold text-white flex items-center justify-center gap-1.5 transition-all">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Test Connection
+            </button>
+          </div>
+        </div>
+
+        <!-- Custom/Local Ollama Provider Card -->
+        <div id="provider-card-ollama" class="bg-cardBg border border-cardBorder rounded-card p-6 glow-card space-y-5 hover:border-purple-500/20 transition-all flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-orange-600/10 flex items-center justify-center border border-orange-600/20">
+                  <span class="text-sm font-bold text-orange-400 font-mono">🦙</span>
+                </div>
+                <div>
+                  <h3 class="text-sm font-bold text-white">Local Ollama</h3>
+                  <p class="text-[10px] text-textSecondary">Self-Hosted / Localhost</p>
+                </div>
+              </div>
+              <span id="provider-status-ollama" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-white/5 text-textSecondary border border-cardBorder">
+                Disconnected
+              </span>
+            </div>
+
+            <!-- Configuration Form Inside Card -->
+            <div class="space-y-3 pt-1">
+              <!-- Server URL -->
+              <div>
+                <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Ollama Server API Endpoint</label>
+                <input type="text" id="ollama-url" value="http://localhost:11434" class="w-full rounded-lg px-3 py-2 text-xs text-white glass-input font-mono">
+              </div>
+
+              <!-- Model Name -->
+              <div>
+                <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Model Name (e.g., Llama-3)</label>
+                <input type="text" id="ollama-model" value="llama3.1:8b" class="w-full rounded-lg px-3 py-2 text-xs text-white glass-input font-mono">
+              </div>
+
+              <!-- Custom Headers (JSON) -->
+              <div>
+                <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Custom Header Payloads (Optional)</label>
+                <textarea id="ollama-headers" rows="2" placeholder='{ "Authorization": "Bearer local_token" }' class="w-full rounded-lg px-3 py-2 text-xs text-white glass-input font-mono resize-none"></textarea>
+              </div>
+
+              <!-- Usage Progress Bar (Local, unlimited) -->
+              <div class="space-y-1 pt-1">
+                <div class="flex justify-between text-[10px] font-mono text-textSecondary">
+                  <span>Usage (Local compute)</span>
+                  <span>Unlimited (No cost)</span>
+                </div>
+                <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full" style="width: 100%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-cardBorder/30">
+            <button onclick="testProviderConnection('ollama')" id="test-btn-ollama" class="w-full py-2 bg-white/5 hover:bg-white/10 border border-cardBorder rounded-lg text-xs font-semibold text-white flex items-center justify-center gap-1.5 transition-all">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Test Connection
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 5: SECURITY & AUDIT LOGS -->
+    <section id="tab-content-security" class="tab-pane hidden space-y-6">
+      
+      <!-- Top Section: Security Policies Form -->
+      <div class="bg-cardBg border border-cardBorder rounded-card p-6 glow-card space-y-5">
+        <div>
+          <h2 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+            <svg class="w-5 h-5 text-primaryAccent animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            Security & Governance Policies
+          </h2>
+          <p class="text-xs text-textSecondary mt-0.5">Define corporate access parameters, active threat controls, and download regulatory certification files.</p>
+        </div>
+
+        <form id="sec-policies-form" onsubmit="saveSecurityPolicies(event)" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          <!-- IP Allowlist Textarea -->
+          <div class="space-y-2">
+            <label for="sec_ip_allowlist" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider">Access IP Allowlist (CIDR notation)</label>
+            <textarea id="sec_ip_allowlist" rows="4" class="w-full rounded-xl p-3.5 text-xs text-white glass-input font-mono resize-none leading-relaxed" placeholder="e.g. 192.168.1.1, 10.0.0.0/24, 78.92.140.3">192.168.1.1/32, 10.0.0.0/24, 192.168.1.45/32, 104.244.12.9/32, 198.51.100.42/32</textarea>
+            <p class="text-[10px] text-textSecondary leading-normal">Comma-separated IPv4 or range. Leaves blank to authorize access globally.</p>
+          </div>
+
+          <!-- Rate Limiting Input & Encryptions -->
+          <div class="space-y-4">
+            <div>
+              <label for="sec_rate_limit" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider mb-2">Max Token Queries Per User</label>
+              <input type="number" id="sec_rate_limit" value="1000" class="w-full rounded-xl px-4 py-2.5 text-xs text-white glass-input font-mono">
+              <p class="text-[10px] text-textSecondary mt-1">Global threshold limit per user per minute across AI models.</p>
+            </div>
+            
+            <div class="flex items-center justify-between pt-2">
+              <div>
+                <p class="text-xs font-semibold text-white">AES-256 Data Encryption</p>
+                <p class="text-[10px] text-textSecondary">Encrypt vector store and history at-rest and in-transit</p>
+              </div>
+              <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                <input type="checkbox" name="sec_aes_encrypt" id="sec_aes_encrypt" checked class="switch-checkbox hidden">
+                <label for="sec_aes_encrypt" class="switch-label block overflow-hidden h-5 rounded-full bg-white/10 cursor-pointer transition-colors duration-200">
+                  <span class="switch-dot block h-4 w-4 rounded-full bg-white shadow transform translate-x-0.5 mt-0.5 transition-transform duration-200"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Compliance Toggles & SOC 2 Download -->
+          <div class="space-y-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs font-semibold text-white">GDPR Compliance Mode</p>
+                <p class="text-[10px] text-textSecondary">Anonymize user emails and search prompts in auditing</p>
+              </div>
+              <div class="relative inline-block w-10 mr-2 align-middle select-none">
+                <input type="checkbox" name="sec_gdpr_mode" id="sec_gdpr_mode" class="switch-checkbox hidden">
+                <label for="sec_gdpr_mode" class="switch-label block overflow-hidden h-5 rounded-full bg-white/10 cursor-pointer transition-colors duration-200">
+                  <span class="switch-dot block h-4 w-4 rounded-full bg-white shadow transform translate-x-0.5 mt-0.5 transition-transform duration-200"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- SOC 2 PDF Trigger -->
+            <div class="bg-purple-950/20 border border-purple-500/20 rounded-xl p-3 flex items-center justify-between gap-3">
+              <div class="space-y-0.5">
+                <p class="text-[11px] font-bold text-purple-300 uppercase tracking-wider">Compliance Assets</p>
+                <p class="text-[9px] text-textSecondary">SOC 2 Type II audit PDF generation</p>
+              </div>
+              <button type="button" onclick="downloadSOC2Report()" class="px-3.5 py-2 bg-purple-600 hover:bg-purple-500 text-[10px] font-bold text-white rounded-lg glow-purple transition-all flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Download Report
+              </button>
+            </div>
+
+            <!-- Submit Button inside column -->
+            <button type="submit" id="save-sec-policies-btn" class="w-full py-2.5 bg-gradient-to-r from-primaryAccent to-secondaryAccent hover:opacity-95 text-xs font-bold text-white rounded-xl glow-purple transition-all flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Apply Global Policies
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Bottom Section: Audit Log Directory Table -->
+      <div class="bg-cardBg border border-cardBorder rounded-card p-5 glow-card space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-base font-bold text-white">System Audit & Access Logs</h3>
+            <p class="text-xs text-textSecondary mt-0.5">Unmodifiable recording of critical security and administrative actions.</p>
+          </div>
+          <!-- Export CSV -->
+          <button onclick="exportAuditLogsToCSV()" class="px-3.5 py-2 text-xs font-bold text-white bg-white/5 hover:bg-white/10 border border-cardBorder rounded-xl transition-all flex items-center gap-1.5 self-start sm:self-auto">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Export Logs (CSV)
+          </button>
+        </div>
+
+        <!-- FILTERS FOR AUDIT LOGS -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-[#050816]/70 p-3.5 rounded-xl border border-cardBorder">
+          <!-- Action Filter -->
+          <div>
+            <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Filter by Action</label>
+            <select id="audit-filter-action" onchange="filterAuditLogs()" class="w-full rounded-lg px-2.5 py-2 text-xs text-white bg-secondaryBg border border-cardBorder focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none font-medium">
+              <option value="All">All Actions</option>
+              <option value="Login">User Logins</option>
+              <option value="Query">Model Queries</option>
+              <option value="Security">Security Policy Changes</option>
+              <option value="Key">Credential Rotations</option>
+              <option value="Doc">Document Operations</option>
+            </select>
+          </div>
+
+          <!-- User filter input -->
+          <div>
+            <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Filter by User</label>
+            <input type="text" id="audit-filter-user" onkeyup="filterAuditLogs()" placeholder="Search username or scheduler..." class="w-full rounded-lg px-3 py-2 text-xs text-white bg-secondaryBg border border-cardBorder focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none font-medium">
+          </div>
+
+          <!-- IP Filter input -->
+          <div>
+            <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Filter by IP Address</label>
+            <input type="text" id="audit-filter-ip" onkeyup="filterAuditLogs()" placeholder="Search source IP address..." class="w-full rounded-lg px-3 py-2 text-xs text-white bg-secondaryBg border border-cardBorder focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none font-medium">
+          </div>
+        </div>
+
+        <!-- Logs Directory Table -->
+        <div class="overflow-x-auto w-full border border-cardBorder/40 rounded-xl">
+          <table class="w-full text-left border-collapse" id="table-audit-logs">
+            <thead>
+              <tr class="border-b border-cardBorder bg-[#070b18] text-xs font-semibold text-textSecondary uppercase tracking-wider">
+                <th onclick="sortTable('table-audit-logs', 0)" class="sortable px-5 py-3">Timestamp <span class="text-[9px] ml-1">⇅</span></th>
+                <th onclick="sortTable('table-audit-logs', 1)" class="sortable px-5 py-3">User Principal <span class="text-[9px] ml-1">⇅</span></th>
+                <th onclick="sortTable('table-audit-logs', 2)" class="sortable px-5 py-3">Action Type <span class="text-[9px] ml-1">⇅</span></th>
+                <th onclick="sortTable('table-audit-logs', 3)" class="sortable px-5 py-3">Resource Target <span class="text-[9px] ml-1">⇅</span></th>
+                <th onclick="sortTable('table-audit-logs', 4)" class="sortable px-5 py-3">IP Address <span class="text-[9px] ml-1">⇅</span></th>
+                <th onclick="sortTable('table-audit-logs', 5)" class="sortable px-5 py-3 text-center">Status <span class="text-[9px] ml-1">⇅</span></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-cardBorder/30 text-xs font-mono text-textSecondary" id="audit-rows-container">
+              <!-- Dynamically populated audit log rows -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Table empty state -->
+        <div id="audit-empty-state" class="hidden p-10 text-center flex flex-col items-center justify-center">
+          <svg class="w-10 h-10 text-textSecondary mb-2.5 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          <p class="text-xs font-semibold text-white">No audit logs match active criteria</p>
+          <p class="text-[10px] text-textSecondary mt-0.5">Please check your query filters or clear parameters.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 6: BILLING -->
+    <section id="tab-content-billing" class="tab-pane hidden space-y-6">
+      
+      <!-- Top Section: Current Plan & Consumption meters -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Highlighted Enterprise Card -->
+        <div class="bg-gradient-to-br from-[#120F30] via-[#0B1020] to-[#0A0522] border-2 border-purple-500/30 rounded-card p-6 shadow-[0_0_30px_rgba(139,92,246,0.15)] flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute -right-12 -top-12 w-48 h-48 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/25 text-purple-300 border border-purple-500/40 uppercase tracking-wider">
+                <svg class="w-3 h-3 text-purple-300 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                Current Subscription
+              </span>
+              <p class="text-xs text-textSecondary font-medium">Billed annually</p>
+            </div>
+            
+            <div>
+              <h3 class="text-3xl font-extrabold text-white font-sans tracking-tight">Enterprise Pro</h3>
+              <p class="text-xs text-textSecondary mt-1 leading-relaxed">Dedicated clusters, unthrottled API routing, sovereign tenant privacy models, 24/7 priority enterprise support SLAs.</p>
+            </div>
+
+            <div class="pt-2">
+              <p class="text-[10px] text-textSecondary font-semibold uppercase tracking-wider">Next Billing Cycle</p>
+              <p class="text-xs font-mono text-white mt-0.5">January 15, 2027 ($2,400.00)</p>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t border-cardBorder/30 flex items-center justify-between gap-3 flex-wrap">
+            <button onclick="showToast('Dedicated Support', 'Routing secure request ticket to your Dedicated Account Manager.', 'info')" class="flex-1 py-2.5 text-center text-xs text-white font-bold bg-white/5 hover:bg-white/10 border border-cardBorder rounded-xl transition-all">
+              Dedicated Support
+            </button>
+            <button onclick="showToast('Plan Locked', 'Enterprise custom additions require co-owner approvals.', 'warning')" class="flex-1 py-2.5 text-center text-xs text-white font-bold bg-purple-600 hover:bg-purple-500 rounded-xl glow-purple transition-all">
+              Manage Licenses
+            </button>
+          </div>
+        </div>
+
+        <!-- Usage progress meters (2 cards worth merged or responsive grid) -->
+        <div class="bg-cardBg border border-cardBorder rounded-card p-6 glow-card space-y-5 lg:col-span-2 flex flex-col justify-between">
+          <div>
+            <h3 class="text-base font-bold text-white">Monthly Active Consumption</h3>
+            <p class="text-xs text-textSecondary mt-0.5">Real-time tracking of current period token volumes, database storage limits, and API count expenditures.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <!-- Meter 1: Tokens -->
+            <div class="space-y-2 bg-[#050816]/75 border border-cardBorder p-4 rounded-xl">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-textSecondary font-semibold">Token Quota</span>
+                <span class="font-bold text-white font-mono">75.0%</span>
+              </div>
+              <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full" style="width: 75%"></div>
+              </div>
+              <p class="text-[10px] text-textSecondary font-mono mt-1 text-right">750M / 1.0B tokens</p>
+            </div>
+
+            <!-- Meter 2: Vector Storage -->
+            <div class="space-y-2 bg-[#050816]/75 border border-cardBorder p-4 rounded-xl">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-textSecondary font-semibold">Vector Storage</span>
+                <span class="font-bold text-white font-mono">42.0%</span>
+              </div>
+              <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full" style="width: 42%"></div>
+              </div>
+              <p class="text-[10px] text-textSecondary font-mono mt-1 text-right">4.2TB / 10TB</p>
+            </div>
+
+            <!-- Meter 3: API calls -->
+            <div class="space-y-2 bg-[#050816]/75 border border-cardBorder p-4 rounded-xl">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-textSecondary font-semibold">API Gateways</span>
+                <span class="font-bold text-white font-mono">62.0%</span>
+              </div>
+              <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full" style="width: 62%"></div>
+              </div>
+              <p class="text-[10px] text-textSecondary font-mono mt-1 text-right">12.4M / 20M calls</p>
+            </div>
+          </div>
+
+          <div class="bg-purple-950/10 border border-purple-500/10 rounded-xl p-3 flex items-center justify-between gap-3 text-xs">
+            <span class="text-textSecondary font-semibold">Warning threshold notifications trigger at 80% consumption alerts.</span>
+            <button onclick="showToast('Settings Saved', 'Quota warning limits configured.', 'success')" class="text-primaryAccent font-bold hover:underline">Edit limits</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Layout: Invoices & Payment Methods -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Table: Invoices (col-span-2) -->
+        <div class="bg-cardBg border border-cardBorder rounded-card p-5 glow-card space-y-4 lg:col-span-2">
+          <div>
+            <h4 class="font-bold text-white text-base">Billing History & Invoices</h4>
+            <p class="text-xs text-textSecondary mt-0.5">List of historic payments, downloadable as secure PDF copies.</p>
+          </div>
+          <div class="overflow-x-auto w-full border border-cardBorder/40 rounded-xl">
+            <table class="w-full text-left border-collapse" id="table-invoices">
+              <thead>
+                <tr class="border-b border-cardBorder bg-[#070b18] text-xs font-semibold text-textSecondary uppercase tracking-wider">
+                  <th onclick="sortTable('table-invoices', 0)" class="sortable px-5 py-3">Invoice Date <span class="text-[9px] ml-1">⇅</span></th>
+                  <th onclick="sortTable('table-invoices', 1)" class="sortable px-5 py-3">Description ID <span class="text-[9px] ml-1">⇅</span></th>
+                  <th onclick="sortTable('table-invoices', 2, 'currency')" class="sortable px-5 py-3 text-right">Charged Amount <span class="text-[9px] ml-1">⇅</span></th>
+                  <th onclick="sortTable('table-invoices', 3)" class="sortable px-5 py-3 text-center">Receipt Status <span class="text-[9px] ml-1">⇅</span></th>
+                  <th class="px-5 py-3 text-right">Download</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-cardBorder/30 text-xs font-mono text-textSecondary">
+                <tr class="hover:bg-white/[0.01]">
+                  <td class="px-5 py-3 font-semibold text-white">2026-07-15</td>
+                  <td class="px-5 py-3 text-textSecondary font-normal">πX-INV-2026-005</td>
+                  <td class="px-5 py-3 text-right font-bold text-white">$2,400.00</td>
+                  <td class="px-5 py-3 text-center">
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">Paid</span>
+                  </td>
+                  <td class="px-5 py-3 text-right">
+                    <button onclick="downloadInvoice('πX-INV-2026-005', '2026-07-15', '2400.00')" class="text-primaryAccent hover:text-white font-bold font-sans hover:underline flex items-center justify-end gap-1 ml-auto">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                      PDF
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-white/[0.01]">
+                  <td class="px-5 py-3 font-semibold text-white">2026-06-15</td>
+                  <td class="px-5 py-3 text-textSecondary font-normal">πX-INV-2026-004</td>
+                  <td class="px-5 py-3 text-right font-bold text-white">$2,400.00</td>
+                  <td class="px-5 py-3 text-center">
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">Paid</span>
+                  </td>
+                  <td class="px-5 py-3 text-right">
+                    <button onclick="downloadInvoice('πX-INV-2026-004', '2026-06-15', '2400.00')" class="text-primaryAccent hover:text-white font-bold font-sans hover:underline flex items-center justify-end gap-1 ml-auto">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                      PDF
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-white/[0.01]">
+                  <td class="px-5 py-3 font-semibold text-white">2026-05-15</td>
+                  <td class="px-5 py-3 text-textSecondary font-normal">πX-INV-2026-003</td>
+                  <td class="px-5 py-3 text-right font-bold text-white">$2,400.00</td>
+                  <td class="px-5 py-3 text-center">
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">Paid</span>
+                  </td>
+                  <td class="px-5 py-3 text-right">
+                    <button onclick="downloadInvoice('πX-INV-2026-003', '2026-05-15', '2400.00')" class="text-primaryAccent hover:text-white font-bold font-sans hover:underline flex items-center justify-end gap-1 ml-auto">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                      PDF
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-white/[0.01]">
+                  <td class="px-5 py-3 font-semibold text-white">2026-04-15</td>
+                  <td class="px-5 py-3 text-textSecondary font-normal">πX-INV-2026-002</td>
+                  <td class="px-5 py-3 text-right font-bold text-white">$2,400.00</td>
+                  <td class="px-5 py-3 text-center">
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">Paid</span>
+                  </td>
+                  <td class="px-5 py-3 text-right">
+                    <button onclick="downloadInvoice('πX-INV-2026-002', '2026-04-15', '2400.00')" class="text-primaryAccent hover:text-white font-bold font-sans hover:underline flex items-center justify-end gap-1 ml-auto">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                      PDF
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-white/[0.01]">
+                  <td class="px-5 py-3 font-semibold text-white">2026-03-15</td>
+                  <td class="px-5 py-3 text-textSecondary font-normal">πX-INV-2026-001</td>
+                  <td class="px-5 py-3 text-right font-bold text-white">$2,400.00</td>
+                  <td class="px-5 py-3 text-center">
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">Paid</span>
+                  </td>
+                  <td class="px-5 py-3 text-right">
+                    <button onclick="downloadInvoice('πX-INV-2026-001', '2026-03-15', '2400.00')" class="text-primaryAccent hover:text-white font-bold font-sans hover:underline flex items-center justify-end gap-1 ml-auto">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                      PDF
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Payment Method Credit Card Card -->
+        <div class="bg-cardBg border border-cardBorder rounded-card p-5 glow-card space-y-5 flex flex-col justify-between">
+          <div>
+            <h4 class="font-bold text-white text-base">Payment Methods</h4>
+            <p class="text-xs text-textSecondary mt-0.5">Manage default corporate credit cards.</p>
+          </div>
+
+          <!-- Credit Card CSS Mockup -->
+          <div class="relative h-[165px] rounded-xl bg-gradient-to-tr from-purple-900 via-indigo-950 to-purple-800 p-5 shadow-[0_4px_25px_rgba(124,58,237,0.25)] flex flex-col justify-between overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-36 h-36 bg-purple-500/15 rounded-full blur-2xl"></div>
+            
+            <div class="flex items-start justify-between">
+              <!-- NFC Chip & Logo -->
+              <div class="space-y-1.5">
+                <!-- SVG Chip -->
+                <svg class="w-8 h-6.5 text-amber-400/80" viewBox="0 0 24 20" fill="currentColor">
+                  <rect x="2" y="2" width="20" height="16" rx="3" fill="#D97706" opacity="0.4"/>
+                  <rect x="5" y="5" width="14" height="10" rx="1.5" fill="#F59E0B"/>
+                  <line x1="12" y1="5" x2="12" y2="15" stroke="#78350F" stroke-width="0.8"/>
+                  <line x1="5" y1="10" x2="19" y2="10" stroke="#78350F" stroke-width="0.8"/>
+                </svg>
+              </div>
+              <!-- MasterCard Brand Representation -->
+              <div class="flex items-center -space-x-2.5">
+                <div class="w-7 h-7 rounded-full bg-rose-500 opacity-90"></div>
+                <div class="w-7 h-7 rounded-full bg-amber-500 opacity-80"></div>
+              </div>
+            </div>
+
+            <!-- Card Number -->
+            <div class="font-mono text-base font-bold text-white tracking-widest text-shadow" id="cc-display-number">
+              ••••  ••••  ••••  8432
+            </div>
+
+            <!-- Holder and Expiry -->
+            <div class="flex items-end justify-between">
+              <div class="text-left">
+                <p class="text-[8px] text-purple-200/50 uppercase tracking-wider">Cardholder Name</p>
+                <p class="text-[11px] font-bold text-white tracking-wide uppercase truncate max-w-[130px]" id="cc-display-holder">πX TECHNOLOGIES INC.</p>
+              </div>
+              <div class="text-right">
+                <p class="text-[8px] text-purple-200/50 uppercase tracking-wider">Expiry</p>
+                <p class="text-[11px] font-bold text-white font-mono" id="cc-display-expiry">11/29</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="space-y-2">
+            <button onclick="openUpdateCardModal()" class="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-cardBorder rounded-xl text-xs font-semibold text-white transition-all">
+              Update Credit Card Credentials
+            </button>
+            <p class="text-[10px] text-textSecondary text-center leading-normal pt-1">All billing calculations processed using secure TLS 1.3 encryption & PCI-DSS level 1 compliance gateways.</p>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- MODALS OVERLAYS (Hidden by default) -->
+
+  <!-- MODAL 1: INVITE USER -->
+  <div id="modal-invite" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden">
+    <div class="bg-secondaryBg border border-cardBorder rounded-card max-w-md w-full p-6 shadow-2xl relative glow-card transform scale-95 transition-all duration-200">
+      <button onclick="closeInviteModal()" class="absolute top-4 right-4 text-textSecondary hover:text-white transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+      
+      <div class="space-y-4">
+        <div>
+          <h3 class="text-lg font-bold text-white">Invite Team Member</h3>
+          <p class="text-xs text-textSecondary mt-0.5">Send a system registration email to add a user to the directory.</p>
+        </div>
+
+        <form id="invite-user-form" onsubmit="submitInviteUserForm(event)" class="space-y-4 pt-1">
+          <div>
+            <label for="invite-name" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider mb-2">Full Name</label>
+            <input type="text" id="invite-name" required placeholder="e.g. Liam Gallagher" class="w-full rounded-xl px-4 py-3 text-sm text-white glass-input font-medium">
+          </div>
+          
+          <div>
+            <label for="invite-email" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider mb-2">Email Address</label>
+            <input type="email" id="invite-email" required placeholder="e.g. liam@pix-tech.ai" class="w-full rounded-xl px-4 py-3 text-sm text-white glass-input font-mono">
+          </div>
+
+          <div>
+            <label for="invite-role" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider mb-2">Directory Role</label>
+            <select id="invite-role" class="w-full rounded-xl px-4 py-3 text-sm text-white bg-secondaryBg border border-cardBorder focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none font-medium">
+              <option value="Member">Member (Developer access)</option>
+              <option value="Admin">Admin (Full administrative governance)</option>
+              <option value="Viewer">Viewer (Read-only analytics)</option>
+              <option value="API Only">API Only (Integration keys only)</option>
+            </select>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-3">
+            <button type="button" onclick="closeInviteModal()" class="px-5 py-2.5 text-xs font-semibold text-textSecondary bg-white/5 hover:bg-white/10 border border-cardBorder rounded-xl transition-all">Cancel</button>
+            <button type="submit" id="invite-submit-btn" class="px-6 py-2.5 text-xs font-semibold text-white bg-gradient-to-r from-primaryAccent to-secondaryAccent hover:opacity-90 rounded-xl glow-purple transition-all flex items-center gap-2">
+              Send Invitation
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: CONFIRM DELETE USER -->
+  <div id="modal-delete" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden">
+    <div class="bg-secondaryBg border border-[#EF4444]/30 rounded-card max-w-sm w-full p-6 shadow-2xl relative glow-card transform scale-95 transition-all duration-200">
+      <div class="text-center space-y-4">
+        <div class="w-12 h-12 rounded-full bg-[#EF4444]/15 border border-[#EF4444]/35 flex items-center justify-center mx-auto text-xl text-[#EF4444] animate-bounce">
+          ⚠️
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-white">Delete User Directory Profile?</h3>
+          <p class="text-xs text-textSecondary mt-1 leading-relaxed">Are you absolutely sure you want to delete <span class="font-bold text-white" id="delete-username-target">this user</span>? This action is un-doable and immediately revokes all operational key integrations.</p>
+        </div>
+        <div class="flex items-center justify-center gap-3 pt-2">
+          <button onclick="closeDeleteModal()" class="px-4.5 py-2 text-xs font-semibold text-textSecondary bg-white/5 hover:bg-white/10 border border-cardBorder rounded-xl transition-all">Cancel</button>
+          <button onclick="executeUserDeletion()" class="px-5 py-2 text-xs font-semibold text-white bg-[#EF4444] hover:bg-red-500 rounded-xl transition-all">Confirm Deletion</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: ADD AI PROVIDER -->
+  <div id="modal-add-provider" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden">
+    <div class="bg-secondaryBg border border-cardBorder rounded-card max-w-md w-full p-6 shadow-2xl relative glow-card transform scale-95 transition-all duration-200">
+      <button onclick="closeAddProviderModal()" class="absolute top-4 right-4 text-textSecondary hover:text-white transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <div class="space-y-4">
+        <div>
+          <h3 class="text-lg font-bold text-white">Add Custom AI Provider</h3>
+          <p class="text-xs text-textSecondary mt-0.5">Configure secure routing credentials for custom endpoints or open LLMs.</p>
+        </div>
+
+        <form id="add-provider-form" onsubmit="submitAddProviderForm(event)" class="space-y-4 pt-1">
+          <div>
+            <label for="provider-select-type" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider mb-2">Provider Base Core</label>
+            <select id="provider-select-type" required class="w-full rounded-xl px-4 py-3 text-sm text-white bg-secondaryBg border border-cardBorder focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none font-medium">
+              <option value="groq">Groq Inc. (LPU Inference)</option>
+              <option value="cohere">Cohere Command</option>
+              <option value="mistral">Mistral AI Console</option>
+              <option value="deepseek">DeepSeek AI Core</option>
+              <option value="huggingface">Hugging Face Serverless Endpoints</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="add-provider-endpoint" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider mb-2">Base Endpoint URL</label>
+            <input type="text" id="add-provider-endpoint" required placeholder="e.g. https://api.groq.com/openai/v1" class="w-full rounded-xl px-4 py-3 text-sm text-white glass-input font-mono">
+          </div>
+
+          <div>
+            <label for="add-provider-key" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider mb-2">Secure Authentication Key</label>
+            <input type="password" id="add-provider-key" required placeholder="sk-gq-294H..." class="w-full rounded-xl px-4 py-3 text-sm text-white glass-input font-mono">
+          </div>
+
+          <div>
+            <label for="add-provider-model" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider mb-2">Preferred Base Model</label>
+            <input type="text" id="add-provider-model" required placeholder="e.g. llama3-70b-8192" class="w-full rounded-xl px-4 py-3 text-sm text-white glass-input font-mono">
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-3">
+            <button type="button" onclick="closeAddProviderModal()" class="px-5 py-2.5 text-xs font-semibold text-textSecondary bg-white/5 hover:bg-white/10 border border-cardBorder rounded-xl transition-all">Cancel</button>
+            <button type="submit" id="add-provider-submit-btn" class="px-6 py-2.5 text-xs font-semibold text-white bg-gradient-to-r from-primaryAccent to-secondaryAccent hover:opacity-90 rounded-xl glow-purple transition-all flex items-center gap-2">
+              Mount Provider Core
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: UPDATE CREDIT CARD -->
+  <div id="modal-update-card" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden">
+    <div class="bg-secondaryBg border border-cardBorder rounded-card max-w-md w-full p-6 shadow-2xl relative glow-card transform scale-95 transition-all duration-200">
+      <button onclick="closeUpdateCardModal()" class="absolute top-4 right-4 text-textSecondary hover:text-white transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <div class="space-y-4">
+        <div>
+          <h3 class="text-lg font-bold text-white">Update Card Credentials</h3>
+          <p class="text-xs text-textSecondary mt-0.5">Please provide secure banking credentials. All connections are PCI-DSS compliant.</p>
+        </div>
+
+        <form id="update-card-form" onsubmit="submitUpdateCardForm(event)" class="space-y-4 pt-1">
+          <div>
+            <label for="cc-input-number" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider mb-2">Card Number</label>
+            <div class="relative">
+              <input type="text" id="cc-input-number" required maxlength="19" placeholder="4111 2222 3333 4444" oninput="formatCardNumber(this)" class="w-full rounded-xl px-4 py-3 text-sm text-white glass-input font-mono">
+              <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-textSecondary" id="cc-type-brand">💳</span>
+            </div>
+          </div>
+
+          <div>
+            <label for="cc-input-holder" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider mb-2">Cardholder Legal Name</label>
+            <input type="text" id="cc-input-holder" required placeholder="πX Technologies Inc." class="w-full rounded-xl px-4 py-3 text-sm text-white glass-input uppercase font-semibold">
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="cc-input-expiry" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider mb-2">Expiry Date</label>
+              <input type="text" id="cc-input-expiry" required maxlength="5" placeholder="MM/YY" oninput="formatExpiry(this)" class="w-full rounded-xl px-4 py-3 text-sm text-white glass-input font-mono">
+            </div>
+            <div>
+              <label for="cc-input-cvv" class="block text-xs font-semibold text-textSecondary uppercase tracking-wider mb-2">CVV Code</label>
+              <input type="password" id="cc-input-cvv" required maxlength="4" placeholder="•••" class="w-full rounded-xl px-4 py-3 text-sm text-white glass-input font-mono">
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-3">
+            <button type="button" onclick="closeUpdateCardModal()" class="px-5 py-2.5 text-xs font-semibold text-textSecondary bg-white/5 hover:bg-white/10 border border-cardBorder rounded-xl transition-all">Cancel</button>
+            <button type="submit" id="card-submit-btn" class="px-6 py-2.5 text-xs font-semibold text-white bg-gradient-to-r from-primaryAccent to-secondaryAccent hover:opacity-90 rounded-xl glow-purple transition-all flex items-center gap-2">
+              Apply New Card
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION CORE JAVASCRIPT LAYER -->
+  <script type="text/javascript">
+    
+    // --- STATE MANAGEMENT ---
+    let activeTab = 'analytics';
+    let activeTimeRange = '30d';
+    let userDeletionIndex = null;
+    let selectedRoleFilter = 'All';
+
+    // Users Directory Mock Data Structure
+    let users = [
+      { id: 1, name: 'Dr. Evelyn Pierce', email: 'evelyn@pix-tech.ai', role: 'Admin', status: 'Active', active: '2 mins ago', avatar: 'EP', gradient: 'from-purple-500 to-indigo-600' },
+      { id: 2, name: 'Marcus Vance', email: 'marcus@pix-tech.ai', role: 'Member', status: 'Active', active: '1 hour ago', avatar: 'MV', gradient: 'from-emerald-500 to-teal-600' },
+      { id: 3, name: 'Sienna Brooks', email: 'sienna@pix-tech.ai', role: 'Member', status: 'Active', active: '3 hours ago', avatar: 'SB', gradient: 'from-blue-500 to-sky-600' },
+      { id: 4, name: 'Jaxson Reed', email: 'jaxson@pix-tech.ai', role: 'Viewer', status: 'Active', active: '1 day ago', avatar: 'JR', gradient: 'from-amber-500 to-orange-600' },
+      { id: 5, name: 'Amara Chen', email: 'amara@pix-tech.ai', role: 'Admin', status: 'Active', active: '10 mins ago', avatar: 'AC', gradient: 'from-purple-500 to-pink-500' },
+      { id: 6, name: 'Liam Gallagher', email: 'liam@pix-tech.ai', role: 'Member', status: 'Invited', active: 'Never', avatar: 'LG', gradient: 'from-rose-500 to-pink-600' },
+      { id: 7, name: 'Clara Oswald', email: 'clara@pix-tech.ai', role: 'API Only', status: 'Active', active: '4 mins ago', avatar: 'CO', gradient: 'from-indigo-400 to-indigo-700' },
+      { id: 8, name: 'Devon Lane', email: 'devon@pix-tech.ai', role: 'Viewer', status: 'Suspended', active: '5 days ago', avatar: 'DL', gradient: 'from-slate-500 to-slate-700' },
+      { id: 9, name: 'Kiara Smith', email: 'kiara@pix-tech.ai', role: 'Member', status: 'Invited', active: 'Never', avatar: 'KS', gradient: 'from-cyan-400 to-teal-500' },
+      { id: 10, name: 'Zane Sterling', email: 'zane@pix-tech.ai', role: 'API Only', status: 'Active', active: '12 hours ago', avatar: 'ZS', gradient: 'from-violet-500 to-purple-800' }
+    ];
+
+    // System Audit & Access Logs Mock Data
+    let auditLogs = [
+      { timestamp: '2026-07-27 11:45:12', user: 'Dr. Evelyn Pierce', action: 'User Login', resource: 'Auth Portal', ip: '192.168.1.45', status: 'Success' },
+      { timestamp: '2026-07-27 11:32:04', user: 'Clara Oswald', action: 'Model Query', resource: 'OpenAI GPT-4o', ip: '104.244.12.9', status: 'Success' },
+      { timestamp: '2026-07-27 10:15:30', user: 'Marcus Vance', action: 'Document Upload', resource: 'RAG Knowledge Base', ip: '192.168.1.88', status: 'Success' },
+      { timestamp: '2026-07-27 09:42:18', user: 'Dr. Evelyn Pierce', action: 'Rotate API Key', resource: 'Anthropic Provider', ip: '192.168.1.45', status: 'Success' },
+      { timestamp: '2026-07-27 08:21:00', user: 'Sienna Brooks', action: 'Model Query', resource: 'Anthropic Claude 3.5', ip: '192.168.1.12', status: 'Success' },
+      { timestamp: '2026-07-27 07:11:54', user: 'System Scheduler', action: 'Index Optimization', resource: 'Vector Store', ip: '127.0.0.1', status: 'Success' },
+      { timestamp: '2026-07-26 23:45:00', user: 'Amara Chen', action: 'Toggle SSO', resource: 'Security Settings', ip: '192.168.1.32', status: 'Success' },
+      { timestamp: '2026-07-26 19:12:10', user: 'Jaxson Reed', action: 'Export Analytics', resource: 'Billing Center', ip: '192.168.1.102', status: 'Success' },
+      { timestamp: '2026-07-26 16:30:22', user: 'Devon Lane', action: 'User Login', resource: 'Auth Portal', ip: '78.92.140.3', status: 'Failure' },
+      { timestamp: '2026-07-26 14:15:11', user: 'Dr. Evelyn Pierce', action: 'Update Rate Limit', resource: 'Security Policies', ip: '192.168.1.45', status: 'Success' },
+      { timestamp: '2026-07-26 11:02:45', user: 'Clara Oswald', action: 'Model Query', resource: 'Google Gemini Pro', ip: '104.244.12.9', status: 'Success' },
+      { timestamp: '2026-07-26 09:15:30', user: 'Zane Sterling', action: 'Model Query', resource: 'OpenAI GPT-4o', ip: '198.51.100.42', status: 'Success' },
+      { timestamp: '2026-07-25 18:44:12', user: 'Marcus Vance', action: 'Delete Document', resource: 'RAG Knowledge Base', ip: '192.168.1.88', status: 'Success' },
+      { timestamp: '2026-07-25 14:22:01', user: 'Amara Chen', action: 'Invite User', resource: 'User Directory', ip: '192.168.1.32', status: 'Success' },
+      { timestamp: '2026-07-25 10:00:15', user: 'Devon Lane', action: 'Rotate API Key', resource: 'Azure OpenAI', ip: '78.92.140.3', status: 'Success' }
+    ];
+
+    // --- CHART DATA GENERATION LOGIC ---
+    function getChartData(range) {
+      if (range === '7d') {
+        return {
+          cost: [
+            { date: 'Jul 21', val: 380 }, { date: 'Jul 22', val: 420 }, { date: 'Jul 23', val: 310 },
+            { date: 'Jul 24', val: 590 }, { date: 'Jul 25', val: 480 }, { date: 'Jul 26', val: 640 },
+            { date: 'Jul 27', val: 520 }
+          ],
+          requests: [120000, 140000, 110000, 190000, 160000, 220000, 180000]
+        };
+      } else if (range === '30d') {
+        let baseCost = 350;
+        let dataCost = [];
+        let dataReq = [];
+        for (let i = 0; i < 30; i++) {
+          let swing = Math.sin(i / 2) * 80 + (Math.random() * 50 - 25);
+          let cost = Math.round(baseCost + (i * 8) + swing);
+          let date = new Date();
+          date.setDate(date.getDate() - (29 - i));
+          dataCost.push({
+            date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            val: cost
+          });
+          dataReq.push(Math.round(cost * 320 + (Math.random() * 10000 - 5000)));
+        }
+        return { cost: dataCost, requests: dataReq };
+      } else { // 90d
+        let baseCost = 280;
+        let dataCost = [];
+        let dataReq = [];
+        for (let i = 0; i < 30; i++) {
+          let swing = Math.cos(i / 1.5) * 120 + (Math.random() * 80 - 40);
+          let cost = Math.round(baseCost + (i * 20) + swing);
+          let date = new Date();
+          date.setDate(date.getDate() - (29 - i) * 3);
+          dataCost.push({
+            date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            val: cost
+          });
+          dataReq.push(Math.round(cost * 280 + (Math.random() * 20000 - 10000)));
+        }
+        return { cost: dataCost, requests: dataReq };
+      }
+    }
+
+    // --- TOAST NOTIFICATIONS SERVICE ---
+    function showToast(title, message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      
+      let border, icon, bgClass;
+      switch(type) {
+        case 'success':
+          bgClass = 'bg-[#0B1020]/95 backdrop-blur-md';
+          border = 'border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.15)]';
+          icon = `<svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>`;
+          break;
+        case 'error':
+          bgClass = 'bg-[#0B1020]/95 backdrop-blur-md';
+          border = 'border-rose-500/30 shadow-[0_0_20px_rgba(244,63,94,0.15)]';
+          icon = `<svg class="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>`;
+          break;
+        case 'warning':
+          bgClass = 'bg-[#0B1020]/95 backdrop-blur-md';
+          border = 'border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.15)]';
+          icon = `<svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+          break;
+        default: // info / purple
+          bgClass = 'bg-[#0B1020]/95 backdrop-blur-md';
+          border = 'border-purple-500/30 shadow-[0_0_20px_rgba(139,92,246,0.15)]';
+          icon = `<svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      }
+
+      const toastId = 'toast-' + Date.now();
+      const toastHtml = `
+        <div id="${toastId}" class="flex items-start gap-3.5 p-4 rounded-card border ${border} ${bgClass} max-w-sm transform translate-x-full opacity-0 transition-all duration-300 ease-out">
+          <div class="flex-shrink-0 mt-0.5">${icon}</div>
+          <div class="flex-1">
+            <h4 class="font-bold text-xs text-white uppercase tracking-wider">${title}</h4>
+            <p class="text-xs text-textSecondary mt-1 leading-normal">${message}</p>
+          </div>
+          <button onclick="dismissToast('${toastId}')" class="flex-shrink-0 text-textSecondary hover:text-white transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+      `;
+
+      container.insertAdjacentHTML('beforeend', toastHtml);
+      const elem = document.getElementById(toastId);
+      
+      // Animate Entrance
+      setTimeout(() => {
+        elem.classList.remove('translate-x-full', 'opacity-0');
+      }, 20);
+
+      // Self-destruct sequence (3.5 seconds)
+      setTimeout(() => {
+        dismissToast(toastId);
+      }, 3500);
+    }
+
+    function dismissToast(id) {
+      const elem = document.getElementById(id);
+      if (elem) {
+        elem.classList.add('translate-x-full', 'opacity-0');
+        setTimeout(() => { elem.remove(); }, 300);
+      }
+    }
+
+    // --- TAB SWITCH ENGINE ---
+    function switchTab(tabName) {
+      activeTab = tabName;
+      
+      // Hide all panes
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      // Show targeted pane
+      document.getElementById('tab-content-' + tabName).classList.remove('hidden');
+
+      // Update Nav Button styling
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = "tab-btn px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 text-textSecondary hover:text-white";
+        // Remove icon colors
+        const icon = btn.querySelector('svg');
+        if(icon) icon.className.baseVal = "w-4 h-4";
+      });
+
+      const activeBtn = document.getElementById('tab-btn-' + tabName);
+      if (activeBtn) {
+        activeBtn.className = "tab-btn px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 text-white bg-secondaryBg shadow border border-cardBorder";
+        const icon = activeBtn.querySelector('svg');
+        if(icon) icon.className.baseVal = "w-4 h-4 text-primaryAccent";
+      }
+
+      // Specialized triggers on tab open
+      if (tabName === 'analytics') {
+        renderAnalyticsCharts();
+      } else if (tabName === 'users') {
+        renderUsersDirectory();
+      } else if (tabName === 'security') {
+        renderAuditLogs();
+      }
+    }
+
+    // --- TAB 1: ANALYTICS CORE LOGIC ---
+    function changeTimeRange(range) {
+      activeTimeRange = range;
+      
+      // Toggle button styling
+      document.querySelectorAll('.range-btn').forEach(btn => {
+        btn.className = "range-btn px-3.5 py-1.5 text-xs font-medium rounded-lg text-textSecondary hover:text-white transition-all";
+      });
+      document.getElementById('range-btn-' + range).className = "range-btn px-3.5 py-1.5 text-xs font-medium rounded-lg text-white bg-cardBg border border-cardBorder shadow transition-all";
+
+      // Animate KPI Updates
+      animateKPIValues(range);
+
+      // Redraw Charts
+      renderAnalyticsCharts();
+    }
+
+    function animateKPIValues(range) {
+      const kpis = {
+        '7d': { cost: '$3,120.45', costPct: '-2.4%', latency: '42.1ms', latencyPct: '16% faster', requests: '560,400', reqPct: '+11.2%', perf: '99.52%', growth: '+4.1%' },
+        '30d': { cost: '$12,847.40', costPct: '-4.2%', latency: '47.2ms', latencyPct: '12% faster', requests: '2,410,250', reqPct: '+18.4%', perf: '99.24%', growth: '+12.4%' },
+        '90d': { cost: '$41,208.10', costPct: '+8.1%', latency: '51.8ms', latencyPct: '5% faster', requests: '7,890,120', reqPct: '+24.6%', perf: '99.08%', growth: '+34.8%' }
+      };
+
+      const data = kpis[range];
+
+      // Update contents
+      document.getElementById('kpi-cost').textContent = data.cost;
+      document.getElementById('kpi-perf').textContent = data.perf;
+      document.getElementById('kpi-latency').textContent = data.latency;
+      document.getElementById('kpi-requests').textContent = data.requests;
+      document.getElementById('kpi-growth').textContent = data.growth;
+
+      // Update badge states with color configurations
+      const costPctEl = document.getElementById('kpi-cost-pct');
+      if (range === '90d') {
+        costPctEl.className = 'inline-flex items-center text-[11px] font-semibold text-rose-400';
+        costPctEl.innerHTML = `<svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg>${data.costPct}`;
+      } else {
+        costPctEl.className = 'inline-flex items-center text-[11px] font-semibold text-emerald-400';
+        costPctEl.innerHTML = `<svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>${data.costPct}`;
+      }
+
+      document.getElementById('kpi-latency-pct').innerHTML = `<svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>${data.latencyPct}`;
+      document.getElementById('kpi-requests-pct').innerHTML = `<svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg>${data.reqPct}`;
+    }
+
+    function renderAnalyticsCharts() {
+      const dataSet = getChartData(activeTimeRange);
+      const width = 800;
+      const height = 250;
+      
+      // 1. RENDER LINE CHART (AI Cost Over Time)
+      const values = dataSet.cost.map(d => d.val);
+      const maxVal = Math.max(...values) * 1.15;
+      const minVal = Math.min(...values) * 0.85;
+      const deltaY = maxVal - minVal;
+
+      const points = dataSet.cost.map((d, index) => {
+        const x = (index / (dataSet.cost.length - 1)) * (width - 40) + 20;
+        const y = height - (((d.val - minVal) / deltaY) * (height - 60) + 30);
+        return { x, y, data: d };
+      });
+
+      // Horizontal grid lines & values
+      let gridLinesHtml = '';
+      const gridLevels = 4;
+      for (let i = 0; i <= gridLevels; i++) {
+        const levelY = height - ((i / gridLevels) * (height - 60) + 30);
+        const gridVal = Math.round(minVal + (i / gridLevels) * deltaY);
+        gridLinesHtml += `
+          <line x1="20" y1="${levelY}" x2="${width - 20}" y2="${levelY}" stroke="rgba(255,255,255,0.03)" stroke-dasharray="3"></line>
+          <text x="${width - 25}" y="${levelY - 4}" fill="#94A3B8" font-size="8" font-family="monospace" text-anchor="end">$${gridVal}</text>
+        `;
+      }
+      document.getElementById('cost-grid-lines').innerHTML = gridLinesHtml;
+
+      // Construct Smooth Bezier Path
+      let linePath = `M ${points[0].x} ${points[0].y}`;
+      let fillPath = `M ${points[0].x} ${points[0].y}`;
+      
+      for(let i = 1; i < points.length; i++) {
+        const p0 = points[i - 1];
+        const p1 = points[i];
+        const cpX1 = p0.x + (p1.x - p0.x) / 2.5;
+        const cpY1 = p0.y;
+        const cpX2 = p0.x + (p1.x - p0.x) / 1.6;
+        const cpY2 = p1.y;
+        linePath += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
+      }
+
+      fillPath = linePath + ` L ${points[points.length - 1].x} ${height} L ${points[0].x} ${height} Z`;
+
+      document.getElementById('cost-line-path').setAttribute('d', linePath);
+      document.getElementById('cost-area-path').setAttribute('d', fillPath);
+
+      // Handle X-Axis labels
+      const step = Math.ceil(dataSet.cost.length / 6);
+      let xLabelsHtml = '';
+      dataSet.cost.forEach((d, idx) => {
+        if (idx % step === 0 || idx === dataSet.cost.length - 1) {
+          xLabelsHtml += `<span>${d.date}</span>`;
+        }
+      });
+      document.getElementById('cost-x-labels').innerHTML = xLabelsHtml;
+
+      // Interactive Hover dot & tooltip triggers on Line Chart
+      const svg = document.getElementById('svg-cost-chart');
+      const hoverDot = document.getElementById('cost-hover-dot');
+      const tooltip = document.getElementById('chart-cost-tooltip-display');
+
+      svg.onmousemove = function(e) {
+        const rect = svg.getBoundingClientRect();
+        // Project to relative SVG viewport coordinates
+        const localX = ((e.clientX - rect.left) / rect.width) * width;
+        
+        // Find nearest data point
+        let nearest = points[0];
+        let minDist = Math.abs(points[0].x - localX);
+        for(let i = 1; i < points.length; i++) {
+          const d = Math.abs(points[i].x - localX);
+          if (d < minDist) {
+            minDist = d;
+            nearest = points[i];
+          }
+        }
+
+        hoverDot.setAttribute('cx', nearest.x);
+        hoverDot.setAttribute('cy', nearest.y);
+        hoverDot.classList.remove('hidden');
+
+        tooltip.textContent = `${nearest.data.date}: $${nearest.data.val}`;
+        tooltip.classList.remove('hidden');
+      };
+
+      svg.onmouseleave = function() {
+        hoverDot.classList.add('hidden');
+        tooltip.classList.add('hidden');
+      };
+
+
+      // 2. RENDER BAR CHART (Request Volume)
+      const barsContainer = document.getElementById('bars-container');
+      const barXLabelsContainer = document.getElementById('bar-x-labels');
+      const barTotalVal = document.getElementById('bar-total-val');
+      
+      const reqMax = Math.max(...dataSet.requests) * 1.1;
+      const svgBarWidth = 600;
+      const barYBase = 220;
+      const barHeightBase = height - 60;
+      
+      let barsHtml = '';
+      let barXLabelsHtml = '';
+      let sumRequests = 0;
+
+      const totalBars = dataSet.requests.length;
+      const paddingFraction = 0.45;
+      const barOuterWidth = svgBarWidth / totalBars;
+      const barWidth = barOuterWidth * (1 - paddingFraction);
+
+      dataSet.requests.forEach((req, idx) => {
+        sumRequests += req;
+        const normalizedHeight = (req / reqMax) * barHeightBase;
+        const barX = idx * barOuterWidth + (barOuterWidth * paddingFraction / 2);
+        const barY = barYBase - normalizedHeight;
+
+        barsHtml += `
+          <g class="group/bar cursor-pointer" onclick="showToast('Daily Volume', '${dataSet.cost[idx] ? dataSet.cost[idx].date : 'Day ' + (idx+1)}: ${req.toLocaleString()} queries', 'info')">
+            <rect x="${barX}" y="${barY}" width="${barWidth}" height="${normalizedHeight}" rx="4" fill="url(#bar-gradient)" class="transition-all duration-300 hover:opacity-100 group-hover/bar:opacity-90"></rect>
+            <text x="${barX + barWidth/2}" y="${barY - 8}" fill="#94A3B8" font-size="9" text-anchor="middle" class="opacity-0 group-hover/bar:opacity-100 transition-opacity pointer-events-none">${Math.round(req/1000)}k</text>
+          </g>
+        `;
+
+        if (totalBars <= 7 || idx % Math.ceil(totalBars/6) === 0 || idx === totalBars - 1) {
+          barXLabelsHtml += `<span>${dataSet.cost[idx] ? dataSet.cost[idx].date : 'D' + idx}</span>`;
+        }
+      });
+
+      barsContainer.innerHTML = barsHtml;
+      barXLabelsContainer.innerHTML = barXLabelsHtml;
+      barTotalVal.textContent = `Total Volume: ${sumRequests.toLocaleString()}`;
+
+      // Draw Grid lines for bar chart
+      let barGridHtml = '';
+      for (let i = 0; i <= 3; i++) {
+        const levelY = barYBase - (i / 3) * barHeightBase;
+        const levelVal = Math.round((i / 3) * reqMax / 1000);
+        barGridHtml += `
+          <line x1="10" y1="${levelY}" x2="${svgBarWidth - 10}" y2="${levelY}" stroke="rgba(255,255,255,0.03)" stroke-dasharray="3"></line>
+          <text x="${svgBarWidth - 15}" y="${levelY - 4}" fill="#94A3B8" font-size="8" font-family="monospace" text-anchor="end">${levelVal}k</text>
+        `;
+      }
+      document.getElementById('bar-grid-lines').innerHTML = barGridHtml;
+    }
+
+    // --- TAB 2: ORGANIZATION SETTINGS LOGIC ---
+    function triggerLogoUpload() {
+      document.getElementById('logo-input').click();
+    }
+
+    function previewLogo(event) {
+      const file = event.target.files[0];
+      if (file) {
+        if(file.size > 2 * 1024 * 1024) {
+          showToast("Upload Error", "File size exceeds 2MB limit.", "error");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('logo-upload-placeholder').classList.add('hidden');
+          const previewContainer = document.getElementById('logo-preview-container');
+          previewContainer.classList.remove('hidden');
+          document.getElementById('logo-preview').src = e.target.result;
+          document.getElementById('logo-filename').textContent = file.name;
+          showToast("Logo Uploaded", `${file.name} loaded successfully into cash pre-view.`, "success");
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeLogo(event) {
+      event.stopPropagation();
+      document.getElementById('logo-input').value = '';
+      document.getElementById('logo-preview-container').classList.add('hidden');
+      document.getElementById('logo-upload-placeholder').classList.remove('hidden');
+      showToast("Logo Removed", "Corporate logo selection discarded.", "info");
+    }
+
+    function updateTimeoutValue(val) {
+      document.getElementById('timeout-value').textContent = val + " minutes";
+    }
+
+    function toggleSecurityVisual() {
+      const sso = document.getElementById('sec_sso').checked;
+      const mfa = document.getElementById('sec_mfa').checked;
+      const badge = document.getElementById('sec-level-badge');
+
+      if (sso && mfa) {
+        badge.className = "bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-3.5 flex items-center justify-between";
+        badge.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <div>
+              <h4 class="text-xs font-bold text-emerald-400">Security Status: HIGH SECURITY</h4>
+              <p class="text-[9px] text-textSecondary">SSO and MFA active across all domains</p>
+            </div>
+          </div>
+        `;
+      } else if (sso || mfa) {
+        badge.className = "bg-amber-500/5 border border-amber-500/10 rounded-xl p-3.5 flex items-center justify-between";
+        badge.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <div>
+              <h4 class="text-xs font-bold text-amber-400">Security Status: STANDARD SECURITY</h4>
+              <p class="text-[9px] text-textSecondary">Partial verification active. Enhance for complete protection</p>
+            </div>
+          </div>
+        `;
+      } else {
+        badge.className = "bg-rose-500/5 border border-rose-500/10 rounded-xl p-3.5 flex items-center justify-between";
+        badge.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+            <div>
+              <h4 class="text-xs font-bold text-rose-400">Security Status: CRITICAL WARNING</h4>
+              <p class="text-[9px] text-textSecondary">No verification policies active. Security profiles vulnerable</p>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function saveSettings(event) {
+      event.preventDefault();
+
+      // Simple Form Validation
+      const orgName = document.getElementById('org-name').value;
+      const domain = document.getElementById('org-domain').value;
+      const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/;
+
+      if(orgName.trim().length < 3) {
+        showToast("Validation Warning", "Organization name must exceed 3 letters.", "warning");
+        return;
+      }
+      if(!domainRegex.test(domain)) {
+        showToast("Validation Error", "Please provide a valid domain structure.", "error");
+        return;
+      }
+
+      const saveBtn = document.getElementById('save-settings-btn');
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = `
+        <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        Saving Changes...
+      `;
+
+      // Simulate API Save
+      setTimeout(() => {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = 'Save Settings Modifications';
+        showToast("Settings Saved", "Your organization profiles and security alerts have been synchronized.", "success");
+        
+        // Log transaction in audit
+        auditLogs.unshift({
+          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+          user: 'Dr. Evelyn Pierce',
+          action: 'Update Settings',
+          resource: 'Organization Profile',
+          ip: '192.168.1.45',
+          status: 'Success'
+        });
+      }, 1500);
+    }
+
+    function resetSettingsForm() {
+      document.getElementById('org-settings-form').reset();
+      toggleSecurityVisual();
+      showToast("Form Reset", "All modification fields restored.", "info");
+    }
+
+
+    // --- TAB 3: USERS & ROLES LOGIC ---
+    function renderUsersDirectory() {
+      const container = document.getElementById('user-rows-container');
+      const searchVal = document.getElementById('user-search-input').value.toLowerCase();
+      
+      let filtered = users;
+      
+      // Filter by role tab selection
+      if (selectedRoleFilter !== 'All') {
+        filtered = filtered.filter(u => u.role === selectedRoleFilter);
+      }
+
+      // Filter by search string
+      if(searchVal) {
+        filtered = filtered.filter(u => u.name.toLowerCase().includes(searchVal) || u.email.toLowerCase().includes(searchVal));
+      }
+
+      if(filtered.length === 0) {
+        container.innerHTML = '';
+        document.getElementById('users-empty-state').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('users-empty-state').classList.add('hidden');
+
+      let html = '';
+      filtered.forEach((u) => {
+        
+        // Compute Status Badge classes
+        let statusBadge = '';
+        if(u.status === 'Active') {
+          statusBadge = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">Active</span>';
+        } else if(u.status === 'Invited') {
+          statusBadge = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/15">Invited</span>';
+        } else {
+          statusBadge = '<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/15">Suspended</span>';
+        }
+
+        // Action toggle buttons
+        let suspendAction = '';
+        if(u.status === 'Suspended') {
+          suspendAction = `<button onclick="toggleUserStatus(${u.id}, 'Active')" class="text-xs text-emerald-400 hover:text-emerald-300 font-semibold">Activate</button>`;
+        } else {
+          suspendAction = `<button onclick="toggleUserStatus(${u.id}, 'Suspended')" class="text-xs text-amber-400 hover:text-amber-300 font-semibold">Suspend</button>`;
+        }
+
+        html += `
+          <tr class="hover:bg-white/[0.01] transition-colors" id="user-row-${u.id}">
+            <td class="px-6 py-4.5 font-medium text-white flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br ${u.gradient} flex items-center justify-center font-bold text-xs text-white border border-white/10 shadow-sm">
+                ${u.avatar}
+              </div>
+              <span class="font-semibold text-white">${u.name}</span>
+            </td>
+            <td class="px-6 py-4.5 font-mono text-xs text-textSecondary">${u.email}</td>
+            <td class="px-6 py-4.5">
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/15 uppercase tracking-wider">${u.role}</span>
+            </td>
+            <td class="px-6 py-4.5 text-center">${statusBadge}</td>
+            <td class="px-6 py-4.5 font-mono text-xs text-textSecondary">${u.active}</td>
+            <td class="px-6 py-4.5 text-right space-x-3 font-sans">
+              ${suspendAction}
+              <button onclick="triggerDeleteUser(${u.id}, '${u.name}')" class="text-xs text-rose-400 hover:text-rose-300 font-semibold">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function filterUserDirectory() {
+      renderUsersDirectory();
+    }
+
+    function filterUsersByRole(role) {
+      selectedRoleFilter = role;
+      document.querySelectorAll('.role-filter-btn').forEach(btn => {
+        btn.className = "role-filter-btn px-3.5 py-1.5 text-xs font-semibold rounded-lg text-textSecondary hover:text-white transition-all";
+      });
+      // Handle ID mapping with spaces
+      const btnId = 'role-filter-' + role.replace(' ', '-');
+      document.getElementById(btnId).className = "role-filter-btn px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-cardBg border border-cardBorder text-white transition-all";
+      
+      renderUsersDirectory();
+    }
+
+    function toggleUserStatus(userId, newStatus) {
+      const idx = users.findIndex(u => u.id === userId);
+      if(idx !== -1) {
+        users[idx].status = newStatus;
+        showToast("Status Modified", `${users[idx].name} status marked as ${newStatus}.`, "success");
+        renderUsersDirectory();
+
+        // Audit Log
+        auditLogs.unshift({
+          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+          user: 'Dr. Evelyn Pierce',
+          action: 'Modify Status',
+          resource: `User: ${users[idx].name}`,
+          ip: '192.168.1.45',
+          status: 'Success'
+        });
+      }
+    }
+
+    function triggerDeleteUser(userId, name) {
+      userDeletionIndex = userId;
+      document.getElementById('delete-username-target').textContent = name;
+      document.getElementById('modal-delete').classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('modal-delete').classList.add('hidden');
+      userDeletionIndex = null;
+    }
+
+    function executeUserDeletion() {
+      if(userDeletionIndex !== null) {
+        const idx = users.findIndex(u => u.id === userDeletionIndex);
+        if(idx !== -1) {
+          const name = users[idx].name;
+          users.splice(idx, 1);
+          closeDeleteModal();
+          showToast("Profile Deleted", `${name} profile removed from global roster directory.`, "success");
+          renderUsersDirectory();
+
+          // Audit Log
+          auditLogs.unshift({
+            timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+            user: 'Dr. Evelyn Pierce',
+            action: 'Delete Profile',
+            resource: `User Profile: ${name}`,
+            ip: '192.168.1.45',
+            status: 'Success'
+          });
+        }
+      }
+    }
+
+    // Invite User Form Modal actions
+    function openInviteModal() {
+      document.getElementById('modal-invite').classList.remove('hidden');
+    }
+
+    function closeInviteModal() {
+      document.getElementById('modal-invite').classList.add('hidden');
+      document.getElementById('invite-user-form').reset();
+    }
+
+    function submitInviteUserForm(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('invite-name').value;
+      const email = document.getElementById('invite-email').value;
+      const role = document.getElementById('invite-role').value;
+
+      // Duplicate check
+      if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        showToast("Conflict", "This email account is already registered.", "warning");
+        return;
+      }
+
+      const submitBtn = document.getElementById('invite-submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        Sending...
+      `;
+
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Send Invitation';
+        
+        // Add User logic
+        const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0,2);
+        const gradients = ['from-orange-400 to-amber-600', 'from-fuchsia-500 to-pink-600', 'from-teal-400 to-emerald-600', 'from-indigo-400 to-purple-600'];
+        const selectedGrad = gradients[Math.floor(Math.random() * gradients.length)];
+
+        users.push({
+          id: users.length + 1,
+          name: name,
+          email: email,
+          role: role,
+          status: 'Invited',
+          active: 'Never',
+          avatar: initials || 'UN',
+          gradient: selectedGrad
+        });
+
+        closeInviteModal();
+        showToast("Invitation Sent", `A system verification email was dispatched to ${email}.`, "success");
+        renderUsersDirectory();
+
+        // Audit Log
+        auditLogs.unshift({
+          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+          user: 'Dr. Evelyn Pierce',
+          action: 'Invite Profile',
+          resource: `Email Sent: ${email}`,
+          ip: '192.168.1.45',
+          status: 'Success'
+        });
+      }, 1200);
+    }
+
+    function toggleRolePermissions(id) {
+      const el = document.getElementById(id);
+      const arrow = document.getElementById(id + '-arrow');
+      if (el.classList.contains('hidden')) {
+        el.classList.remove('hidden');
+        arrow.textContent = '▲';
+      } else {
+        el.classList.add('hidden');
+        arrow.textContent = '▼';
+      }
+    }
+
+
+    // --- TAB 4: AI PROVIDERS LOGIC ---
+    function toggleKeyMask(id) {
+      const input = document.getElementById(id);
+      if (input.type === 'password') {
+        input.type = 'text';
+      } else {
+        input.type = 'password';
+      }
+    }
+
+    function testProviderConnection(provider) {
+      const btn = document.getElementById(`test-btn-${provider}`);
+      const statusEl = document.getElementById(`provider-status-${provider}`);
+      const apiVal = document.getElementById(`api-key-${provider}`) ? document.getElementById(`api-key-${provider}`).value : "custom";
+
+      if(!apiVal && provider !== 'ollama') {
+        showToast("Connection Failure", "An authentication key must be specified first.", "error");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `
+        <svg class="animate-spin h-3.5 w-3.5 text-white mr-1.5" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        Pinging API...
+      `;
+
+      // Simulating API Latency
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = `
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Test Connection
+        `;
+
+        statusEl.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/15";
+        statusEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Connected`;
+
+        const latencies = { openai: 38, anthropic: 46, google: 58, azure: 31, ollama: 8 };
+        const activeLat = latencies[provider] || 12;
+
+        showToast("Connection Verified", `Connected successfully. Latency: ${activeLat}ms. API Key verified.`, "success");
+
+        // Audit log
+        auditLogs.unshift({
+          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+          user: 'Dr. Evelyn Pierce',
+          action: 'Test Provider Connection',
+          resource: `Target: ${provider.toUpperCase()}`,
+          ip: '192.168.1.45',
+          status: 'Success'
+        });
+      }, 1200);
+    }
+
+    // Add Provider Modal actions
+    function openAddProviderModal() {
+      document.getElementById('modal-add-provider').classList.remove('hidden');
+    }
+
+    function closeAddProviderModal() {
+      document.getElementById('modal-add-provider').classList.add('hidden');
+      document.getElementById('add-provider-form').reset();
+    }
+
+    function submitAddProviderForm(event) {
+      event.preventDefault();
+
+      const type = document.getElementById('provider-select-type').value;
+      const endpoint = document.getElementById('add-provider-endpoint').value;
+      const key = document.getElementById('add-provider-key').value;
+      const model = document.getElementById('add-provider-model').value;
+
+      const submitBtn = document.getElementById('add-provider-submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        Testing & Mounting...
+      `;
+
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Mount Provider Core';
+
+        const pContainer = document.getElementById('providers-container');
+        const customId = 'custom-' + Date.now();
+        const displayLabel = type.toUpperCase();
+
+        const customCardHtml = `
+          <div id="provider-card-${customId}" class="bg-cardBg border border-cardBorder rounded-card p-6 glow-card space-y-5 hover:border-purple-500/20 transition-all flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-purple-600/10 flex items-center justify-center border border-purple-500/20">
+                    <span class="text-xs font-bold text-purple-400 font-mono">🔑</span>
+                  </div>
+                  <div>
+                    <h3 class="text-sm font-bold text-white">${displayLabel}</h3>
+                    <p class="text-[10px] text-textSecondary truncate max-w-[130px] font-mono">${endpoint}</p>
+                  </div>
+                </div>
+                <span id="provider-status-${customId}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                  Connected
+                </span>
+              </div>
+
+              <!-- Configuration Form Inside Card -->
+              <div class="space-y-3 pt-1">
+                <!-- API Key (Masked) -->
+                <div>
+                  <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Secure API Key</label>
+                  <div class="relative">
+                    <input type="password" id="api-key-${customId}" value="${key}" class="w-full rounded-lg pl-3 pr-9 py-2 text-xs text-white glass-input font-mono">
+                    <button onclick="toggleKeyMask('api-key-${customId}')" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-textSecondary hover:text-white transition-colors">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Available Models -->
+                <div>
+                  <label class="block text-[10px] font-semibold text-textSecondary uppercase tracking-wider mb-1.5">Default Active Model</label>
+                  <div class="w-full rounded-lg px-2.5 py-2 text-xs text-white glass-input font-mono font-bold">${model}</div>
+                </div>
+
+                <!-- Usage Progress Bar -->
+                <div class="space-y-1 pt-1">
+                  <div class="flex justify-between text-[10px] font-mono text-textSecondary">
+                    <span>Usage (API mounted)</span>
+                    <span>Unmetered</span>
+                  </div>
+                  <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full" style="width: 100%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-cardBorder/30">
+              <button onclick="testProviderConnection('${customId}')" id="test-btn-${customId}" class="w-full py-2 bg-white/5 hover:bg-white/10 border border-cardBorder rounded-lg text-xs font-semibold text-white flex items-center justify-center gap-1.5 transition-all">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Test Connection
+              </button>
+            </div>
+          </div>
+        `;
+
+        pContainer.insertAdjacentHTML('beforeend', customCardHtml);
+        closeAddProviderModal();
+        showToast("Provider Mounted", `Successfully integrated endpoint gateway with model ${model}`, "success");
+
+        // Audit Log
+        auditLogs.unshift({
+          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+          user: 'Dr. Evelyn Pierce',
+          action: 'Mount Provider',
+          resource: `Model: ${model}`,
+          ip: '192.168.1.45',
+          status: 'Success'
+        });
+      }, 1500);
+    }
+
+
+    // --- TAB 5: SECURITY & AUDIT DIRECTORY LOGIC ---
+    function renderAuditLogs() {
+      const container = document.getElementById('audit-rows-container');
+      const actionFilter = document.getElementById('audit-filter-action').value;
+      const userFilter = document.getElementById('audit-filter-user').value.toLowerCase();
+      const ipFilter = document.getElementById('audit-filter-ip').value.trim();
+
+      let filtered = auditLogs;
+
+      // Filter logic
+      if(actionFilter !== 'All') {
+        filtered = filtered.filter(log => log.action.includes(actionFilter));
+      }
+      if(userFilter) {
+        filtered = filtered.filter(log => log.user.toLowerCase().includes(userFilter));
+      }
+      if(ipFilter) {
+        filtered = filtered.filter(log => log.ip.includes(ipFilter));
+      }
+
+      if(filtered.length === 0) {
+        container.innerHTML = '';
+        document.getElementById('audit-empty-state').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('audit-empty-state').classList.add('hidden');
+
+      let html = '';
+      filtered.forEach(log => {
+        
+        let statusBadge = '';
+        if(log.status === 'Success') {
+          statusBadge = '<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">Success</span>';
+        } else {
+          statusBadge = '<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/15">Failure</span>';
+        }
+
+        html += `
+          <tr class="hover:bg-white/[0.01] transition-colors">
+            <td class="px-5 py-3 text-white font-semibold whitespace-nowrap">${log.timestamp}</td>
+            <td class="px-5 py-3 text-white font-sans font-medium">${log.user}</td>
+            <td class="px-5 py-3 text-textSecondary">${log.action}</td>
+            <td class="px-5 py-3 text-textSecondary max-w-[200px] truncate">${log.resource}</td>
+            <td class="px-5 py-3 text-textSecondary">${log.ip}</td>
+            <td class="px-5 py-3 text-center">${statusBadge}</td>
+          </tr>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function filterAuditLogs() {
+      renderAuditLogs();
+    }
+
+    function saveSecurityPolicies(event) {
+      event.preventDefault();
+      
+      const saveBtn = document.getElementById('save-sec-policies-btn');
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = `Applying policies...`;
+
+      setTimeout(() => {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = `
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          Apply Global Policies
+        `;
+        showToast("Policies Deployed", "IP restrictions and API rate-limiting rules pushed dynamically.", "success");
+
+        // Audit Log
+        auditLogs.unshift({
+          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+          user: 'Dr. Evelyn Pierce',
+          action: 'Modify Security Policies',
+          resource: 'IP Restrictions & Rate Limit rules',
+          ip: '192.168.1.45',
+          status: 'Success'
+        });
+        renderAuditLogs();
+      }, 1000);
+    }
+
+    function downloadSOC2Report() {
+      showToast("Generating PDF", "Packaging SOC 2 Type II Compliance verification document...", "info");
+      
+      setTimeout(() => {
+        // Construct a mock file blob
+        const docText = `
+        ============================================================
+        πX TECHNOLOGIES INC. - AUDIT COMPLIANCE REPORT
+        ============================================================
+        Security: SOC 2 Type II Verification Certified
+        Auditor: AICPA Enterprise Assurance Group
+        Status: FULL COMPLIANCE (No Exceptions Documented)
+        Date Range Verified: Jan 01, 2026 - Jul 25, 2026
+        
+        Governance Integrity Check: Secure SHA-256 Validated.
+        All security systems, SAML SSO protocols, and IP filters operational.
+        ============================================================
+        `;
+        
+        const blob = new Blob([docText], { type: "text/plain;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "pi_x_soc2_compliance_report.txt";
+        link.click();
+        
+        showToast("Download Complete", "SOC 2 Type II certification report file saved.", "success");
+      }, 1500);
+    }
+
+    function exportAuditLogsToCSV() {
+      showToast("CSV Export", "Preparing security log export payloads...", "info");
+      
+      setTimeout(() => {
+        let csvContent = "Timestamp,User Principal,Action Type,Resource Target,IP Address,Status\n";
+        
+        auditLogs.forEach(log => {
+          csvContent += `"${log.timestamp}","${log.user}","${log.action}","${log.resource}","${log.ip}","${log.status}"\n`;
+        });
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "pi_x_system_audit_logs.csv";
+        link.click();
+
+        showToast("CSV Dispatched", "CSV spreadsheet generated and downloaded successfully.", "success");
+      }, 800);
+    }
+
+
+    // --- TAB 6: BILLING & CREDIT CARD MOCK ACTIONS ---
+    function downloadInvoice(invId, date, amount) {
+      showToast("Generating Invoice Receipt", `Building file download link for ${invId}...`, "info");
+      
+      setTimeout(() => {
+        const text = `
+        ============================================================
+        INVOICE RECEIPT - πX TECHNOLOGIES INC.
+        ============================================================
+        Invoice Identifier: ${invId}
+        Receipt Date: ${date}
+        Billed Legal Entity: πX Technologies Inc.
+        Primary Domain: pix-tech.ai
+        
+        Charged Amount: $${amount} USD
+        Payment Method: MasterCard (Ending 8432)
+        Payment Status: TRANSACTION SUCCESSFUL (Paid)
+        ============================================================
+        Thank you for choosing πX compute architecture.
+        `;
+
+        const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `pi_x_invoice_${invId}.txt`;
+        link.click();
+        showToast("Invoice Saved", `Receipt copy file downloaded.`, "success");
+      }, 1000);
+    }
+
+    // Update CC actions
+    function openUpdateCardModal() {
+      document.getElementById('modal-update-card').classList.remove('hidden');
+    }
+
+    function closeUpdateCardModal() {
+      document.getElementById('modal-update-card').classList.add('hidden');
+      document.getElementById('update-card-form').reset();
+      document.getElementById('cc-type-brand').textContent = "💳";
+    }
+
+    function formatCardNumber(input) {
+      // Stripping non-numeric values
+      let val = input.value.replace(/\D/g, '');
+      // Format as 4-digit blocks
+      let formatted = val.match(/.{1,4}/g);
+      input.value = formatted ? formatted.join(' ') : '';
+
+      // Set Mock Brand visual indicators
+      const brandIndicator = document.getElementById('cc-type-brand');
+      if (val.startsWith('4')) {
+        brandIndicator.textContent = "VISA 🔵";
+      } else if (val.startsWith('5')) {
+        brandIndicator.textContent = "MC 🔴";
+      } else if (val.startsWith('3')) {
+        brandIndicator.textContent = "AMEX 🟢";
+      } else {
+        brandIndicator.textContent = "💳";
+      }
+    }
+
+    function formatExpiry(input) {
+      let val = input.value.replace(/\D/g, '');
+      if (val.length >= 2) {
+        input.value = val.substring(0, 2) + '/' + val.substring(2, 4);
+      } else {
+        input.value = val;
+      }
+    }
+
+    function submitUpdateCardForm(event) {
+      event.preventDefault();
+
+      const num = document.getElementById('cc-input-number').value;
+      const holder = document.getElementById('cc-input-holder').value;
+      const expiry = document.getElementById('cc-input-expiry').value;
+
+      if(num.length < 19) {
+        showToast("Invalid Input", "Credit Card number must be 16 digits.", "error");
+        return;
+      }
+
+      const submitBtn = document.getElementById('card-submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `Applying Token...`;
+
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = "Apply New Card";
+
+        // Update Credit Card visually
+        const lastDigits = num.substring(num.length - 4);
+        document.getElementById('cc-display-number').textContent = `••••  ••••  ••••  ${lastDigits}`;
+        document.getElementById('cc-display-holder').textContent = holder.toUpperCase();
+        document.getElementById('cc-display-expiry').textContent = expiry;
+
+        closeUpdateCardModal();
+        showToast("Payment Profile Refreshed", `Default corporate card updated. End digits: •••• ${lastDigits}`, "success");
+
+        // Audit Log
+        auditLogs.unshift({
+          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+          user: 'Dr. Evelyn Pierce',
+          action: 'Update Payment Credentials',
+          resource: `MasterCard Tokenization Ending ${lastDigits}`,
+          ip: '192.168.1.45',
+          status: 'Success'
+        });
+      }, 1500);
+    }
+
+
+    // --- GENERIC GENIUS TABLE SORTING FUNCTION (Pure JS) ---
+    // Handles Strings, Numerics, Dates, and Currencies elegantly
+    function sortTable(tableId, colIndex, dataType = 'string') {
+      const table = document.getElementById(tableId);
+      const tbody = table.querySelector('tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      
+      // Determine existing sorting direction
+      let dir = tbody.getAttribute('data-sort-dir') === 'asc' ? 'desc' : 'asc';
+      tbody.setAttribute('data-sort-dir', dir);
+
+      rows.sort((a, b) => {
+        let cellA = a.cells[colIndex].textContent.trim();
+        let cellB = b.cells[colIndex].textContent.trim();
+
+        // In case cells have subtitle block-text, prioritize primary label
+        if (cellA.includes('\n')) cellA = cellA.split('\n')[0].trim();
+        if (cellB.includes('\n')) cellB = cellB.split('\n')[0].trim();
+
+        if (dataType === 'num') {
+          // Parse as numbers, stripping formatting commas
+          const numA = parseFloat(cellA.replace(/,/g, ''));
+          const numB = parseFloat(cellB.replace(/,/g, ''));
+          return dir === 'asc' ? numA - numB : numB - numA;
+        } else if (dataType === 'currency') {
+          // Parse currency values
+          const curA = parseFloat(cellA.replace(/[$,]/g, ''));
+          const curB = parseFloat(cellB.replace(/[$,]/g, ''));
+          return dir === 'asc' ? curA - curB : curB - curA;
+        } else {
+          // Normal alphabetic comparison
+          return dir === 'asc' 
+            ? cellA.localeCompare(cellB) 
+            : cellB.localeCompare(cellA);
+        }
+      });
+
+      // Appending sorted rows
+      rows.forEach(row => tbody.appendChild(row));
+    }
+
+
+    // --- BOOTSTRAP INITIALIZATION PROCEDURES ---
+    window.onload = function() {
+      // 1. Switch to defaults
+      switchTab('analytics');
+      // 2. Load greeting toast
+      showToast("Access Authorized", "Welcome to πX Enterprise Hub. Systems Operational.", "success");
+    };
+
+  </script>
+</body>
+</html>

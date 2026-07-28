@@ -1,0 +1,25 @@
+{
+  "properties": {
+    "created_at": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "full_name": {
+      "type": "string"
+    },
+    "org_id": {
+      "type": "string"
+    },
+    "password_hash": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "required": [],
+  "name": "PixUser"
+}

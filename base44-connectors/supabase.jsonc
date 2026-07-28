@@ -1,0 +1,9 @@
+{
+  "type": "supabase",
+  "scopes": [
+    "projects:read",
+    "secrets:read",
+    "database:read",
+    "database:write"
+  ]
+}

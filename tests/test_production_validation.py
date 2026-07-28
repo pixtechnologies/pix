@@ -52,7 +52,7 @@ class TestUniversalDataProfiling:
         assert r.column_count == 10
         col_map = {c.name: c for c in r.columns}
         assert col_map["NET_REV"].semantic_type in ("currency", "numeric")
-        assert col_map["Order Dt"].semantic_type in ("date", "text")  # String dates may be text
+        assert col_map["Order Dt"].semantic_type == "date"
         assert col_map["Cust Name"].semantic_type in ("text", "identifier")
 
     def test_profiler_detects_metrics(self):

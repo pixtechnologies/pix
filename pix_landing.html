@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>πX — Enterprise Intelligence, Engineered.</title>
+  
+  <!-- SEO & Open Graph Metadata -->
+  <meta name="description" content="πX transforms fragmented business data into knowledge, decisions, and autonomous intelligence. Engineered for modern high-scale enterprises.">
+  <meta property="og:title" content="πX — Enterprise Intelligence, Engineered.">
+  <meta property="og:description" content="πX transforms fragmented business data into knowledge, decisions, and autonomous intelligence. Engineered for modern high-scale enterprises.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="πX — Enterprise Intelligence, Engineered.">
+  <meta name="twitter:description" content="πX transforms fragmented business data into knowledge, decisions, and autonomous intelligence.">
+
+  <!-- Inter Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* DESIGN SYSTEM & VARIABLES */
+    :root {
+      --bg: #000000;
+      --surface-1: #0A0A0A;
+      --surface-2: #111111;
+      --surface-3: #222222;
+      --text-primary: #FFFFFF;
+      --text-secondary: #8E9296;
+      --text-muted: #555555;
+      --accent-silver: #C0C8D0;
+      --accent-titanium: #E2E8F0;
+      --border-light: rgba(255, 255, 255, 0.06);
+      --border-medium: rgba(255, 255, 255, 0.12);
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --transition-smooth: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* RESET & BASE */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    html, body {
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ACCESSIBILITY FOCUS STATES */
+    *:focus-visible {
+      outline: 2px solid var(--accent-silver);
+      outline-offset: 4px;
+    }
+
+    /* CUSTOM PREMIUM SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #000000;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #222222;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #333333;
+    }
+
+    /* UTILITY CLASSES */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* SCROLL REVEAL SYSTEM */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: var(--transition-smooth);
+    }
+    
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 1. NAVBAR */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 80px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      transition: background-color 0.4s ease, border-color 0.4s ease;
+      border-bottom: 1px solid transparent;
+    }
+    
+    header.scrolled {
+      background-color: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      border-color: var(--border-light);
+    }
+    
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    
+    .logo-link {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 3rem;
+      list-style: none;
+      align-items: center;
+    }
+    
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .btn-nav {
+      border: 1px solid var(--border-medium);
+      background: transparent;
+      color: var(--text-primary);
+      padding: 0.6rem 1.2rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn-nav:hover {
+      background-color: var(--surface-1);
+      border-color: var(--text-primary);
+    }
+
+    /* 2. HERO */
+    .hero-section {
+      position: relative;
+      height: 100vh;
+      min-height: 800px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background-color: #000000;
+    }
+
+    #hero-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 850px;
+      padding: 0 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero-logo-container {
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      transform: scale(0.95);
+      animation: logoFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes logoFadeIn {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .hero-logo-svg {
+      animation: logoGlowBreathing 4s ease-in-out infinite;
+    }
+
+    @keyframes logoGlowBreathing {
+      0%, 100% {
+        filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.05));
+      }
+      50% {
+        filter: drop-shadow(0 0 35px rgba(255, 255, 255, 0.18));
+      }
+    }
+
+    .hero-headline {
+      font-size: clamp(2.5rem, 6vw, 4.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: heroElementFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s;
+    }
+
+    .hero-subheadline {
+      font-size: clamp(1.1rem, 2vw, 1.35rem);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 660px;
+      margin-bottom: 3.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: heroElementFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.5s;
+    }
+
+    @keyframes heroElementFadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: heroElementFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.7s;
+    }
+
+    /* PREMIUM MAGNETIC BUTTONS */
+    .btn {
+      position: relative;
+      padding: 1rem 2.2rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      transform: translate(0, 0);
+    }
+
+    .btn-magnetic {
+      transition: transform 0.1s ease-out;
+    }
+
+    .btn-magnetic:not(:hover) {
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-text {
+      display: inline-block;
+      transition: transform 0.1s ease-out;
+    }
+
+    .btn-magnetic:not(:hover) .btn-text {
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-primary {
+      background-color: var(--text-primary);
+      color: var(--bg);
+      border: 1px solid var(--text-primary);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+    }
+
+    /* 3. ARCHITECTURE (VERTICAL FLOW) */
+    .architecture-section {
+      padding: 10rem 0;
+      position: relative;
+      background-color: #000000;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 7rem auto;
+    }
+
+    .section-tag {
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .section-desc {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .architecture-timeline {
+      position: relative;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* Central absolute vertical line */
+    .architecture-backbone {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .backbone-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2px;
+      height: 100%;
+    }
+
+    .architecture-row {
+      display: grid;
+      grid-template-columns: 1fr 120px 1fr;
+      align-items: center;
+      margin-bottom: 6rem;
+      position: relative;
+    }
+
+    .architecture-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .architecture-card-col {
+      display: flex;
+    }
+
+    .architecture-row:nth-child(even) .architecture-card-col {
+      grid-column: 3;
+    }
+
+    .architecture-row:nth-child(odd) .architecture-card-col {
+      grid-column: 1;
+      justify-content: flex-end;
+    }
+
+    .architecture-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--surface-1);
+      border: 1px solid var(--border-light);
+      border-radius: 4px;
+      padding: 2.5rem;
+      text-align: left;
+      transition: border-color 0.8s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .card-number {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      letter-spacing: 0.1em;
+    }
+
+    .card-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .card-desc {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .step-center-col {
+      grid-column: 2;
+      display: flex;
+      justify-content: center;
+      position: relative;
+      height: 100%;
+    }
+
+    .node-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #000000;
+      border: 2px solid var(--border-medium);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      position: relative;
+      transition: border-color 0.6s, background-color 0.6s, box-shadow 0.6s;
+    }
+
+    .node-dot::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--text-muted);
+      transition: background-color 0.6s, transform 0.6s;
+    }
+
+    /* Active node state triggers via IntersectionObserver */
+    .architecture-row.node-active .node-dot {
+      border-color: var(--text-primary);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+
+    .architecture-row.node-active .node-dot::after {
+      background-color: var(--text-primary);
+      transform: scale(1.2);
+    }
+
+    .architecture-row.node-active .architecture-card {
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 40px rgba(255, 255, 255, 0.04);
+    }
+
+    /* 4. IMMERSIVE FEATURES */
+    .features-section {
+      background-color: #000000;
+    }
+
+    .feature-section {
+      padding: 10rem 0;
+      display: flex;
+      align-items: center;
+      position: relative;
+      background-color: #000000;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .feature-section:last-of-type {
+      border-bottom: none;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+      width: 100%;
+    }
+
+    .feature-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .feature-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15rem;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .feature-title {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .feature-desc {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .feature-visual {
+      position: relative;
+      background-color: var(--surface-1);
+      border: 1px solid var(--border-light);
+      border-radius: 4px;
+      height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.9);
+      transition: border-color 0.8s, box-shadow 0.8s;
+    }
+
+    /* Highlight visual outline on reveal scrolling */
+    .feature-section.active .feature-visual {
+      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.9), 0 10px 40px rgba(255, 255, 255, 0.02);
+    }
+
+    .feature-visual canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Alternating layout columns on desktop */
+    .feature-section:nth-child(even) .feature-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .feature-section:nth-child(even) .feature-info {
+      grid-column: 2;
+    }
+
+    .feature-section:nth-child(even) .feature-visual {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    /* 5. METRICS */
+    .metrics-section {
+      padding: 10rem 0;
+      background-color: #000000;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3rem;
+      text-align: center;
+    }
+
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .metric-number {
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+
+    /* 6. CTA */
+    .cta-section {
+      padding: 12rem 0;
+      position: relative;
+      background-color: #000000;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .cta-container {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cta-logo {
+      margin-bottom: 2rem;
+    }
+
+    .cta-title {
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+      line-height: 1.15;
+    }
+
+    .cta-desc {
+      font-size: clamp(1.1rem, 2vw, 1.3rem);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 620px;
+      margin-bottom: 3.5rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    /* Pure white ambient backdrop glow (Zero Gradients) */
+    .cta-glow-bg {
+      position: absolute;
+      width: 450px;
+      height: 450px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 50%;
+      filter: blur(140px);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* 7. FOOTER */
+    footer {
+      background-color: #000000;
+      border-top: 1px solid var(--border-light);
+      padding: 6rem 0 4rem 0;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.5fr;
+      gap: 4rem;
+      margin-bottom: 6rem;
+    }
+
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .footer-brand .logo-desc {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      max-width: 280px;
+    }
+
+    .footer-col-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .footer-badges-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .badges-container {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .badge-svg {
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .badge-svg:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-light);
+      padding-top: 2.5rem;
+    }
+
+    .copyright {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .footer-bottom-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .footer-bottom-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.3s ease;
+    }
+
+    .footer-bottom-links a:hover {
+      color: var(--text-primary);
+    }
+
+    /* RESPONSIVE LAYOUT ADJUSTMENTS */
+    @media (max-width: 968px) {
+      .feature-grid {
+        grid-template-columns: 1fr !important;
+        gap: 3.5rem;
+      }
+      
+      .feature-section {
+        padding: 6rem 0;
+      }
+      
+      .feature-visual {
+        height: 320px;
+        grid-row: 2 !important;
+        grid-column: 1 !important;
+      }
+      
+      .feature-info {
+        grid-row: 1 !important;
+        grid-column: 1 !important;
+      }
+      
+      .footer-grid {
+        grid-template-columns: 1.5fr 1fr 1fr;
+        gap: 3rem;
+      }
+
+      .footer-grid > div:first-child {
+        grid-column: span 3;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none; /* Keep header ultra clean for mobile */
+      }
+      
+      .architecture-backbone {
+        left: 20px;
+      }
+      
+      .architecture-row {
+        grid-template-columns: 40px 1fr;
+        margin-bottom: 4.5rem;
+      }
+      
+      .architecture-row:nth-child(even) .architecture-card-col,
+      .architecture-row:nth-child(odd) .architecture-card-col {
+        grid-column: 2;
+        justify-content: flex-start;
+      }
+      
+      .step-center-col {
+        grid-column: 1;
+        justify-content: flex-start;
+      }
+      
+      .node-dot {
+        left: 4px;
+      }
+      
+      .architecture-card {
+        max-width: 100%;
+        padding: 2rem 1.5rem;
+      }
+
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4rem 2rem;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .footer-grid > div:first-child {
+        grid-column: span 2;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-buttons, .cta-buttons {
+        flex-direction: column;
+        width: 100%;
+        gap: 1rem;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 3.5rem;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid > div:first-child {
+        grid-column: span 1;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: flex-start;
+      }
+      
+      .footer-bottom-links {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+
+    /* PREFERS REDUCED MOTION SUPPORT */
+    @media (prefers-reduced-motion: reduce) {
+      .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+      
+      .hero-logo-container,
+      .hero-headline,
+      .hero-subheadline,
+      .hero-buttons {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      
+      .hero-logo-svg {
+        animation: none !important;
+      }
+
+      .btn-magnetic, .btn-text {
+        transform: none !important;
+        transition: none !important;
+      }
+      
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. NAVBAR -->
+  <header>
+    <div class="container nav-container">
+      <a href="#" class="logo-link" aria-label="πX home">
+        <svg class="logo-svg" width="90" height="32" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- π symbol in silver -->
+          <path d="M10 12H38" stroke="#C0C8D0" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M17 12V30M31 12V26C31 29 33 29 35 29" stroke="#C0C8D0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- X symbol in white -->
+          <path d="M48 10L64 30M64 10L48 30" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#architecture">Architecture</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#metrics">Metrics</a></li>
+          <li><a href="#cta" class="btn-nav">Request Access</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- 2. HERO -->
+    <section class="hero-section" id="hero">
+      <canvas id="hero-canvas"></canvas>
+      <div class="hero-content">
+        <div class="hero-logo-container">
+          <svg class="hero-logo-svg" width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="πX animated logo">
+            <circle cx="80" cy="80" r="76" stroke="rgba(255,255,255,0.04)" stroke-width="2"/>
+            <circle cx="80" cy="80" r="66" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="10 15"/>
+            <!-- π in silver -->
+            <path d="M45 60H115" stroke="#C0C8D0" stroke-width="6" stroke-linecap="round"/>
+            <path d="M58 60V105" stroke="#C0C8D0" stroke-width="6" stroke-linecap="round"/>
+            <path d="M88 60V96C88 102 92 105 97 105C101 105 103 103 103 103" stroke="#C0C8D0" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- X in white -->
+            <path d="M102 104L114 116" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
+            <path d="M114 104L102 116" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h1 class="hero-headline">Enterprise Intelligence,<br>Engineered.</h1>
+        <p class="hero-subheadline">πX transforms fragmented business data into knowledge, decisions, and autonomous intelligence.</p>
+        <div class="hero-buttons">
+          <a href="#features" class="btn btn-primary btn-magnetic" aria-label="Enter Intelligence Section">
+            <span class="btn-text">Enter Intelligence</span>
+          </a>
+          <a href="#cta" class="btn btn-secondary btn-magnetic" aria-label="Request Access Form">
+            <span class="btn-text">Request Access</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. ARCHITECTURE (VERTICAL FLOW) -->
+    <section class="architecture-section" id="architecture">
+      <div class="container">
+        <div class="section-header reveal">
+          <div class="section-tag">System Core</div>
+          <h2 class="section-title">The Architecture of Certainty</h2>
+          <p class="section-desc">Observe the structural trajectory as raw business variables are ingested and translated down into precise, low-latency execution.</p>
+        </div>
+
+        <div class="architecture-timeline">
+          <!-- Animated connecting backbone lines -->
+          <div class="architecture-backbone">
+            <svg class="backbone-svg" viewBox="0 0 2 1000" preserveAspectRatio="none" aria-hidden="true">
+              <line x1="1" y1="0" x2="1" y2="1000" stroke="rgba(255, 255, 255, 0.05)" stroke-width="2" />
+              <line x1="1" y1="0" x2="1" y2="1000" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="30 180" id="backbone-pulse" />
+            </svg>
+          </div>
+
+          <!-- Node 1: Raw Data -->
+          <div class="architecture-row reveal">
+            <div class="architecture-card-col">
+              <div class="architecture-card">
+                <div class="card-number">01 / INGESTION</div>
+                <h3 class="card-title">Raw Data Ingestion</h3>
+                <p class="card-desc">Seamlessly pipeline semi-structured, unstructured, and transactional data streams at petabyte scale across standard enterprise storage models.</p>
+              </div>
+            </div>
+            <div class="step-center-col">
+              <div class="node-dot"></div>
+            </div>
+            <div></div>
+          </div>
+
+          <!-- Node 2: Memory Core -->
+          <div class="architecture-row reveal">
+            <div></div>
+            <div class="step-center-col">
+              <div class="node-dot"></div>
+            </div>
+            <div class="architecture-card-col">
+              <div class="architecture-card">
+                <div class="card-number">02 / VECTORIZATION</div>
+                <h3 class="card-title">πX Memory Core</h3>
+                <p class="card-desc">Anchor operations using multi-dimensional embedding architectures that format dynamic text into high-speed vector reference grids.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Node 3: Knowledge Graph -->
+          <div class="architecture-row reveal">
+            <div class="architecture-card-col">
+              <div class="architecture-card">
+                <div class="card-number">03 / SYNTHESIS</div>
+                <h3 class="card-title">Knowledge Graph</h3>
+                <p class="card-desc">Automatically compile entities, metrics, and relationships to map latent dependencies across decoupled departments in real-time.</p>
+              </div>
+            </div>
+            <div class="step-center-col">
+              <div class="node-dot"></div>
+            </div>
+            <div></div>
+          </div>
+
+          <!-- Node 4: Reasoning Engine -->
+          <div class="architecture-row reveal">
+            <div></div>
+            <div class="step-center-col">
+              <div class="node-dot"></div>
+            </div>
+            <div class="architecture-card-col">
+              <div class="architecture-card">
+                <div class="card-number">04 / ANALYSIS</div>
+                <h3 class="card-title">Reasoning Engine</h3>
+                <p class="card-desc">Process logical conditions, reference cross-verified facts, and formulate structured operational guides via clean heuristic nodes.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Node 5: Decision Intelligence -->
+          <div class="architecture-row reveal">
+            <div class="architecture-card-col">
+              <div class="architecture-card">
+                <div class="card-number">05 / RESOLUTION</div>
+                <h3 class="card-title">Decision Intelligence</h3>
+                <p class="card-desc">Model business constraints, calculate trade-offs, and suggest the optimal course of action based on historical operational success metrics.</p>
+              </div>
+            </div>
+            <div class="step-center-col">
+              <div class="node-dot"></div>
+            </div>
+            <div></div>
+          </div>
+
+          <!-- Node 6: Business Action -->
+          <div class="architecture-row reveal">
+            <div></div>
+            <div class="step-center-col">
+              <div class="node-dot"></div>
+            </div>
+            <div class="architecture-card-col">
+              <div class="architecture-card">
+                <div class="card-number">06 / EXECUTION</div>
+                <h3 class="card-title">Business Action</h3>
+                <p class="card-desc">Dispatch optimized commands down to ERP systems, databases, and secure API networks without human delays or manual overhead.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. IMMERSIVE FEATURES -->
+    <section class="features-section" id="features">
+      
+      <!-- Feature 1: Memory Engine -->
+      <section class="feature-section reveal">
+        <div class="container">
+          <div class="feature-grid">
+            <div class="feature-info">
+              <div class="feature-tag">Ingestion Engine</div>
+              <h2 class="feature-title">Synthesizing Chaos into Coherent Memory</h2>
+              <p class="feature-desc">Every document, transactional log, and database cell is captured, contextualized, and anchored in a unified Memory Core. By analyzing raw material instantly as it enters your system, πX secures a persistent, queryable knowledge base that keeps your business context aligned.</p>
+            </div>
+            <div class="feature-visual">
+              <canvas id="memory-canvas" aria-label="Visual representation of raw files transforming into structured data nodes"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feature 2: Knowledge Graph -->
+      <section class="feature-section reveal">
+        <div class="container">
+          <div class="feature-grid">
+            <div class="feature-info">
+              <div class="feature-tag">Relational Mapping</div>
+              <h2 class="feature-title">Discovering Latent Operational Connections</h2>
+              <p class="feature-desc">Corporate silos isolate critical insights. πX maps real-time dependencies and links people, entities, and product logs across your infrastructure. Our dynamic Knowledge Graph enables deep, relational mapping so you can locate root causes and structural patterns in seconds.</p>
+            </div>
+            <div class="feature-visual">
+              <canvas id="kg-canvas" aria-label="Interactive physical node graph network of corporate entities"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feature 3: Decision Engine -->
+      <section class="feature-section reveal">
+        <div class="container">
+          <div class="feature-grid">
+            <div class="feature-info">
+              <div class="feature-tag">Resolution Core</div>
+              <h2 class="feature-title">Evidence-Based Decision Engineering</h2>
+              <p class="feature-desc">Avoid operational guessing. The Decision Engine analyzes real-time contextual conditions, references historical evidence paths, and recommends actions with specific confidence metrics. Every output is backed by traceable inputs, transforming uncertainty into mathematical precision.</p>
+            </div>
+            <div class="feature-visual">
+              <canvas id="decision-canvas" aria-label="Dynamic radial visualization of evidence collapsing into an optimal decision core"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feature 4: Simulation -->
+      <section class="feature-section reveal">
+        <div class="container">
+          <div class="feature-grid">
+            <div class="feature-info">
+              <div class="feature-tag">Predictive Scenarios</div>
+              <h2 class="feature-title">Simulate and De-risk Tomorrow, Today</h2>
+              <p class="feature-desc">Run complex parallel Monte Carlo paths to stress-test your operation. Before deploying pricing updates, supply chain adjustments, or resource reallocations, visualize branching futures and eliminate unviable alternatives so you execute only validated paths.</p>
+            </div>
+            <div class="feature-visual">
+              <canvas id="simulation-canvas" aria-label="Interactive branching timelines demonstrating scenario analysis and path committed status"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- 5. METRICS (CARDLESS) -->
+    <section class="metrics-section" id="metrics">
+      <div class="container">
+        <div class="metrics-grid">
+          <div class="metric-item reveal">
+            <div class="metric-number" data-value="10" data-suffix="B+">0</div>
+            <div class="metric-label">Memory Objects</div>
+          </div>
+          <div class="metric-item reveal">
+            <div class="metric-number" data-value="500" data-suffix="+">0</div>
+            <div class="metric-label">Enterprises</div>
+          </div>
+          <div class="metric-item reveal">
+            <div class="metric-number" data-value="99.9" data-suffix="%">0</div>
+            <div class="metric-label">Uptime</div>
+          </div>
+          <div class="metric-item reveal">
+            <div class="metric-number" data-value="10" data-suffix="x">0</div>
+            <div class="metric-label">Faster</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. CTA -->
+    <section class="cta-section" id="cta">
+      <div class="cta-glow-bg" aria-hidden="true"></div>
+      <div class="container cta-container reveal">
+        <div class="cta-logo">
+          <svg width="64" height="64" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="30" cy="30" r="28" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+            <!-- π in silver -->
+            <path d="M18 24H42" stroke="#C0C8D0" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M23 24V38" stroke="#C0C8D0" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M33 24V35C33 37 35 37 36 37" stroke="#C0C8D0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- X in white -->
+            <path d="M38 35L44 41" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M44 35L38 41" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h2 class="cta-title">Ready to transform<br>your enterprise?</h2>
+        <p class="cta-desc">Deploy πX and convert fragmented raw context into high-assurance, secure autonomous actions.</p>
+        <div class="cta-buttons">
+          <a href="#features" class="btn btn-primary btn-magnetic" aria-label="Get Started with Enterprise Platform">
+            <span class="btn-text">Enter Intelligence</span>
+          </a>
+          <a href="mailto:access@pix.enterprise" class="btn btn-secondary btn-magnetic" aria-label="Email support for request access">
+            <span class="btn-text">Request Access</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 7. FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <svg width="90" height="32" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M10 12H38" stroke="#C0C8D0" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M17 12V30M31 12V26C31 29 33 29 35 29" stroke="#C0C8D0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M48 10L64 30M64 10L48 30" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>
+          <p class="logo-desc">Building the foundational vector layer and logical operating architecture for autonomous corporate scale.</p>
+        </div>
+        <div>
+          <h4 class="footer-col-title">Platform</h4>
+          <ul class="footer-links">
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#metrics">Metrics</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-col-title">Company</h4>
+          <ul class="footer-links">
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Press Kit</a></li>
+          </ul>
+        </div>
+        <div class="footer-badges-col">
+          <h4 class="footer-col-title">Compliance</h4>
+          <div class="badges-container">
+            <!-- SOC 2 Badge -->
+            <div class="badge-svg" role="img" aria-label="SOC 2 Type II Compliant Badge">
+              <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="100" rx="4" fill="#0A0A0A" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+                <circle cx="50" cy="50" r="38" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+                <circle cx="50" cy="50" r="34" stroke="rgba(255,255,255,0.04)" stroke-width="1" stroke-dasharray="2 3"/>
+                <text x="50" y="44" font-family="'Inter', sans-serif" font-size="10" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">SOC 2</text>
+                <text x="50" y="56" font-family="'Inter', sans-serif" font-size="6" font-weight="600" fill="#8E9296" text-anchor="middle" letter-spacing="0.5">TYPE II</text>
+                <text x="50" y="66" font-family="'Inter', sans-serif" font-size="5" font-weight="500" fill="#555555" text-anchor="middle" letter-spacing="0.5">COMPLIANT</text>
+              </svg>
+            </div>
+            <!-- ISO 27001 Badge -->
+            <div class="badge-svg" role="img" aria-label="ISO 27001 Certified Badge">
+              <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="100" rx="4" fill="#0A0A0A" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+                <circle cx="50" cy="50" r="38" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+                <circle cx="50" cy="50" r="34" stroke="rgba(255,255,255,0.04)" stroke-width="1" stroke-dasharray="2 3"/>
+                <text x="50" y="44" font-family="'Inter', sans-serif" font-size="11" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">ISO</text>
+                <text x="50" y="56" font-family="'Inter', sans-serif" font-size="6" font-weight="600" fill="#8E9296" text-anchor="middle" letter-spacing="0.5">27001</text>
+                <text x="50" y="66" font-family="'Inter', sans-serif" font-size="5" font-weight="500" fill="#555555" text-anchor="middle" letter-spacing="0.5">CERTIFIED</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="copyright">&copy; 2026 πX Enterprise Ltd. All rights reserved. Built for secure operational scaling.</div>
+        <ul class="footer-bottom-links">
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Security Assurance</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // REDUCED MOTION PREFERENCE CHECK
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      // 1. NAVBAR SCROLL EFFECT
+      const header = document.querySelector('header');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 40) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+      }, { passive: true });
+
+      // 2. SCROLL REVEAL (IntersectionObserver)
+      const reveals = document.querySelectorAll('.reveal');
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+            revealObserver.unobserve(entry.target); // Trigger once
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+      
+      reveals.forEach(r => revealObserver.observe(r));
+
+      // 3. ARCHITECTURE TIMELINE ACTIVE HIGHLIGHT (IntersectionObserver)
+      const archRows = document.querySelectorAll('.architecture-row');
+      const archObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('node-active');
+          } else {
+            entry.target.classList.remove('node-active');
+          }
+        });
+      }, { threshold: 0.5, rootMargin: '0px 0px -10% 0px' });
+      
+      archRows.forEach(row => archObserver.observe(row));
+
+      // 4. MAGNETIC BUTTONS EFFECT
+      document.querySelectorAll('.btn-magnetic').forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+          if (prefersReducedMotion.matches) return;
+          const rect = btn.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+          
+          btn.style.transform = `translate(${x * 0.28}px, ${y * 0.28}px)`;
+          
+          const text = btn.querySelector('.btn-text');
+          if (text) {
+            text.style.transform = `translate(${x * 0.14}px, ${y * 0.14}px)`;
+          }
+        });
+        
+        btn.addEventListener('mouseleave', () => {
+          btn.style.transform = 'translate(0px, 0px)';
+          const text = btn.querySelector('.btn-text');
+          if (text) {
+            text.style.transform = 'translate(0px, 0px)';
+          }
+        });
+      });
+
+      // 5. METRICS COUNT-UP ANIMATION (IntersectionObserver)
+      const metricNumbers = document.querySelectorAll('.metric-number');
+      const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const target = entry.target;
+            const finalValStr = target.getAttribute('data-value');
+            const finalVal = parseFloat(finalValStr);
+            const duration = 2000; // 2 seconds
+            const startTime = performance.now();
+            const suffix = target.getAttribute('data-suffix') || '';
+            const isFloat = finalValStr.includes('.');
+            
+            if (prefersReducedMotion.matches) {
+              target.innerText = finalValStr + suffix;
+              counterObserver.unobserve(target);
+              return;
+            }
+
+            function updateCounter(currentTime) {
+              const elapsed = currentTime - startTime;
+              const progress = Math.min(elapsed / duration, 1);
+              // Ease-out cubic calculation
+              const easeProgress = 1 - Math.pow(1 - progress, 3);
+              const currentVal = easeProgress * finalVal;
+              
+              if (isFloat) {
+                target.innerText = currentVal.toFixed(1) + suffix;
+              } else {
+                target.innerText = Math.floor(currentVal) + suffix;
+              }
+              
+              if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+              } else {
+                target.innerText = finalValStr + suffix;
+              }
+            }
+            
+            requestAnimationFrame(updateCounter);
+            counterObserver.unobserve(target);
+          }
+        });
+      }, { threshold: 0.5 });
+
+      metricNumbers.forEach(n => counterObserver.observe(n));
+
+      // 6. HERO BACKGROUND NEURAL NETWORK (Canvas)
+      const initHeroCanvas = () => {
+        const canvas = document.getElementById('hero-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+        
+        window.addEventListener('resize', () => {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+        });
+        
+        let particles = [];
+        const maxParticles = prefersReducedMotion.matches ? 0 : (width < 768 ? 30 : 65);
+        
+        class Particle {
+          constructor() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.z = Math.random() * 500 + 100; // 3D depth coordinate
+            this.vx = (Math.random() - 0.5) * 0.15;
+            this.vy = (Math.random() - 0.5) * 0.15;
+            this.vz = (Math.random() - 0.5) * 0.05;
+            this.baseRadius = Math.random() * 1.5 + 0.8;
+          }
+          
+          update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.z += this.vz;
+            
+            // Wrap-around bounds checks
+            if (this.x < 0 || this.x > width) this.vx *= -1;
+            if (this.y < 0 || this.y > height) this.vy *= -1;
+            if (this.z < 100 || this.z > 600) this.vz *= -1;
+          }
+          
+          draw() {
+            // Transform depth coordinates to 2D projections
+            const scale = 300 / this.z;
+            const projX = (this.x - width / 2) * scale + width / 2;
+            const projY = (this.y - height / 2) * scale + height / 2;
+            const r = this.baseRadius * scale;
+            const alpha = Math.min(1, Math.max(0, (600 - this.z) / 500)) * 0.35;
+            
+            ctx.beginPath();
+            ctx.arc(projX, projY, r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(192, 200, 208, ${alpha})`;
+            ctx.fill();
+          }
+        }
+        
+        if (!prefersReducedMotion.matches) {
+          for (let i = 0; i < maxParticles; i++) {
+            particles.push(new Particle());
+          }
+        }
+        
+        // Mouse coordinate mapping
+        let mouse = { x: null, y: null };
+        window.addEventListener('mousemove', (e) => {
+          mouse.x = e.clientX;
+          mouse.y = e.clientY;
+        });
+        window.addEventListener('mouseleave', () => {
+          mouse.x = null;
+          mouse.y = null;
+        });
+        
+        // Add localized logo particles floating upward around center
+        let logoParticles = [];
+        const maxLogoParticles = prefersReducedMotion.matches ? 0 : 20;
+
+        class LogoParticle {
+          constructor() {
+            this.reset();
+          }
+          reset() {
+            this.x = width / 2 + (Math.random() - 0.5) * 120;
+            this.y = height / 2 + (Math.random() - 0.5) * 120;
+            this.vx = (Math.random() - 0.5) * 0.1;
+            this.vy = -Math.random() * 0.3 - 0.1; // Drift upward
+            this.alpha = Math.random() * 0.5 + 0.3;
+            this.r = Math.random() * 1.5 + 0.5;
+            this.life = Math.random() * 100 + 100;
+            this.maxLife = this.life;
+          }
+          update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.life--;
+            this.alpha = (this.life / this.maxLife) * 0.5;
+            if (this.life <= 0) {
+              this.reset();
+            }
+          }
+          draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+            ctx.fill();
+          }
+        }
+
+        if (!prefersReducedMotion.matches) {
+          for (let i = 0; i < maxLogoParticles; i++) {
+            logoParticles.push(new LogoParticle());
+          }
+        }
+
+        function animateHero() {
+          ctx.clearRect(0, 0, width, height);
+          
+          if (prefersReducedMotion.matches) return;
+          
+          particles.forEach(p => p.update());
+          
+          // Render connecting network cords
+          for (let i = 0; i < particles.length; i++) {
+            const p1 = particles[i];
+            const scale1 = 300 / p1.z;
+            const x1 = (p1.x - width / 2) * scale1 + width / 2;
+            const y1 = (p1.y - height / 2) * scale1 + height / 2;
+            
+            for (let j = i + 1; j < particles.length; j++) {
+              const p2 = particles[j];
+              const scale2 = 300 / p2.z;
+              const x2 = (p2.x - width / 2) * scale2 + width / 2;
+              const y2 = (p2.y - height / 2) * scale2 + height / 2;
+              
+              const dist = Math.hypot(x1 - x2, y1 - y2);
+              if (dist < 155) {
+                const alpha = (1 - dist / 155) * 0.14 * Math.min(scale1, scale2);
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+                ctx.lineWidth = 0.5 * Math.min(scale1, scale2);
+                ctx.stroke();
+              }
+            }
+            
+            // Mouse push/pull physics
+            if (mouse.x !== null) {
+              const scale = 300 / p1.z;
+              const px = (p1.x - width / 2) * scale + width / 2;
+              const py = (p1.y - height / 2) * scale + height / 2;
+              const mDist = Math.hypot(px - mouse.x, py - mouse.y);
+              if (mDist < 160) {
+                const force = (160 - mDist) / 160;
+                const angle = Math.atan2(mouse.y - py, mouse.x - px);
+                p1.x += Math.cos(angle) * force * 0.22 * (p1.z / 300);
+                p1.y += Math.sin(angle) * force * 0.22 * (p1.z / 300);
+              }
+            }
+            
+            p1.draw();
+          }
+
+          // Render center drift particles
+          logoParticles.forEach(lp => {
+            lp.update();
+            lp.draw();
+          });
+          
+          requestAnimationFrame(animateHero);
+        }
+        
+        animateHero();
+      };
+
+      // 7. IMMERSIVE FEATURE 1: MEMORY ENGINE CANVAS
+      const initMemoryCanvas = () => {
+        const canvas = document.getElementById('memory-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let w = canvas.width = canvas.parentElement.clientWidth;
+        let h = canvas.height = canvas.parentElement.clientHeight;
+        
+        window.addEventListener('resize', () => {
+          if (!canvas.parentElement) return;
+          w = canvas.width = canvas.parentElement.clientWidth;
+          h = canvas.height = canvas.parentElement.clientHeight;
+        });
+        
+        const documents = [];
+        const vectors = [];
+        
+        class FloatingDoc {
+          constructor() {
+            this.x = -50;
+            this.y = Math.random() * (h - 100) + 50;
+            this.speed = Math.random() * 0.4 + 0.35;
+            this.width = 30;
+            this.height = 40;
+          }
+          update() {
+            this.x += this.speed;
+          }
+          draw() {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(this.x, this.y, this.width, this.height);
+            
+            // Faint document lines
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+            ctx.beginPath();
+            ctx.moveTo(this.x + 5, this.y + 10);
+            ctx.lineTo(this.x + 25, this.y + 10);
+            ctx.moveTo(this.x + 5, this.y + 20);
+            ctx.lineTo(this.x + 20, this.y + 20);
+            ctx.moveTo(this.x + 5, this.y + 30);
+            ctx.lineTo(this.x + 25, this.y + 30);
+            ctx.stroke();
+          }
+        }
+        
+        class VectorNode {
+          constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.tx = w / 2 + Math.random() * (w / 2 - 100) + 50; // target grid area
+            this.ty = Math.random() * (h - 60) + 30;
+            this.speed = Math.random() * 0.04 + 0.025;
+            this.r = 4;
+            this.progress = 0;
+            this.alpha = 1;
+          }
+          update() {
+            if (this.progress < 1) {
+              this.progress += this.speed;
+              this.x = this.x + (this.tx - this.x) * this.progress;
+              this.y = this.y + (this.ty - this.y) * this.progress;
+            } else {
+              this.alpha = Math.max(0.25, this.alpha - 0.002);
+            }
+          }
+          draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(192, 200, 208, ${this.alpha})`;
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.4)';
+            ctx.shadowBlur = 6;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          }
+        }
+        
+        let lineFlash = 0;
+        
+        function loop() {
+          ctx.clearRect(0, 0, w, h);
+          
+          // Draw vertical scan divider line (Zero Gradients)
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 + lineFlash})`;
+          ctx.lineWidth = 1 + lineFlash * 2.5;
+          ctx.setLineDash([6, 5]);
+          ctx.beginPath();
+          ctx.moveTo(w / 2, 0);
+          ctx.lineTo(w / 2, h);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          
+          if (lineFlash > 0) lineFlash -= 0.04;
+          
+          // Spawn raw documents
+          if (Math.random() < 0.015 && documents.length < 8 && !prefersReducedMotion.matches) {
+            documents.push(new FloatingDoc());
+          }
+          
+          // Process raw files
+          for (let i = documents.length - 1; i >= 0; i--) {
+            const doc = documents[i];
+            doc.update();
+            doc.draw();
+            
+            // Vectorize upon passing midline
+            if (doc.x + doc.width >= w / 2) {
+              lineFlash = 0.55;
+              for (let k = 0; k < 3; k++) {
+                vectors.push(new VectorNode(doc.x + doc.width / 2, doc.y + doc.height / 2));
+              }
+              documents.splice(i, 1);
+            }
+          }
+          
+          // Draw optimized structural targets (matrix backing)
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+          for (let gx = w / 2 + 50; gx < w - 20; gx += 40) {
+            for (let gy = 40; gy < h - 40; gy += 40) {
+              ctx.beginPath();
+              ctx.arc(gx, gy, 2, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+          
+          // Render stabilized memory vectors
+          for (let i = vectors.length - 1; i >= 0; i--) {
+            const vec = vectors[i];
+            vec.update();
+            vec.draw();
+            
+            if (vec.progress >= 1 && vec.alpha <= 0.25) {
+              vectors.splice(i, 1);
+            }
+          }
+          
+          if (!prefersReducedMotion.matches) {
+            requestAnimationFrame(loop);
+          }
+        }
+        loop();
+      };
+
+      // 8. IMMERSIVE FEATURE 2: KNOWLEDGE GRAPH CANVAS
+      const initKnowledgeGraph = () => {
+        const canvas = document.getElementById('kg-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let w = canvas.width = canvas.parentElement.clientWidth;
+        let h = canvas.height = canvas.parentElement.clientHeight;
+        
+        window.addEventListener('resize', () => {
+          if (!canvas.parentElement) return;
+          w = canvas.width = canvas.parentElement.clientWidth;
+          h = canvas.height = canvas.parentElement.clientHeight;
+        });
+        
+        const nodes = [];
+        const connections = [];
+        const labels = ["Acme ERP Data", "Contract Map", "Q4 Forecast", "SaaS Core API", "Risk Log", "Customer Sentiment", "Compute Vector", "Pipeline Lock"];
+        
+        class KGNode {
+          constructor(x, y, label) {
+            this.x = x;
+            this.y = y;
+            this.vx = 0;
+            this.vy = 0;
+            this.r = 6;
+            this.label = label;
+            this.originX = x;
+            this.originY = y;
+          }
+          
+          update() {
+            // Soft anchor spring pulls nodes to start positions
+            const dx = this.originX - this.x;
+            const dy = this.originY - this.y;
+            this.vx += dx * 0.006 + (Math.random() - 0.5) * 0.06;
+            this.vy += dy * 0.006 + (Math.random() - 0.5) * 0.06;
+            
+            this.vx *= 0.94;
+            this.vy *= 0.94;
+            
+            this.x += this.vx;
+            this.y += this.vy;
+          }
+          
+          draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.4)';
+            ctx.shadowBlur = 8;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            
+            ctx.fillStyle = 'rgba(192, 200, 208, 0.85)';
+            ctx.font = '600 10px Inter';
+            ctx.fillText(this.label.toUpperCase(), this.x + 12, this.y + 4);
+          }
+        }
+        
+        // Spawn circular grid system in center
+        const cx = w / 2;
+        const cy = h / 2;
+        const radius = Math.min(w, h) * 0.28;
+        
+        for (let i = 0; i < labels.length; i++) {
+          const angle = (i / labels.length) * Math.PI * 2;
+          const nx = cx + Math.cos(angle) * radius;
+          const ny = cy + Math.sin(angle) * radius;
+          nodes.push(new KGNode(nx, ny, labels[i]));
+        }
+        
+        // Define interconnected structural lines
+        for (let i = 0; i < nodes.length; i++) {
+          connections.push({ from: i, to: (i + 1) % nodes.length, pulseOffset: Math.random() });
+          if (i % 3 === 0) {
+            connections.push({ from: i, to: (i + 4) % nodes.length, pulseOffset: Math.random() });
+          }
+        }
+        
+        // Hover pointer pulling attraction
+        let hoverMouse = { x: null, y: null };
+        canvas.addEventListener('mousemove', (e) => {
+          const rect = canvas.getBoundingClientRect();
+          hoverMouse.x = e.clientX - rect.left;
+          hoverMouse.y = e.clientY - rect.top;
+        });
+        canvas.addEventListener('mouseleave', () => {
+          hoverMouse.x = null;
+          hoverMouse.y = null;
+        });
+        
+        function loop() {
+          ctx.clearRect(0, 0, w, h);
+          
+          nodes.forEach(node => {
+            if (hoverMouse.x !== null) {
+              const dist = Math.hypot(node.x - hoverMouse.x, node.y - hoverMouse.y);
+              if (dist < 160) {
+                const pull = (160 - dist) / 160;
+                const angle = Math.atan2(hoverMouse.y - node.y, hoverMouse.x - node.x);
+                node.vx += Math.cos(angle) * pull * 0.25;
+                node.vy += Math.sin(angle) * pull * 0.25;
+              }
+            }
+            node.update();
+          });
+          
+          // Render bonds
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+          ctx.lineWidth = 1;
+          connections.forEach(c => {
+            const nodeA = nodes[c.from];
+            const nodeB = nodes[c.to];
+            ctx.beginPath();
+            ctx.moveTo(nodeA.x, nodeA.y);
+            ctx.lineTo(nodeB.x, nodeB.y);
+            ctx.stroke();
+            
+            // Pulse node connection signals
+            c.pulseOffset += 0.0035;
+            if (c.pulseOffset > 1) c.pulseOffset = 0;
+            
+            const px = nodeA.x + (nodeB.x - nodeA.x) * c.pulseOffset;
+            const py = nodeA.y + (nodeB.y - nodeA.y) * c.pulseOffset;
+            
+            ctx.beginPath();
+            ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+            ctx.shadowBlur = 5;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          });
+          
+          nodes.forEach(n => n.draw());
+          
+          if (!prefersReducedMotion.matches) {
+            requestAnimationFrame(loop);
+          }
+        }
+        loop();
+      };
+
+      // 9. IMMERSIVE FEATURE 3: DECISION ENGINE CANVAS
+      const initDecisionEngine = () => {
+        const canvas = document.getElementById('decision-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let w = canvas.width = canvas.parentElement.clientWidth;
+        let h = canvas.height = canvas.parentElement.clientHeight;
+        
+        window.addEventListener('resize', () => {
+          if (!canvas.parentElement) return;
+          w = canvas.width = canvas.parentElement.clientWidth;
+          h = canvas.height = canvas.parentElement.clientHeight;
+        });
+        
+        const coreNode = { x: w / 2, y: h / 2, r: 16 };
+        const particles = [];
+        let rippleRad = 0;
+        let rippleAlpha = 0;
+        let confidenceScore = 98.4;
+        let resolutionTimer = 0;
+        
+        class EvidencePiece {
+          constructor() {
+            this.angle = Math.random() * Math.PI * 2;
+            this.radius = Math.random() * 150 + 100;
+            this.speed = Math.random() * 0.02 + 0.01;
+            this.spiralVelocity = 0.55;
+            this.size = 3;
+            this.active = true;
+          }
+          update() {
+            this.angle += this.speed;
+            this.radius -= this.spiralVelocity;
+            if (this.radius <= coreNode.r) {
+              this.active = false;
+            }
+          }
+          draw() {
+            const px = coreNode.x + Math.cos(this.angle) * this.radius;
+            const py = coreNode.y + Math.sin(this.angle) * this.radius;
+            
+            ctx.beginPath();
+            ctx.arc(px, py, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(192, 200, 208, 0.8)';
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+            ctx.shadowBlur = 4;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          }
+        }
+        
+        function loop() {
+          ctx.clearRect(0, 0, w, h);
+          
+          // Orbit guidelines (Zero Gradients)
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+          ctx.lineWidth = 1;
+          [100, 160, 220].forEach(rad => {
+            ctx.beginPath();
+            ctx.arc(coreNode.x, coreNode.y, rad, 0, Math.PI * 2);
+            ctx.stroke();
+          });
+          
+          // Spawn incoming particles
+          if (Math.random() < 0.1 && particles.length < 20 && !prefersReducedMotion.matches) {
+            particles.push(new EvidencePiece());
+          }
+          
+          // Render main core node
+          ctx.beginPath();
+          ctx.arc(coreNode.x, coreNode.y, coreNode.r, 0, Math.PI * 2);
+          ctx.fillStyle = '#0A0A0A';
+          ctx.strokeStyle = '#FFFFFF';
+          ctx.lineWidth = 2;
+          ctx.shadowBlur = 12;
+          ctx.shadowColor = 'rgba(255, 255, 255, 0.1)';
+          ctx.fill();
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+          
+          // Central point inside core
+          ctx.beginPath();
+          ctx.arc(coreNode.x, coreNode.y, 6, 0, Math.PI * 2);
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fill();
+          
+          // Process evidence collision
+          for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.update();
+            p.draw();
+            
+            if (!p.active) {
+              particles.splice(i, 1);
+              rippleRad = coreNode.r;
+              rippleAlpha = 0.8;
+              resolutionTimer = 90;
+              confidenceScore = (96.0 + Math.random() * 3.8).toFixed(1);
+            }
+          }
+          
+          // Expand white feedback rings
+          if (rippleAlpha > 0) {
+            ctx.beginPath();
+            ctx.arc(coreNode.x, coreNode.y, rippleRad, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(255, 255, 255, ${rippleAlpha})`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            
+            rippleRad += 2.2;
+            rippleAlpha -= 0.018;
+          }
+          
+          // Resolve state visual labels
+          ctx.textAlign = 'center';
+          if (resolutionTimer > 0) {
+            ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(1, resolutionTimer / 20)})`;
+            ctx.font = '700 11px Inter';
+            ctx.fillText("OPTIMAL DECISION RESOLVED", coreNode.x, coreNode.y - 45);
+            
+            ctx.fillStyle = `rgba(142, 146, 150, ${Math.min(0.8, resolutionTimer / 20)})`;
+            ctx.font = '600 10px Inter';
+            ctx.fillText(`PROBABILITY CONFIDENCE: ${confidenceScore}%`, coreNode.x, coreNode.y - 30);
+            
+            resolutionTimer--;
+          } else {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+            ctx.font = '600 9px Inter';
+            ctx.fillText("RESOLVING ALTERNATIVES...", coreNode.x, coreNode.y - 35);
+          }
+          
+          if (!prefersReducedMotion.matches) {
+            requestAnimationFrame(loop);
+          }
+        }
+        loop();
+      };
+
+      // 10. IMMERSIVE FEATURE 4: SIMULATION CANVAS
+      const initSimulation = () => {
+        const canvas = document.getElementById('simulation-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let w = canvas.width = canvas.parentElement.clientWidth;
+        let h = canvas.height = canvas.parentElement.clientHeight;
+        
+        window.addEventListener('resize', () => {
+          if (!canvas.parentElement) return;
+          w = canvas.width = canvas.parentElement.clientWidth;
+          h = canvas.height = canvas.parentElement.clientHeight;
+        });
+        
+        let completion = 0;
+        const options = [
+          { tag: "Scenario Alpha: Liquidity Strain", y: h / 2 - 70, ok: false, opacity: 0.25 },
+          { tag: "Scenario Beta: Regulatory Barrier", y: h / 2 - 25, ok: false, opacity: 0.25 },
+          { tag: "Scenario Gamma: Market Conflict", y: h / 2 + 20, ok: false, opacity: 0.25 },
+          { tag: "Scenario Delta: Peak Optimization", y: h / 2 + 65, ok: true, opacity: 0.25 }
+        ];
+        
+        let signalNodes = [];
+        
+        const computeNewPass = () => {
+          completion = 0;
+          options.forEach(opt => {
+            opt.opacity = 0.25;
+          });
+          signalNodes = [];
+        };
+        
+        computeNewPass();
+        setInterval(() => {
+          if (!prefersReducedMotion.matches) {
+            computeNewPass();
+          }
+        }, 5000);
+        
+        function loop() {
+          ctx.clearRect(0, 0, w, h);
+          
+          // Core anchor line
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(30, h / 2);
+          ctx.lineTo(125, h / 2);
+          ctx.stroke();
+          
+          // Junction core
+          ctx.beginPath();
+          ctx.arc(125, h / 2, 6, 0, Math.PI * 2);
+          ctx.fillStyle = '#FFFFFF';
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = '#FFFFFF';
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          
+          // Animate search sweep
+          if (completion < 1) {
+            completion += 0.0075;
+          } else {
+            // Lock finalized status parameters
+            options.forEach(opt => {
+              if (opt.ok) {
+                opt.opacity = 1;
+              } else {
+                opt.opacity = 0.05; // Fade unviable alternatives heavily
+              }
+            });
+            
+            // Generate active transmission packets along the successful option
+            if (Math.random() < 0.045 && signalNodes.length < 4) {
+              signalNodes.push({ x: 125, progress: 0 });
+            }
+          }
+          
+          // Render branching options
+          options.forEach(opt => {
+            ctx.beginPath();
+            ctx.moveTo(125, h / 2);
+            ctx.bezierCurveTo(175, h / 2, 175, opt.y, 225, opt.y);
+            ctx.lineTo(w - 180, opt.y);
+            
+            if (opt.ok && completion >= 1) {
+              ctx.strokeStyle = '#FFFFFF';
+              ctx.lineWidth = 2;
+            } else {
+              ctx.strokeStyle = `rgba(255, 255, 255, ${opt.opacity})`;
+              ctx.lineWidth = 1;
+            }
+            ctx.stroke();
+            
+            // Sweep scan dot
+            if (completion < 1) {
+              const currentX = 125 + (w - 305) * completion;
+              ctx.fillStyle = '#FFFFFF';
+              ctx.shadowBlur = 6;
+              ctx.shadowColor = '#FFFFFF';
+              ctx.beginPath();
+              
+              let cy;
+              if (currentX < 225) {
+                const ratio = (currentX - 125) / 100;
+                cy = h / 2 + (opt.y - h / 2) * (3 * ratio * ratio - 2 * ratio * ratio * ratio);
+              } else {
+                cy = opt.y;
+              }
+              ctx.arc(currentX, cy, 3.5, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.shadowBlur = 0;
+            }
+            
+            // Labels on outer side
+            ctx.textAlign = 'left';
+            ctx.font = '700 10px Inter';
+            if (opt.ok && completion >= 1) {
+              ctx.fillStyle = '#FFFFFF';
+              ctx.fillText(opt.tag.toUpperCase(), w - 160, opt.y + 3);
+              ctx.font = '800 8px Inter';
+              ctx.fillStyle = '#C0C8D0';
+              ctx.fillText("OPTIMAL PATH [COMMITTED]", w - 160, opt.y + 14);
+            } else {
+              ctx.fillStyle = `rgba(142, 146, 150, ${Math.max(0.15, opt.opacity)})`;
+              ctx.fillText(opt.tag.toUpperCase(), w - 160, opt.y + 3);
+              if (completion >= 1) {
+                ctx.font = '600 8px Inter';
+                ctx.fillStyle = 'rgba(85, 85, 85, 0.4)';
+                ctx.fillText("UNVIABLE ALTERNATIVE", w - 160, opt.y + 14);
+              }
+            }
+          });
+          
+          // Animate vector signals moving forward
+          for (let i = signalNodes.length - 1; i >= 0; i--) {
+            const sn = signalNodes[i];
+            sn.progress += 0.018;
+            
+            const currentX = 125 + (w - 305) * sn.progress;
+            let cy;
+            const targetY = options[3].y; // Optimal target y (Scenario Delta)
+            if (currentX < 225) {
+              const ratio = (currentX - 125) / 100;
+              cy = h / 2 + (targetY - h / 2) * (3 * ratio * ratio - 2 * ratio * ratio * ratio);
+            } else {
+              cy = targetY;
+            }
+            
+            ctx.beginPath();
+            ctx.arc(currentX, cy, 3, 0, Math.PI * 2);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = '#FFFFFF';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            
+            if (currentX > w - 180) {
+              signalNodes.splice(i, 1);
+            }
+          }
+          
+          // State details overlay text (Zero Gradients)
+          ctx.textAlign = 'left';
+          if (completion < 1) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+            ctx.font = '600 10px Inter';
+            ctx.fillText(`SIMULATING ALTERNATIVE HYPOTHESES... ${(completion * 100).toFixed(0)}%`, 30, h - 20);
+          } else {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+            ctx.font = '700 10px Inter';
+            ctx.fillText("10,000 SCENARIOS MODELLED. OPTIMAL FLOW IDENTIFIED.", 30, h - 20);
+          }
+          
+          if (!prefersReducedMotion.matches) {
+            requestAnimationFrame(loop);
+          }
+        }
+        loop();
+      };
+
+      // INITIALIZE RUNTIME COMPOSITIONS
+      initHeroCanvas();
+      initMemoryCanvas();
+      initKnowledgeGraph();
+      initDecisionEngine();
+      initSimulation();
+    });
+  </script>
+</body>
+</html>
